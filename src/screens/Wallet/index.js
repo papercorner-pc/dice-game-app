@@ -1,23 +1,78 @@
-import {SafeScreen} from '../../components/template';
+import { SafeScreen } from '../../components/template';
 import {
+  FlatList,
   ImageBackground,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {FontFamily} from '../../theme/fonts';
+import { FontFamily } from '../../theme/fonts';
 import LinearGradient from 'react-native-linear-gradient';
 import rupeeIcon from '../../theme/assets/images/rupee.png';
 import filterIcon from '../../theme/assets/images/filter.png';
 import cashIcon from '../../theme/assets/images/cash.png';
+import game from '../../theme/assets/images/game.png';
 import FastImage from 'react-native-fast-image';
-import {navigate} from '../../navigators/utils';
+import { navigate } from '../../navigators/utils';
+import { useQuery } from '@tanstack/react-query';
+import { walletHistory } from '../../services/game/game';
+import EmptyComponent from '../../components/molecules/EmptyComponet';
+import { useCallback, useEffect, useState } from 'react';
 
 const WalletScreen = props => {
-  const historyComponents = type => {
+  const [refreshing, setRefreshing] = useState(false);
+  const [walletTotal,setWalletTotal] = useState(0)
+  const { isSuccess, data, isFetching, isLoading, refetch } = useQuery({
+    queryKey: ["wallethistory"],
+    queryFn: () => {
+      return walletHistory();
+    },
+  });
+  useEffect(() => { 
+    if (isSuccess) {
+      const total = data.transactions.reduce(
+        (acc, obj) => acc + parseInt(obj.amount),
+        0,
+      );
+      setWalletTotal(total)
+    }
+  }, [isSuccess])
+  const _keyExtractor = (item, index) => index.toString();
+  const formatDate = (isoString) => {
+    // Create a Date object from the ISO string
+    const date = new Date(isoString);
+
+    // Extract date parts
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = date.getUTCFullYear();
+
+    // Extract time parts
+    let hours = date.getUTCHours();
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+
+    // Format the date and time
+    const formattedDate = `${day}-${month}-${year}`;
+    const formattedTime = `${hours}:${minutes} ${ampm}`;
+
+    return `${formattedDate} ${formattedTime}`;
+  }
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    refetch()
+    // Simulate a network request or some data fetching
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }, []);
+  const historyComponents = ({ item }) => {
     return (
       <>
         <View style={styles.lineStyle} />
@@ -27,7 +82,7 @@ const WalletScreen = props => {
             justifyContent: 'space-between',
             marginVertical: 15,
           }}>
-          <View style={{flexDirection: 'row', marginRight: 10}}>
+          <View style={{ flexDirection: 'row', marginRight: 10 }}>
             <View
               style={{
                 width: 40,
@@ -54,7 +109,7 @@ const WalletScreen = props => {
                   fontFamily: FontFamily.poppinsSemiBold,
                   color: '#1B1023',
                 }}>
-                {type == 'Debit' ? '-' : '+'}₹ 100.00
+                {item.type === "deposit" ? '+' : "-"}₹ {item.amount}
               </Text>
               <Text
                 style={{
@@ -62,7 +117,7 @@ const WalletScreen = props => {
                   fontFamily: FontFamily.poppinsMedium,
                   color: '#5F646A',
                 }}>
-                26/04/2024 10:30 AM
+                {formatDate(item.created_at)}
               </Text>
             </View>
           </View>
@@ -77,7 +132,7 @@ const WalletScreen = props => {
                 height: 9,
                 width: 9,
                 borderRadius: 100,
-                backgroundColor: type == 'Debit' ? '#C23421' : '#21C24E',
+                backgroundColor: item.type == 'deposit' ? '#21C24E' : '#C23421',
                 alignSelf: 'center',
                 marginRight: 5,
               }}
@@ -88,7 +143,7 @@ const WalletScreen = props => {
                 fontFamily: FontFamily.poppinsMedium,
                 color: '#1B1023',
               }}>
-              {type}
+              {item.type}
             </Text>
           </View>
         </View>
@@ -106,7 +161,7 @@ const WalletScreen = props => {
           <Pressable
             style={styles.rechargeButton}
             onPress={() => {
-              navigate('WalletPayment');
+              navigate('WalletPayment',{walletTotal:walletTotal});
             }}>
             <Text>Recharge Wallet</Text>
           </Pressable>
@@ -125,8 +180,8 @@ const WalletScreen = props => {
               resizeMode="contain"
             />
             <Text style={styles.balanceTitleText}>E Wallet Balance</Text>
-            <Text style={styles.balanceAmount}>₹ 1,000.00</Text>
-            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={styles.balanceAmount}>₹ {walletTotal.toFixed(2)}</Text>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
               <Text style={styles.messageText}>
                 Every transaction is verified for your peace of mind
               </Text>
@@ -139,10 +194,10 @@ const WalletScreen = props => {
             justifyContent: 'space-between',
             marginBottom: 20,
           }}>
-          <View style={{justifyContent: 'center'}}>
+          <View style={{ justifyContent: 'center' }}>
             <Text style={styles.historyTitle}>History</Text>
           </View>
-          <View style={{justifyContent: 'center'}}>
+          <View style={{ justifyContent: 'center' }}>
             <FastImage
               source={filterIcon}
               style={{
@@ -154,9 +209,23 @@ const WalletScreen = props => {
             />
           </View>
         </View>
-        {historyComponents('Recharge')}
-        {historyComponents('Credit')}
-        {historyComponents('Debit')}
+        {
+          !isLoading &&
+          <FlatList
+            data={!!data ? data.transactions : []}
+            renderItem={historyComponents}
+            keyExtractor={_keyExtractor}
+            listKey={(item, index) => `${index}-item`}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            ListEmptyComponent={() => (
+              <EmptyComponent text={'No Game Founds'} image={game} />
+            )}
+          />
+        }
       </View>
     </SafeScreen>
   );

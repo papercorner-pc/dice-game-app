@@ -26,7 +26,7 @@ import {gameList} from '../../../services/game/game';
 import {customToastMessage} from '../../../utils/UtilityHelper';
 import game from '../../../theme/assets/images/game.png';
 import EmptyComponent from '../../../components/molecules/EmptyComponet';
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 
 const staticData = [{value: adminTab.upComing}, {value: adminTab.history}];
 
@@ -47,7 +47,7 @@ const AdminHomeScreen = props => {
     },
     onError: error => {
       console.log('------ERROR gameList -----', error);
-      customToastMessage(error.error ? error.error : error.message, 'danger');
+      customToastMessage(error.error ? error.error : error.message, 'error');
     },
   });
   useFocusEffect(
@@ -56,11 +56,10 @@ const AdminHomeScreen = props => {
         type: option === 'History' ? 'completed' : 'upcoming',
       };
       mutation.mutate(payload);
-      return () => {
-      };
+      return () => {};
     }, [option, refreshing]), // Empty array means it will run every time the screen is focused
   );
-  
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     // Simulate a network request or some data fetching
@@ -228,6 +227,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10, // Adjust horizontal padding
     fontSize: 14, // Adjust font size as needed
     lineHeight: 18, // Adjust line height as needed
+    width: '100%',
   },
   historyTitle: {
     fontSize: 18,

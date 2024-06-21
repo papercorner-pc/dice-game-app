@@ -25,6 +25,7 @@ import {
   validatePassword,
   validatePhone,
 } from '../../utils/UtilityHelper';
+import { Colors } from '../../theme/colors';
 
 const CreateAccount = () => {
   const [number, setNumber] = useState('');
@@ -46,22 +47,22 @@ const CreateAccount = () => {
     },
     onError: error => {
       console.log('------ERRORq123-----', error);
-      customToastMessage(error.error ? error.error : error.message, 'danger');
+      customToastMessage(error.error ? error.error : error.message, 'error');
     },
   });
   const onPressCreateAccount = () => {
     var isValid = true;
     if (!validatePhone(number)) {
       isValid = false;
-      customToastMessage('Please enter valid phone number', 'danger');
+      customToastMessage('Please enter valid phone number', 'error');
     }
     if (!validatePassword(password)) {
       isValid = false;
-      customToastMessage('Please enter valid Password', 'danger');
+      customToastMessage('Please enter valid Password', 'error');
     }
     if (name === '') {
       isValid = false;
-      customToastMessage('Please enter User Name', 'danger');
+      customToastMessage('Please enter User Name', 'error');
     }
     if (isValid) {
       // const fcm_token = storage.getString('fcm_token');
@@ -153,6 +154,8 @@ const CreateAccount = () => {
                   borderColor: '#C4BCCA',
                   marginBottom: 10,
                   paddingHorizontal: 10,
+                  width: '100%',
+                  color:Colors.black
                 }}
               />
               <Text
@@ -206,6 +209,8 @@ const CreateAccount = () => {
                     marginLeft: 10,
                     borderRadius: 12,
                     borderColor: '#C4BCCA',
+                    width: '100%',
+                    color:Colors.black
                   }}
                 />
               </View>
@@ -235,6 +240,8 @@ const CreateAccount = () => {
                   value={password}
                   style={{
                     padding: 10,
+                    width: '100%',
+                    color:Colors.black
                   }}
                 />
                 <TouchableOpacity onPress={toggleShowPassword}>
@@ -243,6 +250,7 @@ const CreateAccount = () => {
                     style={{
                       height: 24,
                       width: 24,
+                      marginLeft:-20
                     }}
                     resizeMode="contain"
                   />

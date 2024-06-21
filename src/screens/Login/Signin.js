@@ -7,7 +7,7 @@ import flagIcon from '../../theme/assets/images/flag.png';
 import eyeIcon from '../../theme/assets/images/eye.png';
 import {FontFamily} from '../../theme/fonts';
 import CustomTextInput from '../../components/molecules/TextInput';
-import {useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import ButtonComponent from '../../components/molecules/Button';
 import {navigate, navigateAndSimpleReset} from '../../navigators/utils';
@@ -19,11 +19,13 @@ import {
   validatePhone,
 } from '../../utils/UtilityHelper';
 import {storage} from '../../App';
+import { Colors } from '../../theme/colors';
 
 const SignIn = () => {
   const [number, setNumber] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const passwordRef = useRef(null);
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -34,6 +36,7 @@ const SignIn = () => {
     onSuccess: data => {
       console.log('---success', data);
       storage.set('auth_token', data.token);
+      // storage.set('userData',data.user)
       customToastMessage('Login success', 'success');
       if (data.is_admin) {
         storage.set('is_admin', true);
@@ -45,14 +48,18 @@ const SignIn = () => {
     },
     onError: error => {
       console.log('------ERRORq123-----', error);
-      customToastMessage(error.error ? error.error : error.message, 'danger');
+      customToastMessage(error.error ? error.error : error.message, 'error');
     },
   });
   const onPressLogin = () => {
     var isValid = true;
     if (!validatePhone(number)) {
       isValid = false;
-      customToastMessage('Please enter valid phone number', 'danger');
+      customToastMessage('Please enter valid phone number', 'error');
+    }
+    if (password === '') {
+      isValid = false;
+      customToastMessage('Please enter Password', 'error');
     }
     if (isValid) {
       // const fcm_token = storage.getString('fcm_token');
@@ -63,6 +70,11 @@ const SignIn = () => {
       mutation.mutate(payload);
     }
   };
+  useEffect(() => {
+    if (number.length === 10) {
+      passwordRef.current.focus();
+    }
+  }, [number]);
   return (
     <SafeScreen>
       <View style={{flex: 1}}>
@@ -160,6 +172,8 @@ const SignIn = () => {
                   marginLeft: 10,
                   borderRadius: 12,
                   borderColor: '#C4BCCA',
+                  width: '100%',
+                  color:Colors.black
                 }}
               />
             </View>
@@ -184,12 +198,16 @@ const SignIn = () => {
                 marginBottom: 10,
               }}>
               <TextInput
+                ref={passwordRef}
                 placeholder={'Enter password'}
                 onChangeText={setPassword}
                 value={password}
                 style={{
                   padding: 10,
+                  width: '90%',
+                  color:Colors.black
                 }}
+                secureTextEntry={showPassword}
               />
               <TouchableOpacity onPress={toggleShowPassword}>
                 <FastImage

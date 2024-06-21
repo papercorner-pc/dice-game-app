@@ -7,10 +7,11 @@ import ludo from '../../../theme/assets/images/ludoIcon.png';
 
 import {FontFamily} from '../../../theme/fonts';
 import {navigate} from '../../../navigators/utils';
+import { dateFormate, timeFormate } from '../../../utils/UtilityHelper';
 
 const AdminGameList = ({isAnnounced, game}) => {
   const navigateToResult = () => {
-    navigate('LeaderBoard', {isAdmin: true, gameId: game.id});
+    navigate('LeaderBoard', {gameId: game.id});
   };
   const announceResult = () => {
     navigate('ContestantList', {gameId: game.id});
@@ -67,7 +68,7 @@ const AdminGameList = ({isAnnounced, game}) => {
         ]}>
         <View style={{justifyContent: 'center'}}>
           <Text style={styles.dateText}>
-            {game.start_date} | {game.start_time}
+            {dateFormate(game.start_date)} | {timeFormate(game.start_time)}
           </Text>
           {!isAnnounced && (
             <View style={{flexDirection: 'row'}}>

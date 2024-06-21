@@ -8,29 +8,29 @@ import {
   View,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {SafeScreen} from '../../components/template';
-import {goBack, navigate} from '../../navigators/utils';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { SafeScreen } from '../../components/template';
+import { goBack, navigate } from '../../navigators/utils';
 import backIcon from '../../theme/assets/images/back.png';
 import closeIcon from '../../theme/assets/images/close.png';
 import diceIcon from '../../theme/assets/images/diceBg.png';
 import playIcon from '../../theme/assets/images/play.png';
 import sortIcon from '../../theme/assets/images/sort.png';
 import heartIcon from '../../theme/assets/images/heart.png';
-import {FontFamily} from '../../theme/fonts';
-import {paymentMethodListData} from '../../utils/constants';
+import { FontFamily } from '../../theme/fonts';
+import { paymentMethodListData } from '../../utils/constants';
 import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modal';
 import ButtonComponent from '../../components/molecules/Button';
-import {useCallback, useEffect, useState} from 'react';
-import {useMutation} from '@tanstack/react-query';
-import {gameList, getJoinedUserList} from '../../services/game/game';
-import {customToastMessage} from '../../utils/UtilityHelper';
+import { useCallback, useEffect, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { gameList, getJoinedUserList } from '../../services/game/game';
+import { customToastMessage } from '../../utils/UtilityHelper';
 import game from '../../theme/assets/images/game.png';
 import EmptyComponent from '../../components/molecules/EmptyComponet';
 
 const ContestantList = props => {
-  const {gameId} = props.route.params;
+  const { gameId } = props.route.params;
   const [isModalView, setModalView] = useState(false);
   const [contestantList, setContestantList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -51,7 +51,7 @@ const ContestantList = props => {
     },
     onError: error => {
       console.log('------ERROR getJoinedUserList -----', error);
-      customToastMessage(error.error ? error.error : error.message, 'danger');
+      customToastMessage(error.error ? error.error : error.message, 'error');
     },
   });
   useEffect(() => {
@@ -72,29 +72,30 @@ const ContestantList = props => {
     setModalView(!isModalView);
   };
   const navigateToAnnounce = () => {
-    navigate('AnnounceResult', {gameId: gameId});
+    setModalView(false);
+    navigate('AnnounceResult', { gameId: gameId });
   };
-  const renderPaymentMethod = ({item}) => {
+  const renderPaymentMethod = ({ item }) => {
     return (
       <View style={styles.listContainer}>
-        <View style={{flexDirection: 'row'}}>
+        <View style={{ flexDirection: 'row' }}>
           <View style={styles.listImageContainer}>
             <FastImage
-              style={{height: 28, width: 28}}
-              source={{uri: item?.user_profile}}
+              style={{ height: 28, width: 28 }}
+              source={{ uri: item?.user_profile }}
               resizeMode="cover"
             />
           </View>
           <View>
             <Text style={styles.contestNameText}>{item?.user_name}</Text>
             <FastImage
-              style={{height: 16, width: 16}}
+              style={{ height: 16, width: 16 }}
               source={heartIcon}
               resizeMode="contain"
             />
           </View>
         </View>
-        <View style={{justifyContent: 'flex-start'}}>
+        <View style={{ justifyContent: 'flex-start' }}>
           <Text style={styles.wonText}>₹ {item?.user_investment}</Text>
         </View>
       </View>
@@ -103,14 +104,14 @@ const ContestantList = props => {
   return (
     <SafeScreen>
       <View style={styles.headerContainer}>
-        <View style={{flexDirection: 'row', paddingVertical: 30}}>
+        <View style={{ flexDirection: 'row', paddingVertical: 30 }}>
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => {
               goBack();
             }}>
             <Image
-              style={{height: 24, width: 24, marginRight: 24}}
+              style={{ height: 24, width: 24, marginRight: 24 }}
               source={backIcon}
               resizeMode="contain"
               tintColor={'#FBFBFB'}
@@ -120,8 +121,8 @@ const ContestantList = props => {
             <Text style={styles.headingText}>Match Details</Text>
           </View>
         </View>
-        <View style={{alignItems: 'center'}}>
-          <Text style={styles.amountText}>₹ {totalAmount}</Text>
+        <View style={{ alignItems: 'center' }}>
+          <Text style={styles.amountText}>₹ {totalAmount.toFixed(2)}</Text>
           <Text style={styles.amountMessageText}>Amount Received</Text>
           <Pressable style={styles.joinContainer} onPress={onPressAnnounce}>
             <Text style={styles.joinText}>{'Announce Result'}</Text>
@@ -147,13 +148,13 @@ const ContestantList = props => {
             padding: 20,
             backgroundColor: '#FFF',
           }}>
-          <View style={{justifyContent: 'center'}}>
+          <View style={{ justifyContent: 'center' }}>
             {/* <Text style={styles.leaderBoardText}>Lead board</Text> */}
             <Text style={styles.contestText}>
               {contestantList.length} Contestants
             </Text>
           </View>
-          <View style={{justifyContent: 'center', marginTop: 5}}>
+          <View style={{ justifyContent: 'center', marginTop: 5 }}>
             <FastImage
               source={sortIcon}
               style={{
@@ -173,10 +174,10 @@ const ContestantList = props => {
             padding: 20,
             backgroundColor: '#FFF',
           }}>
-          <View style={{justifyContent: 'center'}}>
+          <View style={{ justifyContent: 'center' }}>
             <Text style={styles.investText}>Contestant List</Text>
           </View>
-          <View style={{justifyContent: 'center', marginTop: 5}}>
+          <View style={{ justifyContent: 'center', marginTop: 5 }}>
             <Text style={styles.investText}>Investment</Text>
           </View>
         </View>
@@ -206,17 +207,17 @@ const ContestantList = props => {
           <LinearGradient
             colors={['#412653', '#2E1B3B']}
             style={styles.balanceGradientContainer}>
-            <View style={{alignItems: 'flex-end', marginBottom: 10}}>
+            <View style={{ alignItems: 'flex-end', marginBottom: 10 }}>
               <Pressable onPress={onPressAnnounce}>
                 <Image
-                  style={{height: 24, width: 24}}
+                  style={{ height: 24, width: 24 }}
                   source={closeIcon}
                   resizeMode="contain"
                   tintColor={'#FBFBFB'}
                 />
               </Pressable>
             </View>
-            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
               <Text
                 style={{
                   color: '#FFFFFF',

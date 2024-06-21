@@ -10,16 +10,21 @@
     "test": "jest"
   },
   "dependencies": {
+    "@notifee/react-native": "^7.8.2",
     "@react-native-community/netinfo": "^11.3.2",
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/stack": "^6.3.29",
     "@tanstack/react-query": "^5.36.0",
+    "@zegocloud/zego-uikit-prebuilt-live-streaming-rn": "^2.3.1",
+    "@zegocloud/zego-uikit-rn": "^2.10.0",
     "ky": "^1.3.0",
     "lottie-react-native": "^6.7.2",
     "moment": "^2.30.1",
     "react": "18.2.0",
+    "react-delegate-component": "^1.0.0",
     "react-native": "0.73.4",
+    "react-native-countdown-component": "^2.7.1",
     "react-native-date-picker": "^5.0.4",
     "react-native-fast-image": "^8.6.3",
     "react-native-flash-message": "^0.4.2",
@@ -34,7 +39,8 @@
     "react-native-screens": "^3.31.1",
     "react-native-toast-message": "^2.2.0",
     "react-native-vector-icons": "^10.1.0",
-    "rn-material-ui-textfield": "^1.0.9"
+    "rn-material-ui-textfield": "^1.0.9",
+    "zego-express-engine-reactnative": "^3.14.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

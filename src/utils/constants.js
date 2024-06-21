@@ -12,8 +12,8 @@ import cardFlag from '../theme/assets/images/cardFlag.png';
 import cardMoon from '../theme/assets/images/cardMoon.png';
 
 export const type = {
-  upComing: 'Upcoming',
-  liveMatch: 'Live Matches',
+  live: 'Live',
+  resultWaiting:'Result Waiting',
   completed: 'Completed',
 };
 
@@ -128,3 +128,17 @@ export const resultDiceCards = [
     isSelected: false,
   },
 ];
+
+export const streamData = {
+  apiKey: "j4rr4zywt4vv",
+  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.ZjBDaE5944mDjd6lA4z7hdpxInE1Ri2UIiWXIrGFl4w",
+  callId: "dice_dash",
+  userId: "admin"
+}
+
+// export const streamData = {
+//   apiKey: "mmhfdzb5evj2",
+//   token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiSm9ydXVzX0NfQmFvdGgiLCJpc3MiOiJodHRwczovL3Byb250by5nZXRzdHJlYW0uaW8iLCJzdWIiOiJ1c2VyL0pvcnV1c19DX0Jhb3RoIiwiaWF0IjoxNzE4NDYyNTY1LCJleHAiOjE3MTkwNjczNzB9.Y-qkPvpl-5-LAmUCPcAEUN_IKJF9AWeEg4QgDT_SKdg",
+//   callId: "RLRaEw9hi5Aq",
+//   userId: "Joruus_C_Baoth"
+// }

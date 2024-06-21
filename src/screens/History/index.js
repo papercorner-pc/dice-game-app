@@ -142,9 +142,9 @@ const HistoryScreen = props => {
             />
           </View>
         </View>
-        <CompletedList />
-        <CompletedList />
-        <CompletedList />
+        {/* <CompletedList /> */}
+        {/* <CompletedList /> */}
+        {/* <CompletedList /> */}
       </View>
     </SafeScreen>
   );

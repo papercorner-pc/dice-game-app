@@ -1,4 +1,4 @@
-import {SafeScreen} from '../../components/template';
+import { SafeScreen } from '../../components/template';
 import {
   ImageBackground,
   ScrollView,
@@ -15,22 +15,22 @@ import notiIcon from '../../theme/assets/images/notification.png';
 import thumbUp from '../../theme/assets/images/thumbUp.png';
 import thumbDown from '../../theme/assets/images/thumbDown.png';
 import game from '../../theme/assets/images/game.png';
-import {Colors} from '../../theme/colors';
-import {FontFamily} from '../../theme/fonts';
+import { Colors } from '../../theme/colors';
+import { FontFamily } from '../../theme/fonts';
 import MaterialTab from '../../components/molecules/MaterialTab';
-import {useCallback, useState, useEffect} from 'react';
-import {type} from '../../utils/constants';
+import { useCallback, useState, useEffect } from 'react';
+import { type } from '../../utils/constants';
 import UpcomingList from '../../components/molecules/Game/UpcomingList';
 import CompletedList from '../../components/molecules/Game/CompletedList';
 import EmptyComponent from '../../components/molecules/EmptyComponet';
-import {useMutation} from '@tanstack/react-query';
-import {gameList} from '../../services/game/game';
-import {customToastMessage} from '../../utils/UtilityHelper';
+import { useMutation } from '@tanstack/react-query';
+import { gameList } from '../../services/game/game';
+import { customToastMessage } from '../../utils/UtilityHelper';
 
 const staticData = [
-  {value: type.upComing},
-  {value: type.liveMatch},
-  {value: type.completed},
+  { value: type.live },
+  { value: type.resultWaiting },
+  { value: type.completed },
 ];
 
 const HomeScreen = props => {
@@ -49,7 +49,7 @@ const HomeScreen = props => {
     },
     onError: error => {
       console.log('------ERROR gameList -----', error);
-      customToastMessage(error.error ? error.error : error.message, 'danger');
+      customToastMessage(error.error ? error.error : error.message, 'error');
     },
   });
   useEffect(() => {
@@ -57,9 +57,9 @@ const HomeScreen = props => {
       type:
         option === 'Completed'
           ? 'completed'
-          : option === 'Upcoming'
-          ? 'upcoming'
-          : 'live',
+          : option === 'Live'
+            ? 'upcoming'
+            : 'live',
     };
     mutation.mutate(payload);
   }, [option, refreshing]);
@@ -72,13 +72,13 @@ const HomeScreen = props => {
   }, []);
   return (
     <SafeScreen>
-      <View style={{backgroundColor: '#EEEDED', flex: 1}}>
-        <View style={{height: '30%'}}>
+      <View style={{ backgroundColor: '#EEEDED', flex: 1 }}>
+        <View style={{ height: '30%' }}>
           <LinearGradient
             colors={['#412653', '#2E1B3B']}
-            style={{flex: 1, padding: 10}}>
+            style={{ flex: 1, padding: 10 }}>
             <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <View
                 style={{
                   alignItems: 'flex-end',
@@ -94,7 +94,7 @@ const HomeScreen = props => {
                   resizeMode="contain"
                 />
               </View>
-              <View style={{alignItems: 'center', justifyContent: 'center'}}>
+              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                 <FastImage
                   source={notiIcon}
                   style={{
@@ -119,7 +119,7 @@ const HomeScreen = props => {
             margin: 15,
             justifyContent: 'space-around',
           }}>
-          <View style={{padding: 20}}>
+          <View style={{ padding: 20 }}>
             <Text
               style={{
                 fontSize: 22,
@@ -146,7 +146,7 @@ const HomeScreen = props => {
               Welcome to Your Scoreboard
             </Text>
           </View>
-          <View style={{padding: 20, marginBottom: 20}}>
+          <View style={{ padding: 20, marginBottom: 20 }}>
             <Text
               style={{
                 fontSize: 24,
@@ -156,7 +156,7 @@ const HomeScreen = props => {
               {userGameHistory?.total_joined_game}
             </Text>
             <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text
                 style={{
                   fontSize: 14,
@@ -165,7 +165,7 @@ const HomeScreen = props => {
                 }}>
                 Total Matches
               </Text>
-              <View style={{flexDirection: 'row'}}>
+              <View style={{ flexDirection: 'row' }}>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -190,7 +190,7 @@ const HomeScreen = props => {
                     resizeMode="contain"
                   />
                 </View>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <Text
                     style={{
                       fontSize: 14,
@@ -237,30 +237,31 @@ const HomeScreen = props => {
           onSelect={value => setOption(value)}
           selectedOption={option}
         />
-        <View style={{marginHorizontal: 10, flex: 1}}>
+        <View style={{ marginHorizontal: 10, flex: 1 }}>
           <FlatList
             data={gameListData}
             keyExtractor={(item, index) => index.toString()}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <>
-                {option === 'Upcoming' ? (
+                {option === 'Live' ? (
                   <UpcomingList item={item} />
                 ) : (
                   <CompletedList item={item} />
                 )}
               </>
-            )}
+            )
+            }
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
             ListEmptyComponent={() => (
               <EmptyComponent
                 text={
-                  option === 'Upcoming'
-                    ? 'No Upcoming Matches Right Now'
+                  option === 'Live'
+                    ? 'No Live Matches Right Now'
                     : option === 'Completed'
-                    ? 'No Completed Matches Right Now'
-                    : 'No Live Matches Right Now'
+                      ? 'No Completed Matches Right Now'
+                      : 'No Waiting Matches Right Now'
                 }
                 image={game}
               />

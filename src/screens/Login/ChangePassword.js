@@ -32,7 +32,7 @@ const ChangePassword = () => {
     },
     onError: (error) => {
       console.log("------ERRORq123-----", error.error);
-      customToastMessage(error.error ? error.error : error.message, "danger");
+      customToastMessage(error.error ? error.error : error.message, "error");
     },
   });
 

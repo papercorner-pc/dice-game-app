@@ -12,6 +12,7 @@ import CustomTextInput from '../../components/molecules/TextInput';
 import {SafeScreen} from '../../components/template';
 import {goBack, navigate} from '../../navigators/utils';
 import backIcon from '../../theme/assets/images/back.png';
+import { Colors } from '../../theme/colors';
 import {FontFamily} from '../../theme/fonts';
 
 const EditProfile = props => {
@@ -130,5 +131,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderColor: '#C4BCCA',
     marginVertical: 10,
+    width: '100%',
+    color:Colors.black
   },
 });

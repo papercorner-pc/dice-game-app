@@ -13,6 +13,7 @@ import {SafeScreen} from '../../components/template';
 import HeaderComponent from '../../components/molecules/Header';
 import ButtonComponent from '../../components/molecules/Button';
 import {otpVerify} from '../../services/auth/auth';
+import { storage } from '../../App';
 
 const OtpVerify = props => {
   const {phone} = props.route.params;
@@ -45,20 +46,24 @@ const OtpVerify = props => {
     },
     onSuccess: data => {
       console.log('---success', data);
+      storage.set('auth_token', data.token);
+      // storage.set('userData',data.user)
+      storage.set('is_admin', false);
       customToastMessage('Otp Verified', 'success');
       navigateToVerified();
       // queryClient.invalidateQueries("movies");
     },
     onError: error => {
       console.log('------ERRORq123-----', error);
-      customToastMessage(error.error ? error.error : error.message, 'danger');
+      customToastMessage(error.error ? error.error : error.message, 'error');
     },
   });
   const onPressVerify = () => {
     var isValid = true;
+    console.log("otp type",typeof otp);
     if (otp === '') {
       isValid = false;
-      customToastMessage('Please enter Otp', 'danger');
+      customToastMessage('Please enter Otp', 'error');
     }
     if (isValid) {
       // const fcm_token = storage.getString('fcm_token');

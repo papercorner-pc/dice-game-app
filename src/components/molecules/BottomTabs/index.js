@@ -21,7 +21,7 @@ const getIcon = (route, isFocused) => {
       iconName = walletImage;
       break;
     case 'Game':
-    case 'AdminGame':
+    case 'AdminContest':
       iconName = gameImage;
       break;
     case 'History':
@@ -39,7 +39,7 @@ const getIcon = (route, isFocused) => {
   return (
     <Image
       tintColor={
-        route === 'Game' || route === 'AdminGame'
+        route === 'Game' || route === 'AdminContest'
           ? null
           : isFocused
           ? Colors.white
@@ -47,9 +47,9 @@ const getIcon = (route, isFocused) => {
       }
       source={iconName}
       style={{
-        width: route === 'Game' || route === 'AdminGame' ? 85 : 25,
-        height: route === 'Game' || route === 'AdminGame' ? 85 : 25,
-        marginTop: route === 'Game' || route === 'AdminGame' ? -30 : 0,
+        width: route === 'Game' || route === 'AdminContest' ? 85 : 25,
+        height: route === 'Game' || route === 'AdminContest' ? 85 : 25,
+        marginTop: route === 'Game' || route === 'AdminContest' ? -30 : 0,
       }}
       resizeMode="contain"
     />

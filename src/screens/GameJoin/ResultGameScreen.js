@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Image,
   ImageBackground,
@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import Orientation from 'react-native-orientation-locker';
-import {SafeScreen} from '../../components/template';
+import { SafeScreen } from '../../components/template';
 import bg from '../../theme/assets/images/gameBg.png';
 import cardAce from '../../theme/assets/images/cardAce.png';
 import cardHeart from '../../theme/assets/images/cardHeart.png';
@@ -21,14 +21,16 @@ import nextArrow from '../../theme/assets/images/nextArrow.png';
 import backIcon from '../../theme/assets/images/back.png';
 import coinIcon from '../../theme/assets/images/coins.png';
 import FastImage from 'react-native-fast-image';
-import {FontFamily} from '../../theme/fonts';
-import {goBack, navigate, navigateAndSimpleReset} from '../../navigators/utils';
-import {customToastMessage} from '../../utils/UtilityHelper';
-import {useFocusEffect} from '@react-navigation/native';
+import { FontFamily } from '../../theme/fonts';
+import { goBack, navigate, navigateAndSimpleReset } from '../../navigators/utils';
+import { customToastMessage } from '../../utils/UtilityHelper';
+import { useFocusEffect } from '@react-navigation/native';
 import GamePaymentModal from './GamePaymentScreen';
+import ViewLiveStream from '../../components/molecules/LiveStreaming';
 
 const ResultGameScreen = props => {
-  const {selectedCard} = props.route.params;
+  const { selectedCard, isFromResult } = props.route.params;
+  const [isStreamStart, setIsStreamStart] = useState(false)
   useFocusEffect(
     useCallback(() => {
       Orientation.lockToLandscape();
@@ -38,28 +40,32 @@ const ResultGameScreen = props => {
       };
     }, []), // Empty array means it will run every time the screen is focused
   );
-
+  const onPressBack = () => {
+    if (isFromResult) {
+      goBack()
+    } else {
+      navigateAndSimpleReset("HomeRoot")
+    }
+  }
   return (
     <SafeScreen>
       <View style={styles.container}>
         <ImageBackground source={bg} resizeMode="cover" style={styles.image}>
-          <View style={{flexDirection: 'row', flex: 1, padding: 10}}>
-            <View style={{flex: 1}}>
+          <View style={{ flexDirection: 'row', flex: 1, padding: 10 }}>
+            <View style={{ flex: 1 }}>
               <TouchableOpacity
                 style={styles.backButton}
-                onPress={() => {
-                  navigateAndSimpleReset("HomeRoot")
-                }}>
+                onPress={onPressBack}>
                 <Image
-                  style={{height: 24, width: 24, marginRight: 24}}
+                  style={{ height: 24, width: 24, marginRight: 24 }}
                   source={backIcon}
                   resizeMode="contain"
                   tintColor={'#FFF'}
                 />
               </TouchableOpacity>
             </View>
-            <View style={{flex: 10}}>
-              <View style={{flexDirection: 'row', flex: 1}}>
+            <View style={{ flex: 10 }}>
+              <View style={{ flexDirection: 'row', flex: 1 }}>
                 <View
                   style={[
                     styles.cardContainer,
@@ -73,10 +79,7 @@ const ResultGameScreen = props => {
                       <View style={styles.backgroundContainer}>
                         <FastImage
                           source={coinIcon}
-                          style={{
-                            height: 46,
-                            width: 46,
-                          }}
+                          style={styles.selectedImage}
                           resizeMode="contain"
                         />
                       </View>
@@ -96,10 +99,7 @@ const ResultGameScreen = props => {
                       <View style={styles.backgroundContainer}>
                         <FastImage
                           source={coinIcon}
-                          style={{
-                            height: 46,
-                            width: 46,
-                          }}
+                          style={styles.selectedImage}
                           resizeMode="contain"
                         />
                       </View>
@@ -119,10 +119,7 @@ const ResultGameScreen = props => {
                       <View style={styles.backgroundContainer}>
                         <FastImage
                           source={coinIcon}
-                          style={{
-                            height: 46,
-                            width: 46,
-                          }}
+                          style={styles.selectedImage}
                           resizeMode="contain"
                         />
                       </View>
@@ -142,10 +139,7 @@ const ResultGameScreen = props => {
                       <View style={styles.backgroundContainer}>
                         <FastImage
                           source={coinIcon}
-                          style={{
-                            height: 46,
-                            width: 46,
-                          }}
+                          style={styles.selectedImage}
                           resizeMode="contain"
                         />
                       </View>
@@ -153,7 +147,7 @@ const ResultGameScreen = props => {
                   </ImageBackground>
                 </View>
               </View>
-              <View style={{flexDirection: 'row', flex: 1}}>
+              <View style={{ flexDirection: 'row', flex: 1 }}>
                 <View
                   style={[
                     styles.cardContainer,
@@ -167,17 +161,16 @@ const ResultGameScreen = props => {
                       <View style={styles.backgroundContainer}>
                         <FastImage
                           source={coinIcon}
-                          style={{
-                            height: 46,
-                            width: 46,
-                          }}
+                          style={styles.selectedImage}
                           resizeMode="contain"
                         />
                       </View>
                     )}
                   </ImageBackground>
                 </View>
-                <View style={{flex: 2, backgroundColor: '#A49C9C'}} />
+                <View style={{ flex: 2, backgroundColor: '#FFF' }} >
+                  <ViewLiveStream isHost={false} />
+                </View>
                 <View
                   style={[
                     styles.cardContainer,
@@ -191,10 +184,7 @@ const ResultGameScreen = props => {
                       <View style={styles.backgroundContainer}>
                         <FastImage
                           source={coinIcon}
-                          style={{
-                            height: 46,
-                            width: 46,
-                          }}
+                          style={styles.selectedImage}
                           resizeMode="contain"
                         />
                       </View>
@@ -255,7 +245,17 @@ const styles = StyleSheet.create({
   },
   backgroundContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
   },
+  selectedImage: {
+    height: 46,
+    width: 46,
+    padding: 10,
+    backgroundColor: "yellow",
+    borderWidth: 1,
+    borderColor: "green",
+    borderRadius: 100,
+    margin: 5
+  }
 });

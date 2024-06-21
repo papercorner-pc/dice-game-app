@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   FlatList,
   Image,
@@ -12,20 +12,22 @@ import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 import OTPTextView from 'react-native-otp-textinput';
 import ButtonComponent from '../../components/molecules/Button';
-import {SafeScreen} from '../../components/template';
-import {goBack} from '../../navigators/utils';
+import { SafeScreen } from '../../components/template';
+import { goBack, navigate } from '../../navigators/utils';
 import backIcon from '../../theme/assets/images/back.png';
-import {FontFamily} from '../../theme/fonts';
-import {paymentMethodListData} from '../../utils/constants';
+import { FontFamily } from '../../theme/fonts';
+import { paymentMethodListData } from '../../utils/constants';
 
-function WalletPaymentScreen() {
+function WalletPaymentScreen(props) {
+  const { walletTotal } = props.route.params;
+  const [amount, setAmount] = useState("")
   const [paymentListData, setPaymentListData] = useState(paymentMethodListData);
   const _keyExtractor = (item, index) => index.toString();
 
   const onPressPaymentMethod = item => {
     const paymentList = [...paymentListData];
     const updatePaymentList = paymentList.map?.(itemValue => {
-      const selectedItem = {...itemValue};
+      const selectedItem = { ...itemValue };
       selectedItem.isSelected = false;
       if (selectedItem.id == item.id) {
         selectedItem.isSelected = true;
@@ -35,9 +37,9 @@ function WalletPaymentScreen() {
     setPaymentListData(updatePaymentList);
   };
 
-  const renderPaymentMethod = ({item}) => {
+  const renderPaymentMethod = ({ item }) => {
     return (
-      <View style={{flexDirection: 'row', marginTop: 10}}>
+      <View style={{ flexDirection: 'row', marginTop: 10 }}>
         <Pressable style={styles.radioButton} onPress={onPressPaymentMethod}>
           {item.isSelected && <View style={styles.radioButtonSelected} />}
         </Pressable>
@@ -61,7 +63,7 @@ function WalletPaymentScreen() {
             goBack();
           }}>
           <Image
-            style={{height: 24, width: 24, marginRight: 24}}
+            style={{ height: 24, width: 24, marginRight: 24 }}
             source={backIcon}
             resizeMode="contain"
             tintColor={'#FBFBFB'}
@@ -69,13 +71,13 @@ function WalletPaymentScreen() {
         </TouchableOpacity>
         <Text style={styles.titleText}>Payment</Text>
       </View>
-      <View style={{padding: 15, flex: 1, backgroundColor: '#EEEDED'}}>
+      <View style={{ padding: 15, flex: 1, backgroundColor: '#EEEDED' }}>
         <View style={styles.balanceContainer}>
           <LinearGradient
             colors={['#412653', '#2E1B3B']}
             style={styles.balanceGradientContainer}>
             <Text style={styles.balanceTitleText}>E Wallet Balance</Text>
-            <Text style={styles.balanceAmount}>₹ 1,000.00</Text>
+            <Text style={styles.balanceAmount}>₹ {walletTotal.toFixed(2)}</Text>
             <Text style={styles.enterText}>
               Enter amount you want to invest
             </Text>
@@ -84,7 +86,9 @@ function WalletPaymentScreen() {
                 containerStyle={styles.textInputContainer}
                 textInputStyle={styles.otpInputContainer}
                 tintColor={'#333333'}
-                handleTextChange={() => {}}
+                handleTextChange={e => {
+                  setAmount(e);
+                }}
                 inputCount={6}
                 keyboardType="numeric"
               />
@@ -122,7 +126,7 @@ function WalletPaymentScreen() {
             fontFamily: FontFamily.poppinsMedium,
           }}
           text={'Continue'}
-          onPress={() => {}}
+          onPress={() => { navigate("WalletPaymentPage", { amount: amount }) }}
         />
       </View>
     </SafeScreen>
@@ -173,17 +177,18 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   enterContainer: {
-    height: 45,
+    height: 50,
     borderRadius: 8,
     backgroundColor: '#F8EAF9',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
   },
   textInputContainer: {
-    marginBottom: 30,
+    // marginBottom: 30,
   },
   otpInputContainer: {
     width: 22,
+    height: 45
   },
   paymentOptionContainer: {
     height: 160,

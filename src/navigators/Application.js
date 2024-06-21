@@ -30,6 +30,9 @@ import AddContest from '../screens/Admin/AddContest';
 import ContestantList from '../screens/LeaderBoard/ContestantList';
 import AnnounceResult from '../screens/Admin/AnnounceResult';
 import ResultGameScreen from '../screens/GameJoin/ResultGameScreen';
+import LatestGameFetch from '../screens/Game/LatestGameFetch';
+import GameJoinedList from '../screens/LeaderBoard/GameJoinedList';
+import WalletPaymentPage from '../screens/Payments/WalletPaymentPage';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -62,7 +65,9 @@ function AppStack() {
       <Stack.Screen name="AdminRoot" component={AdminTabs} />
       <Stack.Screen name="LoginRoot" component={LoginStack} />
       <Stack.Screen name="WalletPayment" component={WalletPaymentScreen} />
+      <Stack.Screen name="WalletPaymentPage" component={WalletPaymentPage} />
       <Stack.Screen name="LeaderBoard" component={LeaderBoard} />
+      <Stack.Screen name="GameJoinedList" component={GameJoinedList} />
       <Stack.Screen name="JoinSelectedCard" component={SelectedCardScreen} />
       <Stack.Screen name="GameJoin" component={GameJoin} />
       <Stack.Screen name="ResultGameScreen" component={ResultGameScreen} />
@@ -98,7 +103,7 @@ function HomeTabs() {
       />
       <Tab.Screen
         name="Game"
-        component={GameScreen}
+        component={LatestGameFetch}
         options={{tabBarLabel: 'Game', title: 'Game'}}
       />
       <Tab.Screen
@@ -135,8 +140,8 @@ function AdminTabs() {
         options={{tabBarLabel: 'Wallet', title: 'Wallet'}}
       />
       <Tab.Screen
-        name="AdminGame"
-        component={GameScreen}
+        name="AdminContest"
+        component={AddContest}
         options={{tabBarLabel: 'Game', title: 'Game'}}
       />
       <Tab.Screen

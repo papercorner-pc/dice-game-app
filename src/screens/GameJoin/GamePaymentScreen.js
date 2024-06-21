@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   FlatList,
@@ -14,12 +14,12 @@ import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 import OTPTextView from 'react-native-otp-textinput';
 import ButtonComponent from '../../components/molecules/Button';
-import {SafeScreen} from '../../components/template';
-import {goBack, navigate} from '../../navigators/utils';
+import { SafeScreen } from '../../components/template';
+import { goBack, navigate } from '../../navigators/utils';
 import backIcon from '../../theme/assets/images/back.png';
 import closeIcon from '../../theme/assets/images/close.png';
-import {FontFamily} from '../../theme/fonts';
-import {gamePaymentList} from '../../utils/constants';
+import { FontFamily } from '../../theme/fonts';
+import { gamePaymentList } from '../../utils/constants';
 import Modal from 'react-native-modal';
 import iconAce from '../../theme/assets/images/iconAce.png';
 import iconClaver from '../../theme/assets/images/iconClaver.png';
@@ -27,21 +27,22 @@ import iconDiamond from '../../theme/assets/images/iconDiamond.png';
 import iconFlag from '../../theme/assets/images/iconFlag.png';
 import iconHeart from '../../theme/assets/images/iconHeart.png';
 import iconMoon from '../../theme/assets/images/iconMoon.png';
-import {useMutation} from '@tanstack/react-query';
-import {joinGame} from '../../services/game/game';
-import {customToastMessage} from '../../utils/UtilityHelper';
+import { useMutation } from '@tanstack/react-query';
+import { joinGame } from '../../services/game/game';
+import { customToastMessage } from '../../utils/UtilityHelper';
+import { Colors } from '../../theme/colors';
 
-function GamePaymentModal({visible, onClose, selectedCard, game}) {
+function GamePaymentModal({ visible, onClose, selectedCard, game }) {
   const [paymentListData, setPaymentListData] = useState(gamePaymentList);
   const [image, setImage] = useState('');
-  const [amount, setAmount] = useState(game.min_fee);
+  const [count, setCount] = useState("1");
   const mutation = useMutation({
     mutationFn: payload => {
       return joinGame(payload);
     },
     onSuccess: data => {
       console.log('---success joinGame', data);
-      navigate('PaymentScreen', {selectedCard: selectedCard});
+      navigate('PaymentScreen', { selectedCard: selectedCard });
     },
     onError: error => {
       console.log('------ERROR joinGame -----', error);
@@ -54,7 +55,7 @@ function GamePaymentModal({visible, onClose, selectedCard, game}) {
     console.log('item  payment', item);
     const paymentList = [...paymentListData];
     const updatePaymentList = paymentList.map?.(itemValue => {
-      const selectedItem = {...itemValue};
+      const selectedItem = { ...itemValue };
       selectedItem.isSelected = false;
       if (selectedItem.id == item.id) {
         selectedItem.isSelected = true;
@@ -91,10 +92,11 @@ function GamePaymentModal({visible, onClose, selectedCard, game}) {
     }
   };
   const onJoinGame = () => {
-    if (parseInt(amount) >= parseInt(game.min_fee)) {
+    const totalAmount = parseInt(game.min_fee) * parseInt(count);
+    if (totalAmount >= parseInt(game.min_fee)) {
       const payload = {
         game_id: game.id,
-        joined_amount: amount,
+        joined_amount: totalAmount,
         user_card: selectedCard,
       };
       mutation.mutate(payload);
@@ -102,10 +104,10 @@ function GamePaymentModal({visible, onClose, selectedCard, game}) {
       Alert.alert('At least Minimum amount for Join');
     }
   };
-  const renderPaymentMethod = ({item}) => {
+  const renderPaymentMethod = ({ item }) => {
     return (
-      <View style={{flexDirection: 'row', marginTop: 10}}>
-        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{ flexDirection: 'row', marginTop: 10 }}>
+        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
           <Pressable
             style={styles.radioButton}
             onPress={() => {
@@ -161,14 +163,15 @@ function GamePaymentModal({visible, onClose, selectedCard, game}) {
     );
   };
   return (
-    <View
-      style={{
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
-      <Modal isVisible={visible} onBackdropPress={onClose}>
-        <View style={styles.modalContainer}>
-          {/* <View style={styles.closeIconContainer}>
+    // <View
+    //   style={{
+    //     justifyContent: 'center',
+    //     alignItems: 'center',
+    //     // flex: 1
+    //   }}>
+    <Modal isVisible={visible} onBackdropPress={onClose}>
+      <View style={styles.modalContainer}>
+        {/* <View style={styles.closeIconContainer}>
             <TouchableOpacity onPress={() => {}}>
               <FastImage
                 style={styles.closeIcon}
@@ -177,43 +180,48 @@ function GamePaymentModal({visible, onClose, selectedCard, game}) {
               />
             </TouchableOpacity>
           </View> */}
-          <View style={styles.container}>
-            <View style={styles.balanceContainer}>
-              <LinearGradient
-                colors={['#412653', '#2E1B3B']}
-                style={styles.balanceGradientContainer}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <View>
-                    <Text style={styles.balanceTitleText}>Minimum Fee</Text>
-                    <Text style={styles.balanceAmount}>₹ {game.min_fee}</Text>
-                  </View>
-                  <View style={styles.cardImageContainer}>
-                    <FastImage
-                      source={image}
-                      style={{
-                        height: 32,
-                        width: 32,
-                      }}
-                      resizeMode="contain"
-                    />
-                  </View>
+        <View style={styles.container}>
+          <View style={styles.balanceContainer}>
+            <LinearGradient
+              colors={['#412653', '#2E1B3B']}
+              style={styles.balanceGradientContainer}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <View>
+                  <Text style={styles.balanceTitleText}>Minimum Fee</Text>
+                  <Text style={styles.balanceAmount}>₹ {game.min_fee}</Text>
                 </View>
-                <Text style={styles.enterText}>
-                  Enter amount you want to invest
-                </Text>
-                <View style={styles.enterContainer}>
-                  <TextInput
-                    placeholder="Enter Amount"
-                    value={amount}
-                    onChangeText={setAmount}
-                    style={{borderBottomWidth: 1, margin: 5}}
-                    keyboardType="numeric"
+                <View style={styles.cardImageContainer}>
+                  <FastImage
+                    source={image}
+                    style={{
+                      height: 32,
+                      width: 32,
+                    }}
+                    resizeMode="contain"
                   />
-                  {/* <OTPTextView
+                </View>
+              </View>
+              <Text style={styles.enterText}>
+                Enter amount you want to invest
+              </Text>
+              <View style={styles.enterContainer}>
+                <Text style={{
+                  fontSize: 20,
+                  fontFamily: FontFamily.poppinsRegular,
+                  color: '#000',
+                }}>{game.min_fee} X </Text>
+                <TextInput
+                  placeholder="Enter Count"
+                  value={count}
+                  onChangeText={setCount}
+                  style={{ borderBottomWidth: 1, margin: 5, width: 50, alignItems: "center", justifyContent: "center", color: Colors.black }}
+                  keyboardType="numeric"
+                />
+                {/* <OTPTextView
                     containerStyle={styles.textInputContainer}
                     textInputStyle={styles.otpInputContainer}
                     tintColor={'#333333'}
@@ -221,9 +229,37 @@ function GamePaymentModal({visible, onClose, selectedCard, game}) {
                     inputCount={6}
                     keyboardType="numeric"
                   /> */}
-                </View>
-              </LinearGradient>
-            </View>
+              </View>
+              <View style={{ marginTop: 5, flexDirection: "row", justifyContent: "space-evenly" }}>
+                <Pressable style={styles.multipleContainer} onPress={() => {
+                  setCount("2")
+                }}>
+                  <Text style={styles.buttonText}>2x</Text>
+                </Pressable>
+                <Pressable style={styles.multipleContainer} onPress={() => {
+                  setCount("5")
+                }}>
+                  <Text style={styles.buttonText}>5x</Text>
+                </Pressable>
+                <Pressable style={styles.multipleContainer} onPress={() => {
+                  setCount("10")
+                }}>
+                  <Text style={styles.buttonText}>10x</Text>
+                </Pressable>
+                <Pressable style={styles.multipleContainer} onPress={() => {
+                  setCount("15")
+                }}>
+                  <Text style={styles.buttonText}>15x</Text>
+                </Pressable>
+                <Pressable style={styles.multipleContainer} onPress={() => {
+                  setCount("20")
+                }}>
+                  <Text style={styles.buttonText}>20x</Text>
+                </Pressable>
+              </View>
+            </LinearGradient>
+          </View>
+          <View style={{ flex: 1 }}>
             <View style={styles.paymentOptionContainer}>
               <Text
                 style={{
@@ -244,13 +280,14 @@ function GamePaymentModal({visible, onClose, selectedCard, game}) {
                 showsVerticalScrollIndicator={false}
               />
             </View>
+            <Pressable style={styles.button} onPress={onJoinGame}>
+              <Text style={styles.buttonText}>Continue</Text>
+            </Pressable>
           </View>
-          <Pressable style={styles.button} onPress={onJoinGame}>
-            <Text style={styles.buttonText}>Continue</Text>
-          </Pressable>
         </View>
-      </Modal>
-    </View>
+      </View>
+    </Modal>
+    // </View>
   );
 }
 
@@ -305,6 +342,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8EAF9',
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: "row"
   },
   textInputContainer: {
     marginBottom: 30,
@@ -373,10 +411,19 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     height: 30,
     borderRadius: 10,
+    marginTop: 10
   },
   buttonText: {
     fontSize: 16,
     fontFamily: FontFamily.poppinsMedium,
     color: '#070A0D',
+  },
+  multipleContainer: {
+    height: 20,
+    width: 35,
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 5
   },
 });

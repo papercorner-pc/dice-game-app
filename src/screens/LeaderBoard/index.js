@@ -20,13 +20,13 @@ import {paymentMethodListData} from '../../utils/constants';
 import {useMutation} from '@tanstack/react-query';
 import {gameDetails, getJoinedUserList} from '../../services/game/game';
 import {customToastMessage} from '../../utils/UtilityHelper';
-import {useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import game from '../../theme/assets/images/game.png';
 import EmptyComponent from '../../components/molecules/EmptyComponet';
 
 const LeaderBoard = props => {
   const _keyExtractor = (item, index) => index.toString();
-  const {isAdmin, gameId} = props.route.params;
+  const {gameId} = props.route.params;
   const [leaderBoardList, setLeaderBoardList] = useState([]);
   const [adminData, setAdminData] = useState({});
   const [refreshing, setRefreshing] = useState(false);
@@ -42,7 +42,7 @@ const LeaderBoard = props => {
     },
     onError: error => {
       console.log('------ERROR gameDetails -----', error);
-      customToastMessage(error.error ? error.error : error.message, 'danger');
+      customToastMessage(error.error ? error.error : error.message, 'error');
     },
   });
   useEffect(() => {
@@ -85,7 +85,7 @@ const LeaderBoard = props => {
   };
   return (
     <SafeScreen>
-      <View style={[styles.headerContainer, {height: isAdmin ? '25%' : '30%'}]}>
+      <View style={[styles.headerContainer, {height: '25%'}]}>
         <View style={{flexDirection: 'row', paddingVertical: 30}}>
           <TouchableOpacity
             style={styles.backButton}
@@ -103,8 +103,7 @@ const LeaderBoard = props => {
             <Text style={styles.headingText}>Match Result</Text>
           </View>
         </View>
-        {isAdmin ? (
-          <View
+        <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
@@ -152,19 +151,6 @@ const LeaderBoard = props => {
               </Text>
             </View>
           </View>
-        ) : (
-          <View style={{alignItems: 'center'}}>
-            <FastImage
-              style={{height: 48, width: 48, marginBottom: 10}}
-              source={diceIcon}
-              resizeMode="contain"
-            />
-            <Text style={styles.amountText}>₹ 1,000.00</Text>
-            <Text style={styles.amountMessageText}>
-              Congrats You won the game
-            </Text>
-          </View>
-        )}
       </View>
       <View style={styles.container}>
         <View style={styles.videoContainer}>

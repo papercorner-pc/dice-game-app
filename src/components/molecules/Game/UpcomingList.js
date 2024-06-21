@@ -1,14 +1,42 @@
-import React from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {Colors} from '../../../theme/colors';
+import { Colors } from '../../../theme/colors';
 import group from '../../../theme/assets/images/group.png';
 import join from '../../../theme/assets/images/join-now.png';
 import clock from '../../../theme/assets/images/clock-icon.png';
-import {FontFamily} from '../../../theme/fonts';
-import {navigate} from '../../../navigators/utils';
+import { FontFamily } from '../../../theme/fonts';
+import { navigate } from '../../../navigators/utils';
+import CountDown from 'react-native-countdown-component';
+import { dateFormate, timeFormate } from '../../../utils/UtilityHelper';
 
-function UpcomingList({item}) {
+function UpcomingList({ item }) {
+  const targetDate = new Date(`${item.start_date}T${item.start_time}`);
+  const [hours, setHourse] = useState("00");
+  const [minute, setMinute] = useState("00")
+
+  useEffect(() => {
+    const updateRemainingTime = () => {
+      const now = new Date();
+      const difference = targetDate - now;
+      if (difference <= 0) {
+        // Alert.alert('Time is up!');
+        clearInterval(intervalId);
+      } else {
+        const remHours = Math.floor(difference / (1000 * 60 * 60));
+        const remMinutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const remSeconds = Math.floor((difference % (1000 * 60)) / 1000);
+        setHourse(remHours)
+        setMinute(remMinutes)
+        // setTimeRemaining(difference);
+      }
+    };
+
+    updateRemainingTime(); // Initial call to set the correct remaining time
+    const intervalId = setInterval(updateRemainingTime, 60000); // Update every second
+
+    return () => clearInterval(intervalId); // Cleanup interval on component unmount
+  }, [targetDate]);
   return (
     <View style={styles.container}>
       <Text style={styles.nameText}>{item.match_name}</Text>
@@ -35,12 +63,12 @@ function UpcomingList({item}) {
       <View
         style={[
           styles.participateContainer,
-          {justifyContent: 'space-between', marginTop: 10},
+          { justifyContent: 'space-between', marginTop: 10 },
         ]}>
-        <View style={{justifyContent: 'center'}}>
+        <View style={{ justifyContent: 'center' }}>
           <Text style={styles.dateText}>
-            {item.start_date} {item.start_time} | Minimum Fee :{' '}
-            <Text style={{fontFamily: FontFamily.poppinsSemiBold}}>
+            {dateFormate(item.start_date)} {timeFormate(item.start_time)} | Minimum Fee :{' '}
+            <Text style={{ fontFamily: FontFamily.poppinsSemiBold }}>
               ₹{item.min_fee}
             </Text>
           </Text>
@@ -48,7 +76,7 @@ function UpcomingList({item}) {
         <Pressable
           style={[styles.participateContainer, styles.joinContainer]}
           onPress={() => {
-            navigate('GameJoin', {game: item});
+            navigate('GameJoin', { game: item });
           }}>
           <Text style={styles.joinText}>Join Now</Text>
           <View
@@ -69,7 +97,7 @@ function UpcomingList({item}) {
         </Pressable>
       </View>
       <View style={styles.lineStyle} />
-      <View style={[styles.participateContainer, {justifyContent: 'center'}]}>
+      <View style={[styles.participateContainer, { justifyContent: 'center', alignItems: "center" }]}>
         <View
           style={{
             alignItems: 'center',
@@ -86,8 +114,17 @@ function UpcomingList({item}) {
           />
         </View>
         <Text style={styles.contestText}>
-          Contest Start in - 12 Hours : 30 Min
+          Contest Start in - {hours} Hours : {minute} Min
         </Text>
+        {/* <CountDown
+          id={item.id.toString()}
+          until={second}
+          size={13}
+          timeToShow={['D', 'H', 'M', 'S']}
+          digitStyle={{
+            backgroundColor: "#DC9C40",
+          }}
+        /> */}
       </View>
     </View>
   );

@@ -1,16 +1,17 @@
 import React from 'react';
-import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {Colors} from '../../../theme/colors';
+import { Colors } from '../../../theme/colors';
 import group from '../../../theme/assets/images/group.png';
 import join from '../../../theme/assets/images/join-now.png';
 import clock from '../../../theme/assets/images/clock-icon.png';
-import {FontFamily} from '../../../theme/fonts';
-import {navigate} from '../../../navigators/utils';
+import { FontFamily } from '../../../theme/fonts';
+import { navigate } from '../../../navigators/utils';
+import { dateFormate, timeFormate } from '../../../utils/UtilityHelper';
 
-function CompletedList({item}) {
+function CompletedList({ item }) {
   const navigateToResult = () => {
-    navigate('LeaderBoard', {isAdmin: false, gameId: ''});
+    navigate('GameJoinedList', { gameId: item.id });
   };
   return (
     <View style={styles.container}>
@@ -41,8 +42,8 @@ function CompletedList({item}) {
             marginTop: 10,
           },
         ]}>
-        <View style={{justifyContent: 'center'}}>
-          <Text style={styles.dateText}>Completed On {item.start_date} {item.start_time}</Text>
+        <View style={{ justifyContent: 'center' }}>
+          <Text style={styles.dateText}>Completed On {dateFormate(item.start_date)} {timeFormate(item.start_time)}</Text>
         </View>
         <Pressable
           style={[styles.participateContainer, styles.joinContainer]}

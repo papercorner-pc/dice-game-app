@@ -45,30 +45,53 @@ const AddContest = props => {
     },
     onError: error => {
       console.log('------ERROR createGame -----', error);
-      customToastMessage(error.error ? error.error : error.message, 'danger');
+      customToastMessage(error.error ? error.error : error.message, 'error');
     },
   });
+  const checkCurrentTime = () => {
+    const [day, month, year] = startDate.split('/').map(Number);
+    const [hours, minutes, seconds] = startTime.split(':').map(Number);
+
+    const givenDate = new Date(year, month - 1, day, hours, minutes, seconds);
+
+    // Get the current date and time
+    const currentDate = new Date();
+    const isSameDateTime = givenDate.getTime() === currentDate.getTime();
+    console.log('isSameDateTime', isSameDateTime);
+    if (isSameDateTime) {
+      return true;
+    } else {
+      return false;
+    }
+  };
   const onAddContest = () => {
     var isValid = true;
     if (contestName === '') {
       isValid = false;
-      customToastMessage('Please Enter Contest Name', 'danger');
+      customToastMessage('Please Enter Contest Name', 'error');
     }
     if (entryFee === '') {
       isValid = false;
-      customToastMessage('Please Enter Minimum Entry Fee', 'danger');
+      customToastMessage('Please Enter Minimum Entry Fee', 'error');
     }
     if (startTime === '') {
       isValid = false;
-      customToastMessage('Please Select Start Time', 'danger');
+      customToastMessage('Please Select Start Time', 'error');
     }
     if (startDate === '') {
       isValid = false;
-      customToastMessage('Please Select Start Date', 'danger');
+      customToastMessage('Please Select Start Date', 'error');
     }
     if (entryLimit === '') {
       isValid = false;
-      customToastMessage('Please Enter Maximum Entry Limit', 'danger');
+      customToastMessage('Please Enter Maximum Entry Limit', 'error');
+    }
+    if (checkCurrentTime()) {
+      isValid = false;
+      customToastMessage(
+        'Not possible to create contest in current Time',
+        'error',
+      );
     }
     if (isValid) {
       // const fcm_token = storage.getString('fcm_token');
@@ -178,7 +201,7 @@ const AddContest = props => {
               style={{
                 height: 14,
                 width: 14,
-                //   marginHorizontal: 2,
+                marginLeft: -15,
               }}
               resizeMode="contain"
             />
@@ -283,6 +306,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10, // Adjust horizontal padding
     fontSize: 14, // Adjust font size as needed
     lineHeight: 18, // Adjust line height as needed
+    width: '100%',
+    color:Colors.black
   },
   text: {
     fontSize: 15,
