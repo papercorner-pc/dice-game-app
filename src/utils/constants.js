@@ -76,6 +76,7 @@ export const profileList = [
     id: 3,
     icon: callIcon,
     title: 'Contact us',
+    navigate: '',
   },
   {
     id: 4,
@@ -87,6 +88,7 @@ export const profileList = [
     id: 5,
     icon: reviewIcon,
     title: 'Review',
+    navigate: '',
   },
   {
     id: 6,

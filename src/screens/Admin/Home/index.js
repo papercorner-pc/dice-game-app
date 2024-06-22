@@ -8,27 +8,27 @@ import {
   RefreshControl,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {SafeScreen} from '../../../components/template';
-import {FontFamily} from '../../../theme/fonts';
+import { SafeScreen } from '../../../components/template';
+import { FontFamily } from '../../../theme/fonts';
 import addIcon from '../../../theme/assets/images/addContestIcon.png';
 import searchIcon from '../../../theme/assets/images/search.png';
 import filterIcon from '../../../theme/assets/images/filter.png';
 import FastImage from 'react-native-fast-image';
 import MaterialTab from '../../../components/molecules/MaterialTab';
-import {adminTab} from '../../../utils/constants';
-import {useCallback, useEffect, useState} from 'react';
+import { adminTab } from '../../../utils/constants';
+import { useCallback, useEffect, useState } from 'react';
 import GameTab from '../../../components/molecules/MaterialTab/GameTab';
 import CompletedList from '../../../components/molecules/Game/CompletedList';
 import AdminGameList from '../../../components/molecules/Game/AdminGameList';
-import {navigate} from '../../../navigators/utils';
-import {useMutation} from '@tanstack/react-query';
-import {gameList} from '../../../services/game/game';
-import {customToastMessage} from '../../../utils/UtilityHelper';
+import { navigate } from '../../../navigators/utils';
+import { useMutation } from '@tanstack/react-query';
+import { gameList } from '../../../services/game/game';
+import { customToastMessage } from '../../../utils/UtilityHelper';
 import game from '../../../theme/assets/images/game.png';
 import EmptyComponent from '../../../components/molecules/EmptyComponet';
-import {useFocusEffect} from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 
-const staticData = [{value: adminTab.upComing}, {value: adminTab.history}];
+const staticData = [{ value: adminTab.upComing }, { value: adminTab.history }];
 
 const AdminHomeScreen = props => {
   const [option, setOption] = useState(staticData[0].value);
@@ -56,7 +56,7 @@ const AdminHomeScreen = props => {
         type: option === 'History' ? 'completed' : 'upcoming',
       };
       mutation.mutate(payload);
-      return () => {};
+      return () => { };
     }, [option, refreshing]), // Empty array means it will run every time the screen is focused
   );
 
@@ -72,7 +72,7 @@ const AdminHomeScreen = props => {
       <View style={styles.headerContainer}>
         <LinearGradient
           colors={['#412653', '#2E1B3B']}
-          style={{flex: 1, padding: 15}}>
+          style={{ flex: 1, padding: 15 }}>
           <View style={styles.topContainer}>
             <View>
               <Text style={styles.gameNumber}>250</Text>
@@ -120,7 +120,7 @@ const AdminHomeScreen = props => {
             marginVertical: 20,
             paddingHorizontal: 5,
           }}>
-          <View style={{justifyContent: 'center'}}>
+          <View style={{ justifyContent: 'center' }}>
             {option === 'History' ? (
               <Text style={styles.historyTitle}>Result</Text>
             ) : (
@@ -129,7 +129,7 @@ const AdminHomeScreen = props => {
               </Text>
             )}
           </View>
-          <View style={{justifyContent: 'center', marginTop: 5}}>
+          <View style={{ justifyContent: 'center', marginTop: 5 }}>
             <FastImage
               source={filterIcon}
               style={{
@@ -144,7 +144,7 @@ const AdminHomeScreen = props => {
         <FlatList
           data={gameListData}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <AdminGameList
               isAnnounced={option === 'History' ? true : false}
               game={item}

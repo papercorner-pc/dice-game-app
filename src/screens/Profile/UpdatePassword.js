@@ -1,4 +1,5 @@
-import {useState} from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { useState } from 'react';
 import {
   Image,
   StyleSheet,
@@ -9,10 +10,12 @@ import {
 } from 'react-native';
 import ButtonComponent from '../../components/molecules/Button';
 import CustomTextInput from '../../components/molecules/TextInput';
-import {SafeScreen} from '../../components/template';
-import {goBack, navigate, navigateAndSimpleReset} from '../../navigators/utils';
+import { SafeScreen } from '../../components/template';
+import { goBack, navigate, navigateAndSimpleReset } from '../../navigators/utils';
+import { updatePassword } from '../../services/users/users';
 import backIcon from '../../theme/assets/images/back.png';
-import {FontFamily} from '../../theme/fonts';
+import { FontFamily } from '../../theme/fonts';
+import { customToastMessage, validatePassword } from '../../utils/UtilityHelper';
 
 const UpdatePassword = props => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -21,6 +24,47 @@ const UpdatePassword = props => {
   const [errorNewPassword, setErrorNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorConfirmPassword, setErrorConfirmPassword] = useState('');
+  const mutation = useMutation({
+    mutationFn: payload => {
+      return updatePassword(payload);
+    },
+    onSuccess: data => {
+      console.log('---success updateProfile', data);
+      customToastMessage('Passeord Updated', 'success');
+      navigateAndSimpleReset('LoginRoot');
+    },
+    onError: error => {
+      console.log('------ERROR updateProfile -----', error);
+      customToastMessage(error.error ? error.error : error.message, 'error');
+    },
+  });
+  const onPressUpdate = () => {
+    var isValid = true;
+    if (currentPassword === '') {
+      isValid = false;
+      setErrorCurrentPassword("Please Enter Current Password")
+    }
+    if (!validatePassword(newPassword)) {
+      isValid = false;
+      setErrorNewPassword("Please Enter Valid New Password")
+    }
+    if (!validatePassword(confirmPassword)) {
+      isValid = false;
+      setErrorConfirmPassword("Please Enter Valid New Password")
+    }
+    if (newPassword !== confirmPassword) {
+      isValid = false;
+      setErrorConfirmPassword("New Password and Current Password is Different")
+    }
+    if (isValid) {
+      const payload = {
+        "current_password": currentPassword,
+        "new_password": newPassword,
+        "new_password_confirmation": confirmPassword
+      };
+      mutation.mutate(payload);
+    }
+  }
   return (
     <SafeScreen>
       <View style={styles.headerContainer}>
@@ -30,7 +74,7 @@ const UpdatePassword = props => {
             goBack();
           }}>
           <Image
-            style={{height: 24, width: 24, marginRight: 24}}
+            style={{ height: 24, width: 24, marginRight: 24 }}
             source={backIcon}
             resizeMode="contain"
             tintColor={'#070A0D'}
@@ -41,10 +85,10 @@ const UpdatePassword = props => {
         </View>
       </View>
       <View style={styles.container}>
-        <View style={{paddingHorizontal: 15, paddingVertical: 8}}>
+        <View style={{ paddingHorizontal: 15, paddingVertical: 8 }}>
           <Text style={styles.profileText}>Change Password</Text>
         </View>
-        <View style={[styles.inputMainContainer, {marginBottom: 50}]}>
+        <View style={[styles.inputMainContainer, { marginBottom: 50 }]}>
           <Text style={styles.inputText}>Current Password</Text>
           <CustomTextInput
             placeholderName={'Current Password'}
@@ -62,27 +106,27 @@ const UpdatePassword = props => {
             placeholderName={'Enter'}
             secureTextEntry={true}
             isPassword={true}
-            valueField={currentPassword}
-            onChangeTextValue={setCurrentPassword}
+            valueField={newPassword}
+            onChangeTextValue={setNewPassword}
             onChangeFocus={() => {
-              setErrorCurrentPassword('');
+              setErrorNewPassword('');
             }}
-            errorField={errorCurrentPassword}
+            errorField={errorNewPassword}
           />
           <Text style={styles.inputText}>Confirm Password</Text>
           <CustomTextInput
             placeholderName={'Enter'}
             secureTextEntry={true}
             isPassword={true}
-            valueField={currentPassword}
-            onChangeTextValue={setCurrentPassword}
+            valueField={confirmPassword}
+            onChangeTextValue={setConfirmPassword}
             onChangeFocus={() => {
-              setErrorCurrentPassword('');
+              setErrorConfirmPassword('');
             }}
-            errorField={errorCurrentPassword}
+            errorField={errorConfirmPassword}
           />
         </View>
-        <View style={{paddingHorizontal: 15}}>
+        <View style={{ paddingHorizontal: 15 }}>
           <ButtonComponent
             buttonColor="#DC9C40"
             wrapperStyles={{

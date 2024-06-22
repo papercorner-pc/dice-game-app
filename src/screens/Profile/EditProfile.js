@@ -1,4 +1,5 @@
-import {useState} from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { useState } from 'react';
 import {
   Image,
   StyleSheet,
@@ -9,15 +10,50 @@ import {
 } from 'react-native';
 import ButtonComponent from '../../components/molecules/Button';
 import CustomTextInput from '../../components/molecules/TextInput';
-import {SafeScreen} from '../../components/template';
-import {goBack, navigate} from '../../navigators/utils';
+import { SafeScreen } from '../../components/template';
+import { goBack, navigate } from '../../navigators/utils';
+import { updateProfile } from '../../services/users/users';
 import backIcon from '../../theme/assets/images/back.png';
 import { Colors } from '../../theme/colors';
-import {FontFamily} from '../../theme/fonts';
+import { FontFamily } from '../../theme/fonts';
+import { customToastMessage, validatePhone } from '../../utils/UtilityHelper';
 
 const EditProfile = props => {
-  const [userName, setUserName] = useState('');
-  const [phone, setPhone] = useState('');
+  const { name, phone } = props.route.params;
+  const [userName, setUserName] = useState(name);
+  const [phoneNo, setPhoneNo] = useState(phone);
+  const mutation = useMutation({
+    mutationFn: payload => {
+      return updateProfile(payload);
+    },
+    onSuccess: data => {
+      console.log('---success updateProfile', data);
+      customToastMessage('Profile Updated', 'success');
+      goBack();
+    },
+    onError: error => {
+      console.log('------ERROR updateProfile -----', error);
+      customToastMessage(error.error ? error.error : error.message, 'error');
+    },
+  });
+  const onPressUpdate = () => {
+    var isValid = true;
+    if (userName === '') {
+      isValid = false;
+      customToastMessage('Please Enter User Name', 'error');
+    }
+    if (!validatePhone(phoneNo)) {
+      isValid = false;
+      customToastMessage('Please enter valid phone number', 'error');
+    }
+    if (isValid) {
+      const payload = {
+        "name": userName,
+        "phone_number": phoneNo
+      };
+      mutation.mutate(payload);
+    }
+  }
   return (
     <SafeScreen>
       <View style={styles.headerContainer}>
@@ -27,7 +63,7 @@ const EditProfile = props => {
             goBack();
           }}>
           <Image
-            style={{height: 24, width: 24, marginRight: 24}}
+            style={{ height: 24, width: 24, marginRight: 24 }}
             source={backIcon}
             resizeMode="contain"
             tintColor={'#070A0D'}
@@ -38,7 +74,7 @@ const EditProfile = props => {
         </View>
       </View>
       <View style={styles.container}>
-        <View style={{paddingHorizontal: 15, paddingVertical: 8}}>
+        <View style={{ paddingHorizontal: 15, paddingVertical: 8 }}>
           <Text style={styles.profileText}>Profile</Text>
         </View>
         <View style={styles.inputMainContainer}>
@@ -50,19 +86,19 @@ const EditProfile = props => {
             style={styles.inputContainer}
           />
         </View>
-        <View style={{paddingHorizontal: 15}}>
+        <View style={{ paddingHorizontal: 15 }}>
           <Text style={styles.profileText}>Contact Details</Text>
         </View>
-        <View style={[styles.inputMainContainer, {marginBottom: 50}]}>
+        <View style={[styles.inputMainContainer, { marginBottom: 50 }]}>
           <Text style={styles.inputText}>Contact Number</Text>
           <TextInput
             placeholder={'+91 000 0000 000'}
-            onChangeText={setPhone}
-            value={phone}
+            onChangeText={setPhoneNo}
+            value={phoneNo}
             style={styles.inputContainer}
           />
         </View>
-        <View style={{paddingHorizontal: 15}}>
+        <View style={{ paddingHorizontal: 15 }}>
           <ButtonComponent
             buttonColor="#DC9C40"
             wrapperStyles={{
@@ -74,9 +110,7 @@ const EditProfile = props => {
               fontFamily: FontFamily.montserratRegular,
             }}
             text={'Update'}
-            onPress={() => {
-              navigate('OtpVerify', {phone: phone});
-            }}
+            onPress={onPressUpdate}
           />
         </View>
       </View>
@@ -132,6 +166,6 @@ const styles = StyleSheet.create({
     borderColor: '#C4BCCA',
     marginVertical: 10,
     width: '100%',
-    color:Colors.black
+    color: Colors.black
   },
 });

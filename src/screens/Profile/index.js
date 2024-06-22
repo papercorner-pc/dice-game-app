@@ -1,4 +1,4 @@
-import {SafeScreen} from '../../components/template';
+import { SafeScreen } from '../../components/template';
 import {
   ImageBackground,
   Pressable,
@@ -9,16 +9,33 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {FlatList} from 'react-native-gesture-handler';
-import {profileList} from '../../utils/constants';
+import { FlatList } from 'react-native-gesture-handler';
+import { profileList } from '../../utils/constants';
 import FastImage from 'react-native-fast-image';
-import {FontFamily} from '../../theme/fonts';
+import { FontFamily } from '../../theme/fonts';
 import dummy from '../../theme/assets/images/dummy.jpeg';
 import edit from '../../theme/assets/images/editImage.png';
-import {navigate, navigateAndSimpleReset} from '../../navigators/utils';
+import { navigate, navigateAndSimpleReset } from '../../navigators/utils';
 import { storage } from '../../App';
+import { useQuery } from '@tanstack/react-query';
+import { getProfile } from '../../services/users/users';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 const ProfileScreen = props => {
+  const { isSuccess, data, isFetching, isLoading, refetch } = useQuery({
+    queryKey: ["getProfile"],
+    queryFn: () => {
+      return getProfile();
+    },
+  });
+  useFocusEffect(
+    useCallback(() => {
+      refetch()
+      return () => {
+      };
+    }, []), // Empty array means it will run every time the screen is focused
+  );
   const _keyExtractor = (item, index) => index.toString();
   const navigateToScreen = url => {
     if (url == 'Logout') {
@@ -26,10 +43,16 @@ const ProfileScreen = props => {
       storage.delete('is_admin');
       navigateAndSimpleReset('LoginRoot');
     } else {
-      navigate(url);
+      if (!!data) {
+        if (url == 'EditProfile') {
+          navigate(url, { name: data?.user.name, phone: data?.user.phone_number });
+        } else {
+          navigate(url);
+        }
+      }
     }
   };
-  const renderPaymentMethod = ({item}) => {
+  const renderPaymentMethod = ({ item }) => {
     return (
       <Pressable
         style={styles.listContainer}
@@ -37,7 +60,7 @@ const ProfileScreen = props => {
           navigateToScreen(item.navigate);
         }}>
         <FastImage
-          style={{height: 17, width: 19, marginRight: 20}}
+          style={{ height: 17, width: 19, marginRight: 20 }}
           source={item.icon}
           resizeMode="contain"
         />
@@ -45,7 +68,7 @@ const ProfileScreen = props => {
       </Pressable>
     );
   };
-  const renderItemSeparator = ({item}) => {
+  const renderItemSeparator = ({ item }) => {
     return <View style={styles.lineStyle} />;
   };
   return (
@@ -97,8 +120,8 @@ const ProfileScreen = props => {
               />
             </View>
           </View>
-          <Text style={styles.nameText}>Nanthu</Text>
-          <Text style={styles.numberText}>+1 000 000 0000</Text>
+          <Text style={styles.nameText}>{data?.user.name}</Text>
+          <Text style={styles.numberText}>+91 {data?.user.phone_number}</Text>
         </LinearGradient>
       </View>
       <View style={styles.container}>
