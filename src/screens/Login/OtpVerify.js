@@ -1,4 +1,4 @@
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {Platform, Pressable, StyleSheet, Text, View} from 'react-native';
 import clockIcon from '../../theme/assets/images/clock.png';
 import FastImage from 'react-native-fast-image';
 import {FontFamily} from '../../theme/fonts';
@@ -66,10 +66,13 @@ const OtpVerify = props => {
       customToastMessage('Please enter Otp', 'error');
     }
     if (isValid) {
-      // const fcm_token = storage.getString('fcm_token');
+      const fcm_token = storage.getString('fcm_token');
       const payload = {
         phone_number: phone,
         otp: otp,
+        device_type: Platform.OS,
+        device_token: !!fcm_token ? fcm_token : "",
+        fcm_token: !!fcm_token ? fcm_token : "",
       };
       mutation.mutate(payload);
     }

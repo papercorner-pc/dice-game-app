@@ -7,7 +7,6 @@ import join from '../../../theme/assets/images/join-now.png';
 import clock from '../../../theme/assets/images/clock-icon.png';
 import { FontFamily } from '../../../theme/fonts';
 import { navigate } from '../../../navigators/utils';
-import CountDown from 'react-native-countdown-component';
 import { dateFormate, timeFormate } from '../../../utils/UtilityHelper';
 
 function UpcomingList({ item }) {
@@ -116,15 +115,6 @@ function UpcomingList({ item }) {
         <Text style={styles.contestText}>
           Contest Start in - {hours} Hours : {minute} Min
         </Text>
-        {/* <CountDown
-          id={item.id.toString()}
-          until={second}
-          size={13}
-          timeToShow={['D', 'H', 'M', 'S']}
-          digitStyle={{
-            backgroundColor: "#DC9C40",
-          }}
-        /> */}
       </View>
     </View>
   );

@@ -1,4 +1,4 @@
-package com.diceroll
+package com.dicedash
 
 import android.app.Application
 import com.facebook.react.PackageList

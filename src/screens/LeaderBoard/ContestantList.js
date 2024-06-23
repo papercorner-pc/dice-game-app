@@ -27,6 +27,12 @@ import { useMutation } from '@tanstack/react-query';
 import { gameList, getJoinedUserList } from '../../services/game/game';
 import { customToastMessage } from '../../utils/UtilityHelper';
 import game from '../../theme/assets/images/game.png';
+import iconAce from '../../theme/assets/images/iconAce.png';
+import iconClaver from '../../theme/assets/images/iconClaver.png';
+import iconDiamond from '../../theme/assets/images/iconDiamond.png';
+import iconFlag from '../../theme/assets/images/iconFlag.png';
+import iconHeart from '../../theme/assets/images/iconHeart.png';
+import iconMoon from '../../theme/assets/images/iconMoon.png';
 import EmptyComponent from '../../components/molecules/EmptyComponet';
 
 const ContestantList = props => {
@@ -75,6 +81,24 @@ const ContestantList = props => {
     setModalView(false);
     navigate('AnnounceResult', { gameId: gameId });
   };
+  const setSelectedCardImage = (selectedCard) => {
+    switch (selectedCard) {
+      case 1:
+        return iconHeart;
+      case 2:
+        return iconAce;
+      case 3:
+        return iconClaver;
+      case 4:
+        return iconDiamond;
+      case 5:
+        return iconMoon;
+      case 6:
+        return iconFlag;
+      default:
+        break;
+    }
+  };
   const renderPaymentMethod = ({ item }) => {
     return (
       <View style={styles.listContainer}>
@@ -90,7 +114,7 @@ const ContestantList = props => {
             <Text style={styles.contestNameText}>{item?.user_name}</Text>
             <FastImage
               style={{ height: 16, width: 16 }}
-              source={heartIcon}
+              source={setSelectedCardImage(item.user_card)}
               resizeMode="contain"
             />
           </View>

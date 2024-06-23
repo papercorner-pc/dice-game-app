@@ -1,24 +1,24 @@
-import {SafeScreen} from '../../components/template';
+import { SafeScreen } from '../../components/template';
 import LinearGradient from 'react-native-linear-gradient';
-import {Pressable, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import { Platform, Pressable, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import gameIcon from '../../theme/assets/images/game.png';
 import flagIcon from '../../theme/assets/images/flag.png';
 import eyeIcon from '../../theme/assets/images/eye.png';
-import {FontFamily} from '../../theme/fonts';
+import { FontFamily } from '../../theme/fonts';
 import CustomTextInput from '../../components/molecules/TextInput';
-import {useEffect, useRef, useState} from 'react';
+import { useEffect, useRef, useState } from 'react';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import ButtonComponent from '../../components/molecules/Button';
-import {navigate, navigateAndSimpleReset} from '../../navigators/utils';
-import {useMutation, useQueryClient} from '@tanstack/react-query';
-import {login} from '../../services/auth/auth';
+import { navigate, navigateAndSimpleReset } from '../../navigators/utils';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { login } from '../../services/auth/auth';
 import {
   customToastMessage,
   validatePassword,
   validatePhone,
 } from '../../utils/UtilityHelper';
-import {storage} from '../../App';
+import { storage } from '../../App';
 import { Colors } from '../../theme/colors';
 
 const SignIn = () => {
@@ -62,10 +62,13 @@ const SignIn = () => {
       customToastMessage('Please enter Password', 'error');
     }
     if (isValid) {
-      // const fcm_token = storage.getString('fcm_token');
+      const fcm_token = storage.getString('fcm_token');
       const payload = {
         phone_number: number,
         password: password,
+        device_type: Platform.OS,
+        device_token: !!fcm_token ? fcm_token : "",
+        fcm_token: !!fcm_token ? fcm_token : "",
       };
       mutation.mutate(payload);
     }
@@ -77,11 +80,11 @@ const SignIn = () => {
   }, [number]);
   return (
     <SafeScreen>
-      <View style={{flex: 1}}>
-        <View style={{height: '40%'}}>
-          <LinearGradient colors={['#412653', '#2E1B3B']} style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
+        <View style={{ height: '40%' }}>
+          <LinearGradient colors={['#412653', '#2E1B3B']} style={{ flex: 1 }}>
             <View
-              style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
+              style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
               <FastImage
                 source={gameIcon}
                 style={{
@@ -102,7 +105,7 @@ const SignIn = () => {
             borderRadius: 40,
             padding: 10,
           }}>
-          <View style={{marginTop: 30, marginBottom: 15}}>
+          <View style={{ marginTop: 30, marginBottom: 15 }}>
             <Text
               style={{
                 fontSize: 27,
@@ -120,7 +123,7 @@ const SignIn = () => {
             }}>
             Sign in to access your account and start playing
           </Text>
-          <View style={{marginVertical: 20}}>
+          <View style={{ marginVertical: 20 }}>
             <Text
               style={{
                 fontSize: 14,
@@ -130,7 +133,7 @@ const SignIn = () => {
               }}>
               Phone Number
             </Text>
-            <View style={{flexDirection: 'row', marginBottom: 10}}>
+            <View style={{ flexDirection: 'row', marginBottom: 10 }}>
               <View
                 style={{
                   width: 82,
@@ -173,7 +176,7 @@ const SignIn = () => {
                   borderRadius: 12,
                   borderColor: '#C4BCCA',
                   width: '100%',
-                  color:Colors.black
+                  color: Colors.black
                 }}
               />
             </View>
@@ -205,7 +208,7 @@ const SignIn = () => {
                 style={{
                   padding: 10,
                   width: '90%',
-                  color:Colors.black
+                  color: Colors.black
                 }}
                 secureTextEntry={showPassword}
               />
@@ -220,7 +223,7 @@ const SignIn = () => {
                 />
               </TouchableOpacity>
             </View>
-            <View style={{alignItems: 'flex-end', marginBottom: 20}}>
+            <View style={{ alignItems: 'flex-end', marginBottom: 20 }}>
               <Text
                 style={{
                   fontSize: 14,

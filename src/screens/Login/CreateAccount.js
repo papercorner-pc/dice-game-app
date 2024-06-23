@@ -1,6 +1,7 @@
 import {SafeScreen} from '../../components/template';
 import LinearGradient from 'react-native-linear-gradient';
 import {
+  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -26,6 +27,7 @@ import {
   validatePhone,
 } from '../../utils/UtilityHelper';
 import { Colors } from '../../theme/colors';
+import { storage } from '../../App';
 
 const CreateAccount = () => {
   const [number, setNumber] = useState('');
@@ -65,11 +67,14 @@ const CreateAccount = () => {
       customToastMessage('Please enter User Name', 'error');
     }
     if (isValid) {
-      // const fcm_token = storage.getString('fcm_token');
+      const fcm_token = storage.getString('fcm_token');
       const payload = {
         name: name,
         phone_number: number,
         password: password,
+        device_type: Platform.OS,
+        device_token: !!fcm_token ? fcm_token : "",
+        fcm_token: !!fcm_token ? fcm_token : "",
       };
       mutation.mutate(payload);
     }

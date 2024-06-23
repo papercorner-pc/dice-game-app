@@ -32,6 +32,24 @@ export const fetchPrivacyPolicy = async () => {
 };
 
 
+export const uploadImage = async (payload) => {
+  try {
+    const response = await instance
+      .post(`update/profile-image`, { body: payload })
+    return response.json();
+  } catch (error) {
+    if (error.response) {
+      const errorData = await error.response.json();
+      console.log("---error", errorData);
+      throw errorData;
+    } else {
+      const errorData = await error.message;
+      console.log("---error message", errorData);
+      throw errorData;
+    }
+  }
+};
+
 
 export default {
   getProfile,

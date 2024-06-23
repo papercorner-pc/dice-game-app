@@ -1,20 +1,20 @@
 import React from 'react';
-import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {Colors} from '../../../theme/colors';
+import { Colors } from '../../../theme/colors';
 import group from '../../../theme/assets/images/group.png';
 import ludo from '../../../theme/assets/images/ludoIcon.png';
 
-import {FontFamily} from '../../../theme/fonts';
-import {navigate} from '../../../navigators/utils';
+import { FontFamily } from '../../../theme/fonts';
+import { navigate } from '../../../navigators/utils';
 import { dateFormate, timeFormate } from '../../../utils/UtilityHelper';
 
-const AdminGameList = ({isAnnounced, game}) => {
+const AdminGameList = ({ isAnnounced, game }) => {
   const navigateToResult = () => {
-    navigate('LeaderBoard', {gameId: game.id});
+    navigate('LeaderBoard', { gameId: game.id });
   };
   const announceResult = () => {
-    navigate('ContestantList', {gameId: game.id});
+    navigate('ContestantList', { gameId: game.id });
   };
   return (
     <View style={styles.container}>
@@ -66,12 +66,12 @@ const AdminGameList = ({isAnnounced, game}) => {
             marginTop: 10,
           },
         ]}>
-        <View style={{justifyContent: 'center'}}>
+        <View style={{ justifyContent: 'center' }}>
           <Text style={styles.dateText}>
             {dateFormate(game.start_date)} | {timeFormate(game.start_time)}
           </Text>
           {!isAnnounced && (
-            <View style={{flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row' }}>
               <View
                 style={{
                   height: 8,

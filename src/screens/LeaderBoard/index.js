@@ -8,25 +8,25 @@ import {
   RefreshControl,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {SafeScreen} from '../../components/template';
-import {goBack} from '../../navigators/utils';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { SafeScreen } from '../../components/template';
+import { goBack } from '../../navigators/utils';
 import backIcon from '../../theme/assets/images/back.png';
 import diceIcon from '../../theme/assets/images/diceBg.png';
 import playIcon from '../../theme/assets/images/play.png';
 import sortIcon from '../../theme/assets/images/sort.png';
-import {FontFamily} from '../../theme/fonts';
-import {paymentMethodListData} from '../../utils/constants';
-import {useMutation} from '@tanstack/react-query';
-import {gameDetails, getJoinedUserList} from '../../services/game/game';
-import {customToastMessage} from '../../utils/UtilityHelper';
-import {useCallback, useEffect, useState} from 'react';
+import { FontFamily } from '../../theme/fonts';
+import { paymentMethodListData } from '../../utils/constants';
+import { useMutation } from '@tanstack/react-query';
+import { gameDetails, getJoinedUserList } from '../../services/game/game';
+import { customToastMessage } from '../../utils/UtilityHelper';
+import { useCallback, useEffect, useState } from 'react';
 import game from '../../theme/assets/images/game.png';
 import EmptyComponent from '../../components/molecules/EmptyComponet';
 
 const LeaderBoard = props => {
   const _keyExtractor = (item, index) => index.toString();
-  const {gameId} = props.route.params;
+  const { gameId } = props.route.params;
   const [leaderBoardList, setLeaderBoardList] = useState([]);
   const [adminData, setAdminData] = useState({});
   const [refreshing, setRefreshing] = useState(false);
@@ -58,14 +58,14 @@ const LeaderBoard = props => {
       setRefreshing(false);
     }, 1000);
   }, []);
-  const renderLeaderBoardMethod = ({item}) => {
+  const renderLeaderBoardMethod = ({ item }) => {
     return (
       <View style={styles.listContainer}>
-        <View style={{flexDirection: 'row'}}>
+        <View style={{ flexDirection: 'row' }}>
           <View style={styles.listImageContainer}>
             <FastImage
-              style={{height: 28, width: 28}}
-              source={playIcon}
+              style={{ height: 28, width: 28 }}
+              source={{ uri: item.user_profile }}
               resizeMode="contain"
             />
           </View>
@@ -77,7 +77,7 @@ const LeaderBoard = props => {
             </Text>
           </View>
         </View>
-        <View style={{justifyContent: 'flex-start'}}>
+        <View style={{ justifyContent: 'flex-start' }}>
           <Text style={styles.wonText}>₹ {item.user_investment}</Text>
         </View>
       </View>
@@ -85,15 +85,15 @@ const LeaderBoard = props => {
   };
   return (
     <SafeScreen>
-      <View style={[styles.headerContainer, {height: '25%'}]}>
-        <View style={{flexDirection: 'row', paddingVertical: 30}}>
+      <View style={[styles.headerContainer, { height: '25%' }]}>
+        <View style={{ flexDirection: 'row', paddingVertical: 30 }}>
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => {
               goBack();
             }}>
             <Image
-              style={{height: 24, width: 24, marginRight: 24}}
+              style={{ height: 24, width: 24, marginRight: 24 }}
               source={backIcon}
               resizeMode="contain"
               tintColor={'#FBFBFB'}
@@ -104,59 +104,59 @@ const LeaderBoard = props => {
           </View>
         </View>
         <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              padding: 10,
-              paddingHorizontal: 20,
-            }}>
-            <View>
-              <Text
-                style={{
-                  fontSize: 27,
-                  fontFamily: FontFamily.poppinsSemiBold,
-                  color: '#FFF',
-                  textAlign: 'center',
-                }}>
-                ₹ {adminData.game_investment}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontFamily: FontFamily.poppinsMedium,
-                  color: '#FBFBFB',
-                  textAlign: 'center',
-                }}>
-                Amount Received
-              </Text>
-            </View>
-            <View>
-              <Text
-                style={{
-                  fontSize: 27,
-                  fontFamily: FontFamily.poppinsSemiBold,
-                  color: '#FFF',
-                  textAlign: 'center',
-                }}>
-                ₹ {adminData.game_total_earnings}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontFamily: FontFamily.poppinsMedium,
-                  color: '#FBFBFB',
-                  textAlign: 'center',
-                }}>
-                Price Pool
-              </Text>
-            </View>
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            padding: 10,
+            paddingHorizontal: 20,
+          }}>
+          <View>
+            <Text
+              style={{
+                fontSize: 27,
+                fontFamily: FontFamily.poppinsSemiBold,
+                color: '#FFF',
+                textAlign: 'center',
+              }}>
+              ₹ {adminData.game_investment}
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                fontFamily: FontFamily.poppinsMedium,
+                color: '#FBFBFB',
+                textAlign: 'center',
+              }}>
+              Amount Received
+            </Text>
           </View>
+          <View>
+            <Text
+              style={{
+                fontSize: 27,
+                fontFamily: FontFamily.poppinsSemiBold,
+                color: '#FFF',
+                textAlign: 'center',
+              }}>
+              ₹ {adminData.game_total_earnings}
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                fontFamily: FontFamily.poppinsMedium,
+                color: '#FBFBFB',
+                textAlign: 'center',
+              }}>
+              Price Pool
+            </Text>
+          </View>
+        </View>
       </View>
       <View style={styles.container}>
         <View style={styles.videoContainer}>
-          <Pressable style={{flexDirection: 'row'}}>
+          <Pressable style={{ flexDirection: 'row' }}>
             <FastImage
-              style={{height: 18, width: 18, marginRight: 10}}
+              style={{ height: 18, width: 18, marginRight: 10 }}
               source={playIcon}
               resizeMode="contain"
             />
@@ -171,13 +171,13 @@ const LeaderBoard = props => {
             padding: 20,
             backgroundColor: '#FFF',
           }}>
-          <View style={{justifyContent: 'center'}}>
+          <View style={{ justifyContent: 'center' }}>
             <Text style={styles.leaderBoardText}>Lead board</Text>
             <Text style={styles.contestText}>
               {leaderBoardList.length} Contestants
             </Text>
           </View>
-          <View style={{justifyContent: 'center', marginTop: 5}}>
+          <View style={{ justifyContent: 'center', marginTop: 5 }}>
             <FastImage
               source={sortIcon}
               style={{
@@ -197,10 +197,10 @@ const LeaderBoard = props => {
             padding: 20,
             backgroundColor: '#FFF',
           }}>
-          <View style={{justifyContent: 'center'}}>
+          <View style={{ justifyContent: 'center' }}>
             <Text style={styles.investText}>Contestant List</Text>
           </View>
-          <View style={{justifyContent: 'center', marginTop: 5}}>
+          <View style={{ justifyContent: 'center', marginTop: 5 }}>
             <Text style={styles.investText}>Investment</Text>
           </View>
         </View>

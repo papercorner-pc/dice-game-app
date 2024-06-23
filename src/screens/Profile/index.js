@@ -17,16 +17,33 @@ import dummy from '../../theme/assets/images/dummy.jpeg';
 import edit from '../../theme/assets/images/editImage.png';
 import { navigate, navigateAndSimpleReset } from '../../navigators/utils';
 import { storage } from '../../App';
-import { useQuery } from '@tanstack/react-query';
-import { getProfile } from '../../services/users/users';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { getProfile, uploadImage } from '../../services/users/users';
 import { useFocusEffect } from '@react-navigation/native';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import * as ImagePicker from "react-native-image-picker";
+import ActionSheet from 'react-native-actionsheet'
+import { customToastMessage } from '../../utils/UtilityHelper';
 
 const ProfileScreen = props => {
+  const [profileImage, setProfileImage] = useState(null);
+  const actionSheetRef = useRef(null)
   const { isSuccess, data, isFetching, isLoading, refetch } = useQuery({
     queryKey: ["getProfile"],
     queryFn: () => {
       return getProfile();
+    },
+  });
+  const mutation = useMutation({
+    mutationFn: (payload) => {
+      return uploadImage(payload);
+    },
+    onSuccess: (data) => {
+      console.log('-----DATA---', data.data)
+    },
+    onError: (error) => {
+      console.log('ERROR', error.error)
+      customToastMessage(error.error ? error.error : error.message, "danger");
     },
   });
   useFocusEffect(
@@ -36,11 +53,81 @@ const ProfileScreen = props => {
       };
     }, []), // Empty array means it will run every time the screen is focused
   );
+  useEffect(() => {
+    if (isSuccess) {
+      console.log("profile success data", data.user);
+      setProfileImage(data?.user.profile_image)
+    }
+  }, [isSuccess])
+  const onGalleryButtonPress = useCallback(async () => {
+    const options = {
+      mediaType: "photo",
+      quality: 0.2,
+      includeBase64: true,
+    };
+    const result = await ImagePicker.launchImageLibrary(options);
+    setProfileImage(result.assets[0].uri);
+    console.log("image data", result.assets[0]);
+    const formData = new FormData();
+    formData.append(`image`, {
+      uri: result.assets[0].uri,
+      type: 'image/jpeg',
+      name: 'photo.jpg',
+    });
+    // toggleImageModal();
+    mutation.mutate(payload);
+
+  }, []);
+  const onCameraButtonPress = useCallback(async () => {
+    // toggleImageModal();
+    const options = {
+      mediaType: "photo",
+      quality: 0.2,
+      includeBase64: true,
+    };
+    const result = await ImagePicker.launchCamera(options);
+    console.log("image data", result.assets[0]);
+    setProfileImage(result.assets[0].uri);
+    const formData = new FormData();
+    formData.append(`image`, {
+      uri: result.assets[0].uri,
+      type: result.assets[0].type,
+      name: 'photo.jpg',
+    });
+    // toggleImageModal();
+    mutation.mutate(payload);
+
+  }, []);
+  const openActionSheet = () => {
+    if (actionSheetRef.current) {
+      actionSheetRef.current.show();
+    }
+  }
+  const onPressActionSheet = (index, data) => {
+    if (index === 0) {
+      onGalleryButtonPress()
+    } else {
+      onCameraButtonPress()
+    }
+  }
+  function renderActionSheet() {
+    return (
+      <ActionSheet
+        ref={actionSheetRef}
+        title={'Pick Media option'}
+        options={['Gallery', 'Camera', 'Cancel']}
+        cancelButtonIndex={2}
+        destructiveButtonIndex={2}
+        onPress={onPressActionSheet}
+      />
+    )
+  }
   const _keyExtractor = (item, index) => index.toString();
   const navigateToScreen = url => {
     if (url == 'Logout') {
       storage.delete('auth_token');
       storage.delete('is_admin');
+      storage.delete('fcm_token');
       navigateAndSimpleReset('LoginRoot');
     } else {
       if (!!data) {
@@ -82,7 +169,8 @@ const ProfileScreen = props => {
             alignItems: 'center',
             paddingVertical: 20,
           }}>
-          <View
+          <Pressable
+            onPress={openActionSheet}
             style={{
               borderWidth: 1,
               borderRadius: 100,
@@ -95,7 +183,7 @@ const ProfileScreen = props => {
                 width: 120,
                 borderRadius: 100,
               }}
-              source={dummy}
+              source={profileImage == null ? dummy : { uri: profileImage }}
               resizeMode="cover"
             />
             <View
@@ -119,7 +207,7 @@ const ProfileScreen = props => {
                 resizeMode="contain"
               />
             </View>
-          </View>
+          </Pressable>
           <Text style={styles.nameText}>{data?.user.name}</Text>
           <Text style={styles.numberText}>+91 {data?.user.phone_number}</Text>
         </LinearGradient>
@@ -138,6 +226,7 @@ const ProfileScreen = props => {
           />
         </View>
       </View>
+      {renderActionSheet()}
     </SafeScreen>
   );
 };

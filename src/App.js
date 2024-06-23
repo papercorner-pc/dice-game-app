@@ -7,6 +7,8 @@ import Toast from "react-native-toast-message";
 import FlashMessage from "react-native-flash-message";
 import { ErrorBoundary } from "./screens/Error/error-boundary";
 import { ThemeProvider } from "./theme";
+import ShowNotificationForeground from "./components/molecules/NotificationForeground";
+import { notificationListener, requestUserPermission } from "./utils/notificationService";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,11 +23,21 @@ const queryClient = new QueryClient({
 });
 export const storage = new MMKV();
 const App = () => {
+  const notificationConfig = async () => {
+    await requestUserPermission();
+    await notificationListener();
+  };
+  useEffect(() => {
+    async function fetchMyAPI() {
+      await notificationConfig();
+    }
+    fetchMyAPI();
+  }, []);
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider storage={storage}>
         <ErrorBoundary>
-          {/* <ShowNotificationForeground /> */}
+          <ShowNotificationForeground />
           <ApplicationNavigator />
         </ErrorBoundary>
         <FlashMessage position="top" />
