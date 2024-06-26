@@ -2,10 +2,10 @@ import { PermissionsAndroid, Platform } from "react-native";
 import messaging from "@react-native-firebase/messaging";
 import { PERMISSIONS } from "react-native-permissions";
 import { storage } from "../App";
-import notifee from "@notifee/react-native";
+import notifee, { AndroidColor, AndroidImportance } from "@notifee/react-native";
 import { navigate } from "../navigators/utils";
 
-export async function requestUserPermission(callback = () => {}) {
+export async function requestUserPermission(callback = () => { }) {
   if (Platform.OS === "ios") {
     registerForRemoteMessages();
   }
@@ -79,13 +79,23 @@ export const showNotification = async (response) => {
       const channelId = await notifee.createChannel({
         id: "default",
         name: "dicedash",
+        vibration: true,
+        lightColor: AndroidColor.YELLOW,
+        sound: 'notification',
+        importance: AndroidImportance.HIGH,
       });
       console.log("----body--, title", title, body, channelId);
       notifee.displayNotification({
         title: title,
         body: body,
         android: {
+          sound:'notification',
           channelId: channelId,
+          pressAction: {
+            id: 'default',
+          },
+          importance: AndroidImportance.HIGH,
+
         },
       });
     }
@@ -176,8 +186,8 @@ export const storePushNotification = async (remoteMessage, callback) => {
       const remoteNotificationSaved =
         getRemoteNotificationParse != null
           ? getRemoteNotificationParse.sort((a, b) =>
-              a.date > b.date ? 1 : -1
-            )
+            a.date > b.date ? 1 : -1
+          )
           : null;
 
       itemArray = [...remoteNotificationSaved];
@@ -203,7 +213,7 @@ export const storePushNotification = async (remoteMessage, callback) => {
   callback({ success: true });
 };
 
-export async function getReadDeliveredNotification(callback = () => {}) {
+export async function getReadDeliveredNotification(callback = () => { }) {
   const notification = storage.getString("push_notification");
   if (notification != null) {
     const getRemoteNotificationParse = JSON.parse(notification);

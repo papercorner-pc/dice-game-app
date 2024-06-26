@@ -7,8 +7,8 @@ import {useMutation} from '@tanstack/react-query';
 // import uuid from 'react-native-uuid';
 import {storage} from '../App';
 const LOCAL_IP = '192.168.90.127'; // Replace with your local IP address
-const prefixUrl = `http://10.0.2.2:8000/api/`;
-// const prefixUrl = `https://www.dicedash.papercorner.in/api/`;
+// const prefixUrl = `http://10.0.2.2:8000/api/`;
+const prefixUrl = `https://www.dicedash.papercorner.in/api/`;
 const token = storage.getString('auth_token');
 const userData = storage.getString('user_data');
 console.log('--prefixUrl', token);
