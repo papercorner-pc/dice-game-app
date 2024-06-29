@@ -4,6 +4,7 @@ import { PERMISSIONS } from "react-native-permissions";
 import { storage } from "../App";
 import notifee, { AndroidColor, AndroidImportance } from "@notifee/react-native";
 import { navigate } from "../navigators/utils";
+import useModalStore from "../store/store"
 
 export async function requestUserPermission(callback = () => { }) {
   if (Platform.OS === "ios") {
@@ -89,7 +90,7 @@ export const showNotification = async (response) => {
         title: title,
         body: body,
         android: {
-          sound:'notification',
+          sound: 'notification',
           channelId: channelId,
           pressAction: {
             id: 'default',
@@ -98,7 +99,22 @@ export const showNotification = async (response) => {
 
         },
       });
+      console.log("notififition data ------", response.data);
+      console.log("game type check===", response.data?.game_type == "game_published");
+      if (response.data?.game_type == "game_published") {
+        console.log("game published");
+        const modalReq = {
+          title: title,
+          body: body,
+          gameId: response.data?.game_id,
+        }
+        useModalStore.getState().updateModalData(true, modalReq)
+      }
     }
+    getDeliveredNotificationAndroid(response);
+    getReadDeliveredNotification((result) => {
+      // setShowBadge(result.badgeValue)
+    });
   } else {
     const { title, body } = response.notification;
     if (title && body) {
@@ -110,6 +126,7 @@ export const showNotification = async (response) => {
     const notification = {
       ...response,
     };
+    getDeliveredNotificationAndroid(notification);
   }
 };
 
@@ -173,6 +190,15 @@ export function getDeliveredNotification(callback) {
       return updatePushNotification;
     });
     console.log("updated", updatedList.length);
+    if (updatedList.length > 0) {
+      const sortNotification =
+        updatedList.length > 0
+          ? updatedList.sort((a, b) => (a.date > b.date ? 1 : -1))
+          : [];
+      storePushNotification(sortNotification, (result) => {
+        callback(result);
+      });
+    }
   });
 }
 

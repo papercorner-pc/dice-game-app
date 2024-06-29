@@ -9,6 +9,7 @@ import { ErrorBoundary } from "./screens/Error/error-boundary";
 import { ThemeProvider } from "./theme";
 import ShowNotificationForeground from "./components/molecules/NotificationForeground";
 import { notificationListener, requestUserPermission } from "./utils/notificationService";
+import NotificationModal from "./components/molecules/NotificationModal";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,6 +40,7 @@ const App = () => {
         <ErrorBoundary>
           <ShowNotificationForeground />
           <ApplicationNavigator />
+          <NotificationModal />
         </ErrorBoundary>
         <FlashMessage position="top" />
       </ThemeProvider>

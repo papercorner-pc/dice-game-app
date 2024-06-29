@@ -6,22 +6,22 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {SafeScreen} from '../../../components/template';
-import {goBack} from '../../../navigators/utils';
+import { SafeScreen } from '../../../components/template';
+import { goBack } from '../../../navigators/utils';
 import backIcon from '../../../theme/assets/images/back.png';
-import {Colors} from '../../../theme/colors';
-import {FontFamily} from '../../../theme/fonts';
+import { Colors } from '../../../theme/colors';
+import { FontFamily } from '../../../theme/fonts';
 import searchIcon from '../../../theme/assets/images/search.png';
 import dateIcon from '../../../theme/assets/images/calendar.png';
 import timeIcon from '../../../theme/assets/images/time.png';
 import moneyIcon from '../../../theme/assets/images/money.png';
 import FastImage from 'react-native-fast-image';
-import {TextInput} from 'react-native-gesture-handler';
+import { TextInput } from 'react-native-gesture-handler';
 import ButtonComponent from '../../../components/molecules/Button';
-import {createGame} from '../../../services/game/game';
-import {useMutation} from '@tanstack/react-query';
-import {customToastMessage} from '../../../utils/UtilityHelper';
-import {useState} from 'react';
+import { createGame } from '../../../services/game/game';
+import { useMutation } from '@tanstack/react-query';
+import { customToastMessage } from '../../../utils/UtilityHelper';
+import { useState } from 'react';
 import moment from 'moment';
 import DatePicker from 'react-native-date-picker';
 
@@ -110,17 +110,17 @@ const AddContest = props => {
   };
   return (
     <SafeScreen>
-      <View style={{flexDirection: 'row', height: 48}}>
+      <View style={{ flexDirection: 'row', height: 48 }}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => {
             goBack();
           }}>
           <Image
-            style={{height: 24, width: 24, marginRight: 24}}
+            style={{ height: 24, width: 24, marginRight: 24 }}
             source={backIcon}
             resizeMode="contain"
-            // tintColor={'#FBFBFB'}
+          // tintColor={'#FBFBFB'}
           />
         </TouchableOpacity>
         <View style={styles.mainHeadingContainer}>
@@ -188,7 +188,7 @@ const AddContest = props => {
           </View>
           <Text style={styles.text}>Entry Fee</Text>
           <View
-            style={[styles.searchContainer, {justifyContent: 'space-between'}]}>
+            style={[styles.searchContainer, { justifyContent: 'space-between' }]}>
             <TextInput
               placeholder={'Enter'}
               style={styles.input}
@@ -216,9 +216,16 @@ const AddContest = props => {
               onChangeText={setEntryLimit}
             />
           </View>
+          <ButtonComponent
+            wrapperStyles={styles.checkoutContainer}
+            textStyles={styles.buttonText}
+            text={'Create Contest'}
+            onPress={onAddContest}
+            buttonColor={'#DC9C40'}
+          />
         </View>
       </ScrollView>
-      <View style={styles.bottomContainer}>
+      {/* <View style={styles.bottomContainer}>
         <ButtonComponent
           wrapperStyles={styles.checkoutContainer}
           textStyles={styles.buttonText}
@@ -226,7 +233,7 @@ const AddContest = props => {
           onPress={onAddContest}
           buttonColor={'#DC9C40'}
         />
-      </View>
+      </View> */}
       <DatePicker
         modal
         open={dateOpen}
@@ -256,7 +263,7 @@ const AddContest = props => {
           setTimeOpen(false);
         }}
         mode={'time'}
-        // minimumDate={date}
+      // minimumDate={date}
       />
     </SafeScreen>
   );
@@ -307,7 +314,7 @@ const styles = StyleSheet.create({
     fontSize: 14, // Adjust font size as needed
     lineHeight: 18, // Adjust line height as needed
     width: '100%',
-    color:Colors.black
+    color: Colors.black
   },
   text: {
     fontSize: 15,
@@ -333,9 +340,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#EEEDED',
   },
   checkoutContainer: {
-    marginHorizontal: 14,
-    marginBottom: 10,
-    width: '95%',
+    // marginHorizontal: 14,
+    marginVertical: 10,
+    // width: '95%',
     borderRadius: 12,
   },
   buttonText: {

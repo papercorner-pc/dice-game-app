@@ -177,7 +177,7 @@ const LeaderBoard = props => {
               {leaderBoardList.length} Contestants
             </Text>
           </View>
-          <View style={{ justifyContent: 'center', marginTop: 5 }}>
+          {/* <View style={{ justifyContent: 'center', marginTop: 5 }}>
             <FastImage
               source={sortIcon}
               style={{
@@ -187,7 +187,7 @@ const LeaderBoard = props => {
               }}
               resizeMode="contain"
             />
-          </View>
+          </View> */}
         </View>
         <View
           style={{

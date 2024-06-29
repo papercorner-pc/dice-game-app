@@ -4,12 +4,13 @@ import LoaderOverlay from '../../components/molecules/LoaderOverlay';
 import { navigate, navigateAndSimpleReset } from '../../navigators/utils';
 
 const PaymentsScreen = props => {
-  const { selectedCard } = props.route.params;
+  const { selectedCard, gameId } = props.route.params;
   useEffect(() => {
     const timer = setTimeout(() => {
       navigate('ResultGameScreen', {
         selectedCard: selectedCard,
-        isFromResult: false
+        isFromResult: false,
+        gameId: gameId
       });
     }, 3000);
     return () => {

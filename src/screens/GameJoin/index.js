@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Image,
   ImageBackground,
@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import Orientation from 'react-native-orientation-locker';
-import {SafeScreen} from '../../components/template';
+import { SafeScreen } from '../../components/template';
 import bg from '../../theme/assets/images/gameBg.png';
 import cardAce from '../../theme/assets/images/cardAce.png';
 import cardHeart from '../../theme/assets/images/cardHeart.png';
@@ -21,14 +21,14 @@ import nextArrow from '../../theme/assets/images/nextArrow.png';
 import backIcon from '../../theme/assets/images/back.png';
 import coinIcon from '../../theme/assets/images/coins.png';
 import FastImage from 'react-native-fast-image';
-import {FontFamily} from '../../theme/fonts';
-import {goBack, navigate} from '../../navigators/utils';
-import {customToastMessage} from '../../utils/UtilityHelper';
-import {useFocusEffect} from '@react-navigation/native';
+import { FontFamily } from '../../theme/fonts';
+import { goBack, navigate, navigateAndSimpleReset } from '../../navigators/utils';
+import { customToastMessage } from '../../utils/UtilityHelper';
+import { useFocusEffect } from '@react-navigation/native';
 import GamePaymentModal from './GamePaymentScreen';
 
 const GameJoin = props => {
-  const {game} = props.route.params;
+  const { game } = props.route.params;
   const [selectedCard, setSelectedCard] = useState(0);
   const [visiblePaymentModal, setVisiblePaymentModal] = useState(false);
   useFocusEffect(
@@ -51,23 +51,24 @@ const GameJoin = props => {
     <SafeScreen>
       <View style={styles.container}>
         <ImageBackground source={bg} resizeMode="cover" style={styles.image}>
-          <View style={{flexDirection: 'row', flex: 1, padding: 10}}>
-            <View style={{flex: 1}}>
+          <View style={{ flexDirection: 'row', flex: 1, padding: 10 }}>
+            <View style={{ flex: 1 }}>
               <TouchableOpacity
                 style={styles.backButton}
                 onPress={() => {
-                  goBack();
+                  // goBack();
+                  navigateAndSimpleReset("HomeRoot")
                 }}>
                 <Image
-                  style={{height: 24, width: 24, marginRight: 24}}
+                  style={{ height: 24, width: 24, marginRight: 24 }}
                   source={backIcon}
                   resizeMode="contain"
                   tintColor={'#FFF'}
                 />
               </TouchableOpacity>
             </View>
-            <View style={{flex: 10}}>
-              <View style={{flexDirection: 'row', flex: 1}}>
+            <View style={{ flex: 10 }}>
+              <View style={{ flexDirection: 'row', flex: 1 }}>
                 <Pressable
                   style={[
                     styles.cardContainer,
@@ -125,7 +126,7 @@ const GameJoin = props => {
                   />
                 </Pressable>
               </View>
-              <View style={{flexDirection: 'row', flex: 1}}>
+              <View style={{ flexDirection: 'row', flex: 1 }}>
                 <Pressable
                   style={[
                     styles.cardContainer,
@@ -140,7 +141,7 @@ const GameJoin = props => {
                     style={styles.image}
                   />
                 </Pressable>
-                <View style={{flex: 2, backgroundColor: '#A49C9C'}} />
+                <View style={{ flex: 2, backgroundColor: '#A49C9C' }} />
                 <Pressable
                   style={[
                     styles.cardContainer,

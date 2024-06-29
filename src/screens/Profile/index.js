@@ -128,6 +128,7 @@ const ProfileScreen = props => {
       storage.delete('auth_token');
       storage.delete('is_admin');
       storage.delete('fcm_token');
+      storage.delete('push_notification');
       navigateAndSimpleReset('LoginRoot');
     } else {
       if (!!data) {

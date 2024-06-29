@@ -1,21 +1,47 @@
 import React from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { Colors } from '../../../theme/colors';
 import group from '../../../theme/assets/images/group.png';
+import deleteIcon from '../../../theme/assets/images/delete.png';
+import editIcon from '../../../theme/assets/images/edit.png';
 import ludo from '../../../theme/assets/images/ludoIcon.png';
 
 import { FontFamily } from '../../../theme/fonts';
 import { navigate } from '../../../navigators/utils';
-import { dateFormate, timeFormate } from '../../../utils/UtilityHelper';
+import { customToastMessage, dateFormate, timeFormate } from '../../../utils/UtilityHelper';
+import { useMutation } from '@tanstack/react-query';
+import { deleteGame } from '../../../services/game/game';
 
 const AdminGameList = ({ isAnnounced, game }) => {
+  const mutation = useMutation({
+    mutationFn: payload => {
+      return deleteGame(payload);
+    },
+    onSuccess: data => {
+      console.log('---success gameList', data);
+      customToastMessage("Contest deleted", 'success');
+    },
+    onError: error => {
+      console.log('------ERROR gameList -----', error);
+      customToastMessage(error.error ? error.error : error.message, 'error');
+    },
+  });
   const navigateToResult = () => {
     navigate('LeaderBoard', { gameId: game.id });
   };
   const announceResult = () => {
     navigate('ContestantList', { gameId: game.id });
   };
+  const onPressEdit = () => {
+    navigate('EditContest', { game: game })
+  }
+  const onPressDelete = () => {
+    const payload = {
+      game_id: game.id
+    }
+    mutation.mutate(payload);
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.nameText}>{game.match_name}</Text>
@@ -94,6 +120,32 @@ const AdminGameList = ({ isAnnounced, game }) => {
           </Text>
         </Pressable>
       </View>
+      {
+        !isAnnounced &&
+        <View style={{ flexDirection: "row", marginTop: 10 }}>
+          <TouchableOpacity onPress={onPressEdit}>
+            <FastImage
+              source={editIcon}
+              style={{
+                height: 18,
+                width: 18,
+                marginRight: 10
+              }}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onPressDelete}>
+            <FastImage
+              source={deleteIcon}
+              style={{
+                height: 18,
+                width: 18,
+              }}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        </View>
+      }
     </View>
   );
 };

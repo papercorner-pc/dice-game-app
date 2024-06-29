@@ -20,6 +20,7 @@ import cardMoon from '../../theme/assets/images/cardMoon.png';
 import nextArrow from '../../theme/assets/images/nextArrow.png';
 import backIcon from '../../theme/assets/images/back.png';
 import coinIcon from '../../theme/assets/images/coins.png';
+import banner from '../../theme/assets/images/banner.png';
 import FastImage from 'react-native-fast-image';
 import { FontFamily } from '../../theme/fonts';
 import { goBack, navigate, navigateAndSimpleReset } from '../../navigators/utils';
@@ -27,10 +28,24 @@ import { customToastMessage } from '../../utils/UtilityHelper';
 import { useFocusEffect } from '@react-navigation/native';
 import GamePaymentModal from './GamePaymentScreen';
 import ViewLiveStream from '../../components/molecules/LiveStreaming';
+import { useMutation } from '@tanstack/react-query';
+import { gamePublishStatus } from '../../services/game/game';
 
 const ResultGameScreen = props => {
-  const { selectedCard, isFromResult } = props.route.params;
+  const { selectedCard, isFromResult, gameId } = props.route.params;
   const [isStreamStart, setIsStreamStart] = useState(false)
+  const statusMutation = useMutation({
+    mutationFn: payload => {
+      return gamePublishStatus(payload);
+    },
+    onSuccess: data => {
+      console.log("------success game status", data);
+      setIsStreamStart(data.is_publishable == 1 ? true : false)
+    },
+    onError: error => {
+      console.log('------ERROR game status -----', error);
+    },
+  });
   useFocusEffect(
     useCallback(() => {
       Orientation.lockToLandscape();
@@ -40,6 +55,16 @@ const ResultGameScreen = props => {
       };
     }, []), // Empty array means it will run every time the screen is focused
   );
+  useEffect(() => {
+    const payload = {
+      game_id: gameId,
+    };
+    const interval = setInterval(() => {
+      statusMutation.mutate(payload);
+    }, 5000);
+    return () => clearInterval(interval);
+
+  }, []);
   const onPressBack = () => {
     if (isFromResult) {
       goBack()
@@ -169,7 +194,15 @@ const ResultGameScreen = props => {
                   </ImageBackground>
                 </View>
                 <View style={{ flex: 2, backgroundColor: '#FFF' }} >
-                  <ViewLiveStream isHost={false} />
+                  {
+                    isStreamStart ? <ViewLiveStream isHost={false} />
+                      : <FastImage
+                        source={banner}
+                        style={{ flex: 1 }}
+                        resizeMode="contain"
+                      />
+                  }
+
                 </View>
                 <View
                   style={[

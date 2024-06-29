@@ -72,7 +72,7 @@ const AdminHomeScreen = props => {
       <View style={styles.headerContainer}>
         <LinearGradient
           colors={['#412653', '#2E1B3B']}
-          style={{ flex: 1, padding: 15 }}>
+          style={{ flex: 1, padding: 15, justifyContent: "center" }}>
           <View style={styles.topContainer}>
             <View>
               <Text style={styles.gameNumber}>250</Text>
@@ -93,7 +93,7 @@ const AdminHomeScreen = props => {
               <Text style={styles.addText}>Add Contest</Text>
             </Pressable>
           </View>
-          <View style={styles.searchContainer}>
+          {/* <View style={styles.searchContainer}>
             <FastImage
               source={searchIcon}
               style={{
@@ -104,7 +104,7 @@ const AdminHomeScreen = props => {
               resizeMode="contain"
             />
             <TextInput placeholder={'Search Contest'} style={styles.input} />
-          </View>
+          </View> */}
         </LinearGradient>
       </View>
       <View style={styles.container}>
@@ -129,7 +129,7 @@ const AdminHomeScreen = props => {
               </Text>
             )}
           </View>
-          <View style={{ justifyContent: 'center', marginTop: 5 }}>
+          {/* <View style={{ justifyContent: 'center', marginTop: 5 }}>
             <FastImage
               source={filterIcon}
               style={{
@@ -139,7 +139,7 @@ const AdminHomeScreen = props => {
               }}
               resizeMode="contain"
             />
-          </View>
+          </View> */}
         </View>
         <FlatList
           data={gameListData}

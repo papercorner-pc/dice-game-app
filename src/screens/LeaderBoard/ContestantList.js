@@ -24,7 +24,7 @@ import Modal from 'react-native-modal';
 import ButtonComponent from '../../components/molecules/Button';
 import { useCallback, useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { gameList, getJoinedUserList } from '../../services/game/game';
+import { gameList, gamePublishStatus, getJoinedUserList } from '../../services/game/game';
 import { customToastMessage } from '../../utils/UtilityHelper';
 import game from '../../theme/assets/images/game.png';
 import iconAce from '../../theme/assets/images/iconAce.png';
@@ -60,6 +60,18 @@ const ContestantList = props => {
       customToastMessage(error.error ? error.error : error.message, 'error');
     },
   });
+  const statusMutation = useMutation({
+    mutationFn: payload => {
+      return gamePublishStatus(payload);
+    },
+    onSuccess: data => {
+      setModalView(false);
+      navigate('AnnounceResult', { gameId: gameId });
+    },
+    onError: error => {
+      console.log('------ERROR getJoinedUserList -----', error);
+    },
+  });
   useEffect(() => {
     const payload = {
       game_id: gameId,
@@ -78,8 +90,11 @@ const ContestantList = props => {
     setModalView(!isModalView);
   };
   const navigateToAnnounce = () => {
-    setModalView(false);
-    navigate('AnnounceResult', { gameId: gameId });
+    const payload = {
+      game_id: gameId,
+      is_publishable: true
+    };
+    statusMutation.mutate(payload);
   };
   const setSelectedCardImage = (selectedCard) => {
     switch (selectedCard) {
@@ -178,7 +193,7 @@ const ContestantList = props => {
               {contestantList.length} Contestants
             </Text>
           </View>
-          <View style={{ justifyContent: 'center', marginTop: 5 }}>
+          {/* <View style={{ justifyContent: 'center', marginTop: 5 }}>
             <FastImage
               source={sortIcon}
               style={{
@@ -188,7 +203,7 @@ const ContestantList = props => {
               }}
               resizeMode="contain"
             />
-          </View>
+          </View> */}
         </View>
         <View
           style={{

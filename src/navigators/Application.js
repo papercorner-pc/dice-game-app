@@ -33,6 +33,8 @@ import ResultGameScreen from '../screens/GameJoin/ResultGameScreen';
 import LatestGameFetch from '../screens/Game/LatestGameFetch';
 import GameJoinedList from '../screens/LeaderBoard/GameJoinedList';
 import WalletPaymentPage from '../screens/Payments/WalletPaymentPage';
+import EditContest from '../screens/Admin/AddContest/EditContest';
+import NotificationScreen from '../screens/Home/Notifications';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -76,8 +78,10 @@ function AppStack() {
       <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
       <Stack.Screen name="PaymentScreen" component={PaymentsScreen} />
       <Stack.Screen name="AddContest" component={AddContest} />
+      <Stack.Screen name="EditContest" component={EditContest} />
       <Stack.Screen name="ContestantList" component={ContestantList} />
       <Stack.Screen name="AnnounceResult" component={AnnounceResult} />
+      <Stack.Screen name="Notification" component={NotificationScreen} />
     </Stack.Navigator>
   );
 }

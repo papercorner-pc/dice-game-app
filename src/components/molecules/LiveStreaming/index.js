@@ -8,13 +8,10 @@ import FastImage from 'react-native-fast-image';
 
 export default function LiveStreaming({ isHost }) {
 
-  const [isStreamStart, setIsStreamStart] = useState(false)
-
   const randomUserID = String(Math.floor(Math.random() * 100000))
   return (
     <View style={styles.container}>
       {
-        // (isHost || isStreamStart) ?
         <ZegoUIKitPrebuiltLiveStreaming
           appID={580759072} // Your App ID
           appSign='dcb7b9d16a5f4e9b3edffb273fec877934ba8c83158652764bb8b772d6722015'
@@ -33,12 +30,6 @@ export default function LiveStreaming({ isHost }) {
             },
           }}
         />
-        // :
-        // <FastImage
-        //   source={banner}
-        //   style={{ flex: 1 }}
-        //   resizeMode="contain"
-        // />
       }
     </View>
   )

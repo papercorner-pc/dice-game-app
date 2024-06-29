@@ -86,7 +86,7 @@ const GameJoinedList = props => {
         }
     };
     const navigateToResult = (card) => {
-        navigate('ResultGameScreen', { selectedCard: card, isFromResult: true });
+        navigate('ResultGameScreen', { selectedCard: card, isFromResult: true, gameId: gameId });
     };
     const renderLeaderBoardMethod = ({ item }) => {
         return (

@@ -11,6 +11,28 @@ export const createGame = async payload => {
   }
 };
 
+export const editGame = async payload => {
+  try {
+    const response = await instance
+      .post(`admin/edit-game`, { json: payload })
+      .json();
+    return response;
+  } catch (error) {
+    throw await error.response.json();
+  }
+};
+
+export const deleteGame = async payload => {
+  try {
+    const response = await instance
+      .post(`admin/delete-game`, { json: payload })
+      .json();
+    return response;
+  } catch (error) {
+    throw await error.response.json();
+  }
+};
+
 export const joinGame = async payload => {
   try {
     const response = await instance.post(`games/join`, { json: payload }).json();
@@ -86,6 +108,17 @@ export const walletRecharge = async payload => {
 export const walletHistory = async () => {
   try {
     const response = await instance.get(`user-wallet/history`).json();
+    return response;
+  } catch (error) {
+    throw await error.response.json();
+  }
+};
+
+export const gamePublishStatus = async payload => {
+  try {
+    const response = await instance
+      .post(`game/publish-status`, { json: payload })
+      .json();
     return response;
   } catch (error) {
     throw await error.response.json();

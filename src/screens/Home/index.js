@@ -7,11 +7,12 @@ import {
   View,
   FlatList,
   RefreshControl,
+  Pressable,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
 import gameIcon from '../../theme/assets/images/robo.png';
-import notiIcon from '../../theme/assets/images/notification.png';
+import notiIcon from '../../theme/assets/images/notificationIcon.png';
 import thumbUp from '../../theme/assets/images/thumbUp.png';
 import thumbDown from '../../theme/assets/images/thumbDown.png';
 import game from '../../theme/assets/images/game.png';
@@ -26,6 +27,7 @@ import EmptyComponent from '../../components/molecules/EmptyComponet';
 import { useMutation } from '@tanstack/react-query';
 import { gameList } from '../../services/game/game';
 import { customToastMessage } from '../../utils/UtilityHelper';
+import { navigate } from '../../navigators/utils';
 
 const staticData = [
   { value: type.live },
@@ -95,14 +97,16 @@ const HomeScreen = props => {
                 />
               </View>
               <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                <FastImage
-                  source={notiIcon}
-                  style={{
-                    height: 34,
-                    width: 34,
-                  }}
-                  resizeMode="contain"
-                />
+                <Pressable onPress={() => { navigate("Notification") }}>
+                  <FastImage
+                    source={notiIcon}
+                    style={{
+                      height: 34,
+                      width: 34,
+                    }}
+                    resizeMode="contain"
+                  />
+                </Pressable>
               </View>
             </View>
           </LinearGradient>

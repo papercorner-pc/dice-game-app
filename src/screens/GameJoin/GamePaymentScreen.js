@@ -42,7 +42,7 @@ function GamePaymentModal({ visible, onClose, selectedCard, game }) {
     },
     onSuccess: data => {
       console.log('---success joinGame', data);
-      navigate('PaymentScreen', { selectedCard: selectedCard });
+      navigate('PaymentScreen', { selectedCard: selectedCard, gameId: game.id });
     },
     onError: error => {
       console.log('------ERROR joinGame -----', error);

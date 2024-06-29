@@ -1,5 +1,6 @@
+import { useFocusEffect } from '@react-navigation/native';
 import {useMutation} from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import {goBack, navigate} from '../../navigators/utils';
 import {gameList} from '../../services/game/game';
 import {customToastMessage} from '../../utils/UtilityHelper';
@@ -26,12 +27,17 @@ const LatestGameFetch = () => {
       goBack();
     },
   });
-  useEffect(() => {
-    const payload = {
-      type: 'upcoming',
-    };
-    mutation.mutate(payload);
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const payload = {
+        type: 'upcoming',
+      };
+      mutation.mutate(payload);
+
+      return () => {
+      };
+    }, []), // Empty array means it will run every time the screen is focused
+  );
   return null;
 };
 export default LatestGameFetch;

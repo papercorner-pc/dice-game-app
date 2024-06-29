@@ -72,24 +72,24 @@ export const profileList = [
     title: 'Change Password',
     navigate: 'UpdatePassword',
   },
-  {
-    id: 3,
-    icon: callIcon,
-    title: 'Contact us',
-    navigate: '',
-  },
+  // {
+  //   id: 3,
+  //   icon: callIcon,
+  //   title: 'Contact us',
+  //   navigate: '',
+  // },
   {
     id: 4,
     icon: privacyIcon,
     title: 'Privacy policy',
     navigate: 'PrivacyPolicy',
   },
-  {
-    id: 5,
-    icon: reviewIcon,
-    title: 'Review',
-    navigate: '',
-  },
+  // {
+  //   id: 5,
+  //   icon: reviewIcon,
+  //   title: 'Review',
+  //   navigate: '',
+  // },
   {
     id: 6,
     icon: logoutIcon,
