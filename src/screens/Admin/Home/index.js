@@ -6,6 +6,7 @@ import {
   View,
   FlatList,
   RefreshControl,
+  Image,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeScreen } from '../../../components/template';
@@ -16,17 +17,22 @@ import filterIcon from '../../../theme/assets/images/filter.png';
 import FastImage from 'react-native-fast-image';
 import MaterialTab from '../../../components/molecules/MaterialTab';
 import { adminTab } from '../../../utils/constants';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import GameTab from '../../../components/molecules/MaterialTab/GameTab';
 import CompletedList from '../../../components/molecules/Game/CompletedList';
 import AdminGameList from '../../../components/molecules/Game/AdminGameList';
 import { navigate } from '../../../navigators/utils';
 import { useMutation } from '@tanstack/react-query';
-import { gameList } from '../../../services/game/game';
+import { deleteGame, gameList } from '../../../services/game/game';
 import { customToastMessage } from '../../../utils/UtilityHelper';
 import game from '../../../theme/assets/images/game.png';
+import closeIcon from '../../../theme/assets/images/close.png';
+import robo from '../../../theme/assets/images/robo-1.png';
 import EmptyComponent from '../../../components/molecules/EmptyComponet';
 import { useFocusEffect } from '@react-navigation/native';
+import Modal from 'react-native-modal';
+import { Colors } from '../../../theme/colors';
+import ButtonComponent from '../../../components/molecules/Button';
 
 const staticData = [{ value: adminTab.upComing }, { value: adminTab.history }];
 
@@ -34,6 +40,8 @@ const AdminHomeScreen = props => {
   const [option, setOption] = useState(staticData[0].value);
   const [gameListData, setGameListData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [deleteId, setDeleteId] = useState(null)
+  const [isModalEnable, setIsModalEnable] = useState(false)
   const onNAvigateToContest = () => {
     navigate('AddContest');
   };
@@ -50,6 +58,28 @@ const AdminHomeScreen = props => {
       customToastMessage(error.error ? error.error : error.message, 'error');
     },
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: payload => {
+      return deleteGame(payload);
+    },
+    onSuccess: data => {
+      console.log('---success gameList', data);
+      customToastMessage("Contest deleted", 'success');
+    },
+    onError: error => {
+      console.log('------ERROR gameList -----', error);
+      customToastMessage(error.error ? error.error : error.message, 'error');
+    },
+  });
+
+  const onPressDelete = () => {
+    const payload = {
+      game_id: deleteId
+    }
+    deleteMutation.mutate(payload);
+  }
+
   useFocusEffect(
     useCallback(() => {
       const payload = {
@@ -67,6 +97,83 @@ const AdminHomeScreen = props => {
       setRefreshing(false);
     }, 1000);
   }, []);
+
+  const openActionSheet = (id) => {
+    setDeleteId(id)
+    setIsModalEnable(true)
+  }
+  const closeActionSheet = () => {
+    setIsModalEnable(false)
+    setDeleteId(null)
+  };
+  function renderActionSheet() {
+    return (
+      <Modal isVisible={isModalEnable} onBackdropPress={closeActionSheet}>
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            flex: 1,
+          }}>
+          <View style={{
+            borderRadius: 10,
+            padding: 20,
+            width: '90%',
+            backgroundColor: Colors.white,
+          }}>
+            <View style={{ alignItems: 'flex-end', marginBottom: 10 }}>
+              <Pressable onPress={closeActionSheet}>
+                <Image
+                  style={{ height: 24, width: 24 }}
+                  source={closeIcon}
+                  resizeMode="contain"
+                  tintColor={'#000'}
+                />
+              </Pressable>
+            </View>
+            <View style={{ alignItems: "center" }}>
+              <FastImage
+                source={robo}
+                style={{
+                  height: 145,
+                  width: 125,
+                }}
+                resizeMode="cover"
+              />
+              <Text style={{
+                fontSize: 16,
+                fontFamily: FontFamily.poppinsRegular,
+                color: Colors.black,
+                marginRight: 5,
+              }}>Delete Contest</Text>
+              <Text style={{
+                fontSize: 14,
+                fontFamily: FontFamily.poppinsRegular,
+                color: Colors.lightRegularGrey,
+                marginRight: 5,
+              }}>Are you sure delete this Contest</Text>
+                <ButtonComponent
+                  buttonColor="#FFF"
+                  wrapperStyles={{
+                    marginVertical: 15,
+                    borderWidth: 1,
+                    borderColor: "#ff392b"
+                  }}
+                  textStyles={{
+                    color: '#ff392b',
+                    fontSize: 16,
+                    fontFamily: FontFamily.poppinsMedium,
+                  }}
+                  text={'DELETE'}
+                  onPress={onPressDelete}
+                />
+            </View>
+          </View>
+        </View>
+      </Modal>
+    )
+  }
+
   return (
     <SafeScreen>
       <View style={styles.headerContainer}>
@@ -148,6 +255,7 @@ const AdminHomeScreen = props => {
             <AdminGameList
               isAnnounced={option === 'History' ? true : false}
               game={item}
+              onDeletePress={openActionSheet}
             />
           )}
           refreshControl={
@@ -166,6 +274,7 @@ const AdminHomeScreen = props => {
         />
         {/* <AdminGameList isAnnounced={option === 'History' ? true : false} /> */}
       </View>
+      {renderActionSheet()}
     </SafeScreen>
   );
 };

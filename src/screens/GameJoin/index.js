@@ -26,6 +26,7 @@ import { goBack, navigate, navigateAndSimpleReset } from '../../navigators/utils
 import { customToastMessage } from '../../utils/UtilityHelper';
 import { useFocusEffect } from '@react-navigation/native';
 import GamePaymentModal from './GamePaymentScreen';
+import banner from '../../theme/assets/images/banner.png';
 
 const GameJoin = props => {
   const { game } = props.route.params;
@@ -141,7 +142,13 @@ const GameJoin = props => {
                     style={styles.image}
                   />
                 </Pressable>
-                <View style={{ flex: 2, backgroundColor: '#A49C9C' }} />
+                <View style={{ flex: 2, backgroundColor: '#FFF' }}>
+                  <FastImage
+                    source={banner}
+                    style={{ flex: 1 }}
+                    resizeMode="contain"
+                  />
+                </View>
                 <Pressable
                   style={[
                     styles.cardContainer,

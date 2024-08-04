@@ -106,7 +106,7 @@ const ProfileScreen = props => {
   const onPressActionSheet = (index, data) => {
     if (index === 0) {
       onGalleryButtonPress()
-    } else {
+    } else if (index === 1) {
       onCameraButtonPress()
     }
   }
@@ -127,7 +127,7 @@ const ProfileScreen = props => {
     if (url == 'Logout') {
       storage.delete('auth_token');
       storage.delete('is_admin');
-      storage.delete('fcm_token');
+      // storage.delete('fcm_token');
       storage.delete('push_notification');
       navigateAndSimpleReset('LoginRoot');
     } else {

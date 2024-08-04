@@ -13,20 +13,7 @@ import { customToastMessage, dateFormate, timeFormate } from '../../../utils/Uti
 import { useMutation } from '@tanstack/react-query';
 import { deleteGame } from '../../../services/game/game';
 
-const AdminGameList = ({ isAnnounced, game }) => {
-  const mutation = useMutation({
-    mutationFn: payload => {
-      return deleteGame(payload);
-    },
-    onSuccess: data => {
-      console.log('---success gameList', data);
-      customToastMessage("Contest deleted", 'success');
-    },
-    onError: error => {
-      console.log('------ERROR gameList -----', error);
-      customToastMessage(error.error ? error.error : error.message, 'error');
-    },
-  });
+const AdminGameList = ({ isAnnounced, game, onDeletePress = () => { } }) => {
   const navigateToResult = () => {
     navigate('LeaderBoard', { gameId: game.id });
   };
@@ -37,10 +24,7 @@ const AdminGameList = ({ isAnnounced, game }) => {
     navigate('EditContest', { game: game })
   }
   const onPressDelete = () => {
-    const payload = {
-      game_id: game.id
-    }
-    mutation.mutate(payload);
+    onDeletePress(game.id)
   }
   return (
     <View style={styles.container}>
