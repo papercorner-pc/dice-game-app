@@ -20,6 +20,8 @@ import backIcon from '../../../theme/assets/images/back.png';
 import { FontFamily } from '../../../theme/fonts';
 import { resultDiceCards } from '../../../utils/constants';
 import { customToastMessage } from '../../../utils/UtilityHelper';
+import { Collapse, CollapseHeader, CollapseBody } from "accordion-collapse-react-native";
+import { ScrollView } from 'react-native-gesture-handler';
 
 const AnnounceResult = props => {
   const { gameId } = props.route.params;
@@ -187,15 +189,101 @@ const AnnounceResult = props => {
       </View>
       <View
         style={{
-          flex: 0.8,
+          flex: 0.7,
           justifyContent: 'center',
           alignItems: 'center',
         }}>
         <LiveStreaming isHost={true} />
       </View>
-      <LinearGradient
+      <View style={{ flex: 0.3 }}>
+        <ScrollView>
+          <Collapse>
+            <CollapseHeader>
+              <View style={styles.titleContainer}>
+                <Text style={{
+                  fontSize: 18,
+                  fontFamily: FontFamily.poppinsMedium,
+                  color: 'white',
+                }}>Dice 1</Text>
+              </View>
+            </CollapseHeader>
+            <CollapseBody>
+              <View style={{ backgroundColor: "#442554" }}>
+                <FlatList
+                  horizontal={true}
+                  data={resultDice}
+                  renderItem={renderItem}
+                  keyExtractor={item => item.id}
+                  showsHorizontalScrollIndicator={false}
+                  showsVerticalScrollIndicator={false}
+                />
+              </View>
+            </CollapseBody>
+          </Collapse>
+          <Collapse>
+            <CollapseHeader>
+              <View style={styles.titleContainer}>
+                <Text style={{
+                  fontSize: 18,
+                  fontFamily: FontFamily.poppinsMedium,
+                  color: 'white',
+                }}>Dice 2</Text>
+              </View>
+            </CollapseHeader>
+            <CollapseBody>
+              <View style={{ backgroundColor: "#442554" }}>
+                <FlatList
+                  horizontal={true}
+                  data={resultDiceTwo}
+                  renderItem={renderItemTwo}
+                  keyExtractor={item => item.id}
+                  showsHorizontalScrollIndicator={false}
+                  showsVerticalScrollIndicator={false}
+                />
+              </View>
+            </CollapseBody>
+          </Collapse>
+          <Collapse>
+            <CollapseHeader>
+              <View style={styles.titleContainer}>
+                <Text style={{
+                  fontSize: 18,
+                  fontFamily: FontFamily.poppinsMedium,
+                  color: 'white',
+                }}>Dice 3</Text>
+              </View>
+            </CollapseHeader>
+            <CollapseBody>
+              <View style={{ backgroundColor: "#442554" }}>
+                <FlatList
+                  horizontal={true}
+                  data={resultDiceThree}
+                  renderItem={renderItemThree}
+                  keyExtractor={item => item.id}
+                  showsHorizontalScrollIndicator={false}
+                  showsVerticalScrollIndicator={false}
+                />
+              </View>
+            </CollapseBody>
+          </Collapse>
+        </ScrollView>
+        <ButtonComponent
+          buttonColor="#DC9C40"
+          wrapperStyles={{
+            // marginBottom: 10,
+          }}
+          textStyles={{
+            color: '#090D12',
+            fontSize: 16,
+            fontFamily: FontFamily.poppinsRegular,
+          }}
+          text={'Announce'}
+          onPress={onPressAnnounce}
+        />
+      </View>
+      {/* <LinearGradient
         colors={['#412653', '#2E1B3B']}
-        style={{ flex: 1.2, padding: 10 }}>
+        style={{ flex: 0.3, padding: 10 }}>
         <Text
           style={{
             margin: 5,
@@ -260,7 +348,7 @@ const AnnounceResult = props => {
           text={'Announce'}
           onPress={onPressAnnounce}
         />
-      </LinearGradient>
+      </LinearGradient> */}
     </SafeScreen>
   );
 };
@@ -285,4 +373,10 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.poppinsMedium,
     color: '#000',
   },
+  titleContainer: {
+    backgroundColor: "#442554",
+    padding: 10,
+    borderBottomWidth: 1,
+    borderColor: "#FFF"
+  }
 });

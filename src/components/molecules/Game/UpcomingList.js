@@ -9,7 +9,7 @@ import { FontFamily } from '../../../theme/fonts';
 import { navigate } from '../../../navigators/utils';
 import { dateFormate, timeFormate } from '../../../utils/UtilityHelper';
 
-function UpcomingList({ item }) {
+function UpcomingList({ item, isAgent = false }) {
   const targetDate = new Date(`${item.start_date}T${item.start_time}`);
   const [hours, setHourse] = useState("00");
   const [minute, setMinute] = useState("00")
@@ -72,28 +72,31 @@ function UpcomingList({ item }) {
             </Text>
           </Text>
         </View>
-        <Pressable
-          style={[styles.participateContainer, styles.joinContainer]}
-          onPress={() => {
-            navigate('GameJoin', { game: item });
-          }}>
-          <Text style={styles.joinText}>Join Now</Text>
-          <View
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginLeft: 3,
+        {
+          !isAgent &&
+          <Pressable
+            style={[styles.participateContainer, styles.joinContainer]}
+            onPress={() => {
+              navigate('GameJoin', { game: item });
             }}>
-            <FastImage
-              source={join}
+            <Text style={styles.joinText}>Join Now</Text>
+            <View
               style={{
-                height: 10,
-                width: 10,
-              }}
-              resizeMode="contain"
-            />
-          </View>
-        </Pressable>
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginLeft: 3,
+              }}>
+              <FastImage
+                source={join}
+                style={{
+                  height: 10,
+                  width: 10,
+                }}
+                resizeMode="contain"
+              />
+            </View>
+          </Pressable>
+        }
       </View>
       <View style={styles.lineStyle} />
       <View style={[styles.participateContainer, { justifyContent: 'center', alignItems: "center" }]}>

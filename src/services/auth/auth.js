@@ -11,7 +11,7 @@ export const login = async payload => {
 
 export const createAccount = async payload => {
   try {
-    const response = await instance.post(`user/register`, {json: payload}).json();
+    const response = await instance.post(`create-users`, {json: payload}).json();
     return response;
   } catch (error) {
     throw await error.response.json();

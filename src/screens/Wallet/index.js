@@ -18,21 +18,24 @@ import cashIcon from '../../theme/assets/images/cash.png';
 import game from '../../theme/assets/images/game.png';
 import FastImage from 'react-native-fast-image';
 import { navigate } from '../../navigators/utils';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { walletHistory } from '../../services/game/game';
 import EmptyComponent from '../../components/molecules/EmptyComponet';
 import { useCallback, useEffect, useState } from 'react';
+import { dealerCoinReq } from '../../services/wallet/wallet';
+import { customToastMessage } from '../../utils/UtilityHelper';
 
 const WalletScreen = props => {
   const [refreshing, setRefreshing] = useState(false);
-  const [walletTotal,setWalletTotal] = useState(0)
+  const [walletTotal, setWalletTotal] = useState(0)
+  const [reqCoin, setReqCoin] = useState("")
   const { isSuccess, data, isFetching, isLoading, refetch } = useQuery({
     queryKey: ["wallethistory"],
     queryFn: () => {
       return walletHistory();
     },
   });
-  useEffect(() => { 
+  useEffect(() => {
     if (isSuccess) {
       const total = data.transactions.reduce(
         (acc, obj) => acc + parseInt(obj.amount),
@@ -72,6 +75,31 @@ const WalletScreen = props => {
       setRefreshing(false);
     }, 1000);
   }, []);
+  const reqMutation = useMutation({
+    mutationFn: payload => {
+      return dealerCoinReq(payload);
+    },
+    onSuccess: data => {
+      customToastMessage(data.message, 'success');
+    },
+    onError: error => {
+      console.log('------ERROR joinGame -----', error);
+      customToastMessage(error.error ? error.error : error.message, 'error');
+    },
+  });
+  const onPressReq = () => {
+    var isValid = true;
+    if (reqCoin === "") {
+      isValid = false;
+      setErrorReqCoin("Enter valid Amount")
+    }
+    if (isValid) {
+      const payload = {
+        amount: reqCoin
+      }
+      reqMutation.mutate(payload)
+    }
+  }
   const historyComponents = ({ item }) => {
     return (
       <>
@@ -156,12 +184,12 @@ const WalletScreen = props => {
         <View style={styles.walletContainer}>
           <View>
             <Text style={styles.walletTitle}>My Wallet</Text>
-            <Text>Keep Your Coins Safe</Text>
+            <Text style={styles.walletSubTitle}>Keep Your Coins Safe</Text>
           </View>
           <Pressable
             style={styles.rechargeButton}
             onPress={() => {
-              navigate('WalletPayment',{walletTotal:walletTotal});
+              navigate('WalletPayment', { walletTotal: walletTotal });
             }}>
             <Text>Recharge Wallet</Text>
           </Pressable>
@@ -222,7 +250,7 @@ const WalletScreen = props => {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
             ListEmptyComponent={() => (
-              <EmptyComponent text={'No Game Founds'} image={game} />
+              <EmptyComponent text={'No Data Founds'} image={game} />
             )}
           />
         }

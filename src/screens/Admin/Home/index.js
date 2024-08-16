@@ -28,6 +28,7 @@ import { customToastMessage } from '../../../utils/UtilityHelper';
 import game from '../../../theme/assets/images/game.png';
 import closeIcon from '../../../theme/assets/images/close.png';
 import robo from '../../../theme/assets/images/robo-1.png';
+import group from '../../../theme/assets/images/group.png';
 import EmptyComponent from '../../../components/molecules/EmptyComponet';
 import { useFocusEffect } from '@react-navigation/native';
 import Modal from 'react-native-modal';
@@ -44,6 +45,9 @@ const AdminHomeScreen = props => {
   const [isModalEnable, setIsModalEnable] = useState(false)
   const onNAvigateToContest = () => {
     navigate('AddContest');
+  };
+  const onNAvigateToAgent = () => {
+    navigate('AgentList');
   };
   const mutation = useMutation({
     mutationFn: payload => {
@@ -152,21 +156,21 @@ const AdminHomeScreen = props => {
                 color: Colors.lightRegularGrey,
                 marginRight: 5,
               }}>Are you sure delete this Contest</Text>
-                <ButtonComponent
-                  buttonColor="#FFF"
-                  wrapperStyles={{
-                    marginVertical: 15,
-                    borderWidth: 1,
-                    borderColor: "#ff392b"
-                  }}
-                  textStyles={{
-                    color: '#ff392b',
-                    fontSize: 16,
-                    fontFamily: FontFamily.poppinsMedium,
-                  }}
-                  text={'DELETE'}
-                  onPress={onPressDelete}
-                />
+              <ButtonComponent
+                buttonColor="#FFF"
+                wrapperStyles={{
+                  marginVertical: 15,
+                  borderWidth: 1,
+                  borderColor: "#ff392b"
+                }}
+                textStyles={{
+                  color: '#ff392b',
+                  fontSize: 16,
+                  fontFamily: FontFamily.poppinsMedium,
+                }}
+                text={'DELETE'}
+                onPress={onPressDelete}
+              />
             </View>
           </View>
         </View>
@@ -182,23 +186,39 @@ const AdminHomeScreen = props => {
           style={{ flex: 1, padding: 15, justifyContent: "center" }}>
           <View style={styles.topContainer}>
             <View>
-              <Text style={styles.gameNumber}>250</Text>
+              <Text style={styles.gameNumber}>{gameListData.length}</Text>
               <Text style={styles.totalText}>Total Games</Text>
             </View>
-            <Pressable
-              style={styles.contestContainer}
-              onPress={onNAvigateToContest}>
-              <FastImage
-                source={addIcon}
-                style={{
-                  height: 16,
-                  width: 14,
-                  marginRight: 4,
-                }}
-                resizeMode="contain"
-              />
-              <Text style={styles.addText}>Add Contest</Text>
-            </Pressable>
+            <View>
+              <Pressable
+                style={styles.contestContainer}
+                onPress={onNAvigateToContest}>
+                <FastImage
+                  source={addIcon}
+                  style={{
+                    height: 16,
+                    width: 14,
+                    marginRight: 4,
+                  }}
+                  resizeMode="contain"
+                />
+                <Text style={styles.addText}>Add Contest</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.contestContainer, { marginTop: 20 }]}
+                onPress={onNAvigateToAgent}>
+                <FastImage
+                  source={group}
+                  style={{
+                    height: 16,
+                    width: 14,
+                    marginRight: 4,
+                  }}
+                  resizeMode="contain"
+                />
+                <Text style={[styles.addText, { color: "#a0549c" }]}>Agents</Text>
+              </Pressable>
+            </View>
           </View>
           {/* <View style={styles.searchContainer}>
             <FastImage

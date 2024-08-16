@@ -50,6 +50,11 @@ export const uploadImage = async (payload) => {
   }
 };
 
+export const getAgentsList = async () => {
+  const response = await instance.get(`get/user-list`).json();
+  return response;
+};
+
 
 export default {
   getProfile,

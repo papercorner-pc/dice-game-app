@@ -210,7 +210,7 @@ const ProfileScreen = props => {
             </View>
           </Pressable>
           <Text style={styles.nameText}>{data?.user.name}</Text>
-          <Text style={styles.numberText}>+91 {data?.user.phone_number}</Text>
+          {/* <Text style={styles.numberText}>+91 {data?.user.phone_number}</Text> */}
         </LinearGradient>
       </View>
       <View style={styles.container}>

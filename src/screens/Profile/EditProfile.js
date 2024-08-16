@@ -42,14 +42,10 @@ const EditProfile = props => {
       isValid = false;
       customToastMessage('Please Enter User Name', 'error');
     }
-    if (!validatePhone(phoneNo)) {
-      isValid = false;
-      customToastMessage('Please enter valid phone number', 'error');
-    }
     if (isValid) {
       const payload = {
         "name": userName,
-        "phone_number": phoneNo
+        "phone_number": ""
       };
       mutation.mutate(payload);
     }
@@ -86,7 +82,7 @@ const EditProfile = props => {
             style={styles.inputContainer}
           />
         </View>
-        <View style={{ paddingHorizontal: 15 }}>
+        {/* <View style={{ paddingHorizontal: 15 }}>
           <Text style={styles.profileText}>Contact Details</Text>
         </View>
         <View style={[styles.inputMainContainer, { marginBottom: 50 }]}>
@@ -97,7 +93,7 @@ const EditProfile = props => {
             value={phoneNo}
             style={styles.inputContainer}
           />
-        </View>
+        </View> */}
         <View style={{ paddingHorizontal: 15 }}>
           <ButtonComponent
             buttonColor="#DC9C40"
