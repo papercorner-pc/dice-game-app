@@ -27,8 +27,9 @@ import iconDiamond from '../../theme/assets/images/iconDiamond.png';
 import iconFlag from '../../theme/assets/images/iconFlag.png';
 import iconHeart from '../../theme/assets/images/iconHeart.png';
 import iconMoon from '../../theme/assets/images/iconMoon.png';
-import { useMutation } from '@tanstack/react-query';
-import { joinGame } from '../../services/game/game';
+import coinIcon from '../../theme/assets/images/star.png';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { joinGame, walletHistory } from '../../services/game/game';
 import { customToastMessage } from '../../utils/UtilityHelper';
 import { Colors } from '../../theme/colors';
 
@@ -36,6 +37,25 @@ function GamePaymentModal({ visible, onClose, selectedCard, game }) {
   const [paymentListData, setPaymentListData] = useState(gamePaymentList);
   const [image, setImage] = useState('');
   const [count, setCount] = useState("1");
+  const [amount, setAmount] = useState(game.min_fee);
+  const [walletTotal, setWalletTotal] = useState(0)
+  const { isSuccess, data } = useQuery({
+    queryKey: ["wallethistory"],
+    queryFn: () => {
+      return walletHistory();
+    },
+  });
+  useEffect(() => {
+    if (isSuccess) {
+      const total = data.transactions.reduce(
+        (acc, obj) => acc + parseInt(obj.amount),
+        0,
+      );
+      setWalletTotal(total)
+    }else{
+      setWalletTotal(0)
+    }
+  }, [isSuccess])
   const mutation = useMutation({
     mutationFn: payload => {
       return joinGame(payload);
@@ -92,11 +112,11 @@ function GamePaymentModal({ visible, onClose, selectedCard, game }) {
     }
   };
   const onJoinGame = () => {
-    const totalAmount = parseInt(game.min_fee) * parseInt(count);
-    if (totalAmount >= parseInt(game.min_fee)) {
+    // const totalAmount = parseInt(game.min_fee) * parseInt(count);
+    if (amount >= parseInt(game.min_fee)) {
       const payload = {
         game_id: game.id,
-        joined_amount: totalAmount,
+        joined_amount: amount,
         user_card: selectedCard,
       };
       mutation.mutate(payload);
@@ -140,10 +160,17 @@ function GamePaymentModal({ visible, onClose, selectedCard, game }) {
                     fontFamily: FontFamily.poppinsSemiBold,
                     color: '#412653',
                   }}>
-                  ₹ 1,000.00
+                  <FastImage
+                    source={coinIcon}
+                    style={{
+                      height: 12,
+                      width: 10,
+                    }}
+                    resizeMode="contain"
+                  /> {walletTotal.toFixed(2)}
                 </Text>
               </Text>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 onPress={() => {
                   navigate('WalletPayment');
                 }}>
@@ -155,7 +182,7 @@ function GamePaymentModal({ visible, onClose, selectedCard, game }) {
                   }}>
                   Recharge Now
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </>
           )}
         </View>
@@ -192,7 +219,14 @@ function GamePaymentModal({ visible, onClose, selectedCard, game }) {
                 }}>
                 <View>
                   <Text style={styles.balanceTitleText}>Minimum Fee</Text>
-                  <Text style={styles.balanceAmount}>₹ {game.min_fee}</Text>
+                  <Text style={styles.balanceAmount}><FastImage
+                    source={coinIcon}
+                    style={{
+                      height: 12,
+                      width: 10,
+                    }}
+                    resizeMode="contain"
+                  /> {game.min_fee}</Text>
                 </View>
                 <View style={styles.cardImageContainer}>
                   <FastImage
@@ -209,16 +243,16 @@ function GamePaymentModal({ visible, onClose, selectedCard, game }) {
                 Enter amount you want to invest
               </Text>
               <View style={styles.enterContainer}>
-                <Text style={{
+                {/* <Text style={{
                   fontSize: 20,
                   fontFamily: FontFamily.poppinsRegular,
                   color: '#000',
-                }}>{game.min_fee} X </Text>
+                }}>{game.min_fee} X </Text> */}
                 <TextInput
-                  placeholder="Enter Count"
-                  value={count}
-                  onChangeText={setCount}
-                  style={{ borderBottomWidth: 1, margin: 5, width: 50, alignItems: "center", justifyContent: "center", color: Colors.black }}
+                  placeholder="Enter Amount"
+                  value={amount}
+                  onChangeText={setAmount}
+                  style={{ borderBottomWidth: 1, margin: 5, alignItems: "center", justifyContent: "center", color: Colors.black }}
                   keyboardType="numeric"
                 />
                 {/* <OTPTextView
@@ -230,7 +264,7 @@ function GamePaymentModal({ visible, onClose, selectedCard, game }) {
                     keyboardType="numeric"
                   /> */}
               </View>
-              <View style={{ marginTop: 5, flexDirection: "row", justifyContent: "space-evenly" }}>
+              {/* <View style={{ marginTop: 5, flexDirection: "row", justifyContent: "space-evenly" }}>
                 <Pressable style={styles.multipleContainer} onPress={() => {
                   setCount("2")
                 }}>
@@ -256,7 +290,7 @@ function GamePaymentModal({ visible, onClose, selectedCard, game }) {
                 }}>
                   <Text style={styles.buttonText}>20x</Text>
                 </Pressable>
-              </View>
+              </View> */}
             </LinearGradient>
           </View>
           <View style={{ flex: 1 }}>

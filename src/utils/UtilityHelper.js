@@ -3,7 +3,7 @@ import { FontFamily } from '../theme/fonts';
 import Toast from 'react-native-toast-message';
 
 export function validatePassword(text) {
-  const reg = /^.{8,}$/;
+  const reg = /^.{4,}$/;
   if (reg.test(text) === false) {
     return false;
   }

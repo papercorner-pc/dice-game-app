@@ -33,14 +33,22 @@ import iconDiamond from '../../theme/assets/images/iconDiamond.png';
 import iconFlag from '../../theme/assets/images/iconFlag.png';
 import iconHeart from '../../theme/assets/images/iconHeart.png';
 import iconMoon from '../../theme/assets/images/iconMoon.png';
+import coinIcon from '../../theme/assets/images/star.png';
 import EmptyComponent from '../../components/molecules/EmptyComponet';
+import MaterialTab from '../../components/molecules/MaterialTab';
 
+const staticData = [
+  { value: "User" },
+  { value: "Symbol" },
+]
 const ContestantList = props => {
-  const { gameId } = props.route.params;
+  const { gameId, isAdmin } = props.route.params;
+  const [option, setOption] = useState(staticData[0].value);
   const [isModalView, setModalView] = useState(false);
   const [contestantList, setContestantList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [symbolData, setSymbolData] = useState([])
   const mutation = useMutation({
     mutationFn: payload => {
       return getJoinedUserList(payload);
@@ -78,6 +86,18 @@ const ContestantList = props => {
     };
     mutation.mutate(payload);
   }, [refreshing]);
+  useEffect(() => {
+    const result = Object.values(contestantList.reduce((acc, { user_card, user_investment }) => {
+      if (!acc[user_card]) {
+        acc[user_card] = { user_card, totalAmount: 0 };
+      }
+      console.log(typeof user_investment);
+      acc[user_card].totalAmount += parseInt(user_investment);
+      return acc;
+    }, {}));
+    const sortedData = result.sort((a, b) => b.totalAmount - a.totalAmount);
+    setSymbolData(sortedData)
+  }, [contestantList])
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     // Simulate a network request or some data fetching
@@ -135,7 +155,36 @@ const ContestantList = props => {
           </View>
         </View>
         <View style={{ justifyContent: 'flex-start' }}>
-          <Text style={styles.wonText}>₹ {item?.user_investment}</Text>
+          <Text style={styles.wonText}><FastImage
+            source={coinIcon}
+            style={{
+              height: 12,
+              width: 10,
+            }}
+            resizeMode="contain"
+          /> {item?.user_investment}</Text>
+        </View>
+      </View>
+    );
+  };
+  const renderSymbolList = ({ item }) => {
+    console.log("ite", item);
+    return (
+      <View style={styles.listContainer}>
+        <FastImage
+          style={{ height: 24, width: 24 }}
+          source={setSelectedCardImage(item.user_card)}
+          resizeMode="contain"
+        />
+        <View style={{ justifyContent: 'flex-start' }}>
+          <Text style={styles.wonText}><FastImage
+            source={coinIcon}
+            style={{
+              height: 12,
+              width: 10,
+            }}
+            resizeMode="contain"
+          /> {item.totalAmount}</Text>
         </View>
       </View>
     );
@@ -160,13 +209,23 @@ const ContestantList = props => {
             <Text style={styles.headingText}>Match Details</Text>
           </View>
         </View>
-        <View style={{ alignItems: 'center' }}>
-          <Text style={styles.amountText}>₹ {totalAmount.toFixed(2)}</Text>
-          <Text style={styles.amountMessageText}>Amount Received</Text>
-          <Pressable style={styles.joinContainer} onPress={onPressAnnounce}>
-            <Text style={styles.joinText}>{'Announce Result'}</Text>
-          </Pressable>
-        </View>
+        {
+          isAdmin &&
+          <View style={{ alignItems: 'center', paddingBottom: 30 }}>
+            <Text style={styles.amountText}><FastImage
+              source={coinIcon}
+              style={{
+                height: 12,
+                width: 10,
+              }}
+              resizeMode="contain"
+            /> {totalAmount.toFixed(2)}</Text>
+            <Text style={styles.amountMessageText}>Amount Received</Text>
+            <Pressable style={styles.joinContainer} onPress={onPressAnnounce}>
+              <Text style={styles.joinText}>{'Announce Result'}</Text>
+            </Pressable>
+          </View>
+        }
       </View>
       <View style={styles.container}>
         {/* <View style={styles.videoContainer}>
@@ -179,21 +238,29 @@ const ContestantList = props => {
             <Text style={styles.watchText}>Watch Result</Text>
           </Pressable>
         </View> */}
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginBottom: 2,
-            padding: 20,
-            backgroundColor: '#FFF',
-          }}>
-          <View style={{ justifyContent: 'center' }}>
-            {/* <Text style={styles.leaderBoardText}>Lead board</Text> */}
-            <Text style={styles.contestText}>
-              {contestantList.length} Contestants
-            </Text>
-          </View>
-          {/* <View style={{ justifyContent: 'center', marginTop: 5 }}>
+        <MaterialTab
+          data={staticData}
+          onSelect={value => setOption(value)}
+          selectedOption={option}
+        />
+        {
+          option === "User" ?
+            <>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginBottom: 2,
+                  padding: 20,
+                  backgroundColor: '#FFF',
+                }}>
+                <View style={{ justifyContent: 'center' }}>
+                  {/* <Text style={styles.leaderBoardText}>Lead board</Text> */}
+                  <Text style={styles.contestText}>
+                    {contestantList.length} Contestants
+                  </Text>
+                </View>
+                {/* <View style={{ justifyContent: 'center', marginTop: 5 }}>
             <FastImage
               source={sortIcon}
               style={{
@@ -204,37 +271,54 @@ const ContestantList = props => {
               resizeMode="contain"
             />
           </View> */}
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginBottom: 2,
-            padding: 20,
-            backgroundColor: '#FFF',
-          }}>
-          <View style={{ justifyContent: 'center' }}>
-            <Text style={styles.investText}>Contestant List</Text>
-          </View>
-          <View style={{ justifyContent: 'center', marginTop: 5 }}>
-            <Text style={styles.investText}>Investment</Text>
-          </View>
-        </View>
-        <FlatList
-          data={contestantList}
-          renderItem={renderPaymentMethod}
-          keyExtractor={_keyExtractor}
-          // scrollEnabled={false}
-          listKey={(item, index) => `${index}-item`}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          ListEmptyComponent={() => (
-            <EmptyComponent text={'No User Founds'} image={game} />
-          )}
-        />
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginBottom: 2,
+                  padding: 20,
+                  backgroundColor: '#FFF',
+                }}>
+                <View style={{ justifyContent: 'center' }}>
+                  <Text style={styles.investText}>Contestant List</Text>
+                </View>
+                <View style={{ justifyContent: 'center', marginTop: 5 }}>
+                  <Text style={styles.investText}>Investment</Text>
+                </View>
+              </View>
+              <FlatList
+                data={contestantList}
+                renderItem={renderPaymentMethod}
+                keyExtractor={_keyExtractor}
+                // scrollEnabled={false}
+                listKey={(item, index) => `${index}-item`}
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
+                refreshControl={
+                  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
+                ListEmptyComponent={() => (
+                  <EmptyComponent text={'No User Founds'} image={game} />
+                )}
+              />
+            </> :
+            <FlatList
+              data={symbolData}
+              renderItem={renderSymbolList}
+              keyExtractor={_keyExtractor}
+              // scrollEnabled={false}
+              listKey={(item, index) => `${index}-item`}
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+              ListEmptyComponent={() => (
+                <EmptyComponent text={'No Data Founds'} image={game} />
+              )}
+            />
+        }
       </View>
       <Modal isVisible={isModalView} onBackdropPress={onPressAnnounce}>
         <View
@@ -308,7 +392,7 @@ export default ContestantList;
 const styles = StyleSheet.create({
   headerContainer: {
     backgroundColor: '#3F2450',
-    height: '30%',
+    // height: '30%',
   },
   backButton: {
     position: 'absolute',

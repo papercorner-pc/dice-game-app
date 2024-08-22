@@ -124,3 +124,14 @@ export const gamePublishStatus = async payload => {
     throw await error.response.json();
   }
 };
+
+export const gameCardBalance = async payload => {
+  try {
+    const response = await instance
+      .post(`game/card-balance`, { json: payload })
+      .json();
+    return response;
+  } catch (error) {
+    throw await error.response.json();
+  }
+};

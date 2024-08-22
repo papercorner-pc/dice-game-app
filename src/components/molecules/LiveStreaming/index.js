@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import ZegoUIKitPrebuiltLiveStreaming, { HOST_DEFAULT_CONFIG, AUDIENCE_DEFAULT_CONFIG }
+import ZegoUIKitPrebuiltLiveStreaming, { HOST_DEFAULT_CONFIG, AUDIENCE_DEFAULT_CONFIG, ZegoMenuBarButtonName }
   from '@zegocloud/zego-uikit-prebuilt-live-streaming-rn'
 import { Colors } from '../../../theme/colors';
 import banner from '../../../theme/assets/images/banner.png';
@@ -27,6 +27,9 @@ export default function LiveStreaming({ isHost }) {
             useFrontFacingCamera: false,
             onStartLiveButtonPressed: () => {
               setIsStreamStart(true)
+            },
+            topMenuBarConfig: {
+              buttons: [ZegoMenuBarButtonName.leaveButton, ZegoMenuBarButtonName.toggleMicrophoneButton, ZegoMenuBarButtonName.switchCameraButton],
             },
           }}
         />

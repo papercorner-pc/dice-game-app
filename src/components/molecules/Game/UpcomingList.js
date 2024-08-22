@@ -4,7 +4,7 @@ import FastImage from 'react-native-fast-image';
 import { Colors } from '../../../theme/colors';
 import group from '../../../theme/assets/images/group.png';
 import join from '../../../theme/assets/images/join-now.png';
-import clock from '../../../theme/assets/images/clock-icon.png';
+import coinIcon from '../../../theme/assets/images/star.png';
 import { FontFamily } from '../../../theme/fonts';
 import { navigate } from '../../../navigators/utils';
 import { dateFormate, timeFormate } from '../../../utils/UtilityHelper';
@@ -13,8 +13,10 @@ function UpcomingList({ item, isAgent = false }) {
   const targetDate = new Date(`${item.start_date}T${item.start_time}`);
   const [hours, setHourse] = useState("00");
   const [minute, setMinute] = useState("00")
-
-  useEffect(() => {
+  const navigateToContestList = () => {
+    navigate('ContestantList', { gameId: item.id, isAdmin: false });
+  };
+  /* useEffect(() => {
     const updateRemainingTime = () => {
       const now = new Date();
       const difference = targetDate - now;
@@ -35,7 +37,7 @@ function UpcomingList({ item, isAgent = false }) {
     const intervalId = setInterval(updateRemainingTime, 60000); // Update every second
 
     return () => clearInterval(intervalId); // Cleanup interval on component unmount
-  }, [targetDate]);
+  }, [targetDate]); */
   return (
     <View style={styles.container}>
       <Text style={styles.nameText}>{item.match_name}</Text>
@@ -66,40 +68,50 @@ function UpcomingList({ item, isAgent = false }) {
         ]}>
         <View style={{ justifyContent: 'center' }}>
           <Text style={styles.dateText}>
-            {dateFormate(item.start_date)} {timeFormate(item.start_time)} | Minimum Fee :{' '}
+            {/* {dateFormate(item.start_date)} {timeFormate(item.start_time)} | Minimum Fee :{' '} */}
+            Minimum Fee :{' '}
             <Text style={{ fontFamily: FontFamily.poppinsSemiBold }}>
-              ₹{item.min_fee}
+              <FastImage
+                source={coinIcon}
+                style={{
+                  height: 12,
+                  width: 12,
+                  alignSelf: "center"
+                }}
+                resizeMode="contain"
+              />{item.min_fee}
             </Text>
           </Text>
         </View>
-        {
-          !isAgent &&
-          <Pressable
-            style={[styles.participateContainer, styles.joinContainer]}
-            onPress={() => {
+        <Pressable
+          style={[styles.participateContainer, styles.joinContainer]}
+          onPress={() => {
+            if (isAgent) {
+              navigateToContestList()
+            } else {
               navigate('GameJoin', { game: item });
+            }
+          }}>
+          <Text style={styles.joinText}>{isAgent ? "Joined User" : "Join Now"}</Text>
+          <View
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft: 3,
             }}>
-            <Text style={styles.joinText}>Join Now</Text>
-            <View
+            <FastImage
+              source={join}
               style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginLeft: 3,
-              }}>
-              <FastImage
-                source={join}
-                style={{
-                  height: 10,
-                  width: 10,
-                }}
-                resizeMode="contain"
-              />
-            </View>
-          </Pressable>
-        }
+                height: 10,
+                width: 10,
+              }}
+              resizeMode="contain"
+            />
+          </View>
+        </Pressable>
       </View>
       <View style={styles.lineStyle} />
-      <View style={[styles.participateContainer, { justifyContent: 'center', alignItems: "center" }]}>
+      {/* <View style={[styles.participateContainer, { justifyContent: 'center', alignItems: "center" }]}>
         <View
           style={{
             alignItems: 'center',
@@ -118,7 +130,7 @@ function UpcomingList({ item, isAgent = false }) {
         <Text style={styles.contestText}>
           Contest Start in - {hours} Hours : {minute} Min
         </Text>
-      </View>
+      </View> */}
     </View>
   );
 }

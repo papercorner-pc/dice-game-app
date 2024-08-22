@@ -138,7 +138,7 @@ const AgentHomeScreen = props => {
                 {option === 'Live' ? (
                   <UpcomingList item={item} isAgent={true} />
                 ) : (
-                  <CompletedList item={item} />
+                  <CompletedList item={item} isAgent={true} />
                 )}
               </>
             )

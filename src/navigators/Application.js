@@ -41,6 +41,7 @@ import AgentHomeScreen from '../screens/Agents/Home';
 import DealerList from '../screens/Agents/DealersList';
 import AgentWalletScreen from '../screens/Agents/Wallet';
 import AgentWalletPayment from '../screens/Agents/Wallet/WalletPayment';
+import AdminWalletPayment from '../screens/Admin/Wallet/WalletPayment';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -95,7 +96,7 @@ function AppStack() {
       <Stack.Screen name="CreateAccount" component={CreateAccount} />
       <Stack.Screen name="DealerList" component={DealerList} />
       <Stack.Screen name="AgentWalletPayment" component={AgentWalletPayment} />
-      <Stack.Screen name="AdminWalletPayment" component={AgentWalletPayment} />
+      <Stack.Screen name="AdminWalletPayment" component={AdminWalletPayment} />
     </Stack.Navigator>
   );
 }
@@ -195,11 +196,11 @@ function AgentTabs() {
         component={AgentWalletScreen}
         options={{ tabBarLabel: 'Wallet', title: 'Wallet' }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="AgentContest"
         component={AddContest}
         options={{ tabBarLabel: 'Game', title: 'Game' }}
-      />
+      /> */}
       <Tab.Screen
         name="AgentHistory"
         component={HistoryScreen}

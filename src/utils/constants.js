@@ -47,7 +47,7 @@ export const gamePaymentList = [
     title: 'Wallet',
     isSelected: true,
   },
-  {
+  /* {
     id: 2,
     title: 'Phone Pay',
     isSelected: false,
@@ -56,7 +56,7 @@ export const gamePaymentList = [
     id: 3,
     title: 'Google Pay',
     isSelected: false,
-  },
+  }, */
 ];
 
 export const profileList = [

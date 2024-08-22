@@ -22,11 +22,12 @@ import { gameDetails, getJoinedUserList } from '../../services/game/game';
 import { customToastMessage } from '../../utils/UtilityHelper';
 import { useCallback, useEffect, useState } from 'react';
 import game from '../../theme/assets/images/game.png';
+import coinIcon from '../../theme/assets/images/star.png';
 import EmptyComponent from '../../components/molecules/EmptyComponet';
 
 const LeaderBoard = props => {
   const _keyExtractor = (item, index) => index.toString();
-  const { gameId } = props.route.params;
+  const { gameId, isAdmin } = props.route.params;
   const [leaderBoardList, setLeaderBoardList] = useState([]);
   const [adminData, setAdminData] = useState({});
   const [refreshing, setRefreshing] = useState(false);
@@ -73,19 +74,33 @@ const LeaderBoard = props => {
             <Text style={styles.contestNameText}>{item.user_name}</Text>
             <Text style={styles.wonText}>
               Won :{' '}
-              <Text style={styles.wonAmountText}>₹{item.game_earning}</Text>
+              <Text style={styles.wonAmountText}><FastImage
+                source={coinIcon}
+                style={{
+                  height: 12,
+                  width: 10,
+                }}
+                resizeMode="contain"
+              />{item.game_earning}</Text>
             </Text>
           </View>
         </View>
         <View style={{ justifyContent: 'flex-start' }}>
-          <Text style={styles.wonText}>₹ {item.user_investment}</Text>
+          <Text style={styles.wonText}><FastImage
+            source={coinIcon}
+            style={{
+              height: 12,
+              width: 10,
+            }}
+            resizeMode="contain"
+          /> {item.user_investment}</Text>
         </View>
       </View>
     );
   };
   return (
     <SafeScreen>
-      <View style={[styles.headerContainer, { height: '25%' }]}>
+      <View style={[styles.headerContainer]}>
         <View style={{ flexDirection: 'row', paddingVertical: 30 }}>
           <TouchableOpacity
             style={styles.backButton}
@@ -103,57 +118,81 @@ const LeaderBoard = props => {
             <Text style={styles.headingText}>Match Result</Text>
           </View>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            padding: 10,
-            paddingHorizontal: 20,
-          }}>
-          <View>
-            <Text
-              style={{
-                fontSize: 27,
-                fontFamily: FontFamily.poppinsSemiBold,
-                color: '#FFF',
-                textAlign: 'center',
-              }}>
-              ₹ {adminData.game_investment}
-            </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                fontFamily: FontFamily.poppinsMedium,
-                color: '#FBFBFB',
-                textAlign: 'center',
-              }}>
-              Amount Received
-            </Text>
+        {
+          isAdmin &&
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              padding: 10,
+              paddingHorizontal: 20,
+              paddingBottom: 30
+            }}>
+            <View>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <FastImage
+                  source={coinIcon}
+                  style={{
+                    height: 12,
+                    width: 10,
+                  }}
+                  resizeMode="contain"
+                />
+                <Text
+                  style={{
+                    fontSize: 27,
+                    fontFamily: FontFamily.poppinsSemiBold,
+                    color: '#FFF',
+                    textAlign: 'center',
+                  }}>
+                  {adminData.game_investment}
+                </Text>
+              </View>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: FontFamily.poppinsMedium,
+                  color: '#FBFBFB',
+                  textAlign: 'center',
+                }}>
+                Amount Received
+              </Text>
+            </View>
+            <View>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <FastImage
+                  source={coinIcon}
+                  style={{
+                    height: 12,
+                    width: 10,
+                  }}
+                  resizeMode="contain"
+                />
+                <Text
+                  style={{
+                    fontSize: 27,
+                    fontFamily: FontFamily.poppinsSemiBold,
+                    color: '#FFF',
+                    textAlign: 'center',
+                  }}>
+                  {adminData.game_total_earnings}
+                </Text>
+              </View>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: FontFamily.poppinsMedium,
+                  color: '#FBFBFB',
+                  textAlign: 'center',
+                }}>
+                Price Pool
+              </Text>
+            </View>
           </View>
-          <View>
-            <Text
-              style={{
-                fontSize: 27,
-                fontFamily: FontFamily.poppinsSemiBold,
-                color: '#FFF',
-                textAlign: 'center',
-              }}>
-              ₹ {adminData.game_total_earnings}
-            </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                fontFamily: FontFamily.poppinsMedium,
-                color: '#FBFBFB',
-                textAlign: 'center',
-              }}>
-              Price Pool
-            </Text>
-          </View>
-        </View>
+        }
       </View>
       <View style={styles.container}>
-        <View style={styles.videoContainer}>
+        {/* <View style={styles.videoContainer}>
           <Pressable style={{ flexDirection: 'row' }}>
             <FastImage
               style={{ height: 18, width: 18, marginRight: 10 }}
@@ -162,7 +201,7 @@ const LeaderBoard = props => {
             />
             <Text style={styles.watchText}>Watch Result</Text>
           </Pressable>
-        </View>
+        </View> */}
         <View
           style={{
             flexDirection: 'row',

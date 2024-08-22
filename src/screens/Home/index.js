@@ -16,6 +16,7 @@ import notiIcon from '../../theme/assets/images/notificationIcon.png';
 import thumbUp from '../../theme/assets/images/thumbUp.png';
 import thumbDown from '../../theme/assets/images/thumbDown.png';
 import game from '../../theme/assets/images/game.png';
+import coinIcon from '../../theme/assets/images/star.png';
 import { Colors } from '../../theme/colors';
 import { FontFamily } from '../../theme/fonts';
 import MaterialTab from '../../components/molecules/MaterialTab';
@@ -232,7 +233,14 @@ const HomeScreen = props => {
                 color: '#000000',
                 marginRight: 5,
               }}>
-              Earnings : ₹ {userGameHistory?.total_earning}
+              Earnings : <FastImage
+                source={coinIcon}
+                style={{
+                  height: 12,
+                  width: 10,
+                }}
+                resizeMode="contain"
+              /> {userGameHistory?.total_earning}
             </Text>
           </View>
         </View>

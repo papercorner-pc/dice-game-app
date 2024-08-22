@@ -34,6 +34,8 @@ const AddContest = props => {
   const [timeOpen, setTimeOpen] = useState(false);
   const [entryFee, setEntryFee] = useState('');
   const [entryLimit, setEntryLimit] = useState('');
+  const [userLimit, setUserLimit] = useState('');
+  const [symbolLimit, setSymbolLimit] = useState('');
   const mutation = useMutation({
     mutationFn: payload => {
       return createGame(payload);
@@ -74,35 +76,45 @@ const AddContest = props => {
       isValid = false;
       customToastMessage('Please Enter Minimum Entry Fee', 'error');
     }
-    if (startTime === '') {
+    /* if (startTime === '') {
       isValid = false;
       customToastMessage('Please Select Start Time', 'error');
     }
     if (startDate === '') {
       isValid = false;
       customToastMessage('Please Select Start Date', 'error');
-    }
+    } */
     if (entryLimit === '') {
       isValid = false;
       customToastMessage('Please Enter Maximum Entry Limit', 'error');
     }
-    if (checkCurrentTime()) {
+    if (userLimit === "") {
+      isValid = false;
+      customToastMessage('Please Enter User Amount Limit', 'error');
+    }
+    if (symbolLimit === "") {
+      isValid = false;
+      customToastMessage('Please Enter Symbol Limit', 'error');
+    }
+    /* if (checkCurrentTime()) {
       isValid = false;
       customToastMessage(
         'Not possible to create contest in current Time',
         'error',
       );
-    }
+    } */
     if (isValid) {
       // const fcm_token = storage.getString('fcm_token');
       const payload = {
         match_name: contestName,
         min_fee: parseFloat(entryFee),
-        start_time: startTime.toString(),
+        /* start_time: startTime.toString(),
         start_date: startDate.toString(),
         end_time: startTime.toString(),
-        end_date: startDate.toString(),
+        end_date: startDate.toString(), */
         entry_limit: parseInt(entryLimit),
+        user_limit: parseInt(userLimit),
+        symbol_limit: parseInt(symbolLimit)
       };
       console.log('payload=', payload);
       mutation.mutate(payload);
@@ -146,7 +158,7 @@ const AddContest = props => {
               onChangeText={setContestName}
             />
           </View>
-          <Text style={styles.text}>Start Date</Text>
+          {/* <Text style={styles.text}>Start Date</Text>
           <View style={styles.searchContainer}>
             <FastImage
               source={dateIcon}
@@ -185,7 +197,7 @@ const AddContest = props => {
                 setTimeOpen(true);
               }}
             />
-          </View>
+          </View> */}
           <Text style={styles.text}>Entry Fee</Text>
           <View
             style={[styles.searchContainer, { justifyContent: 'space-between' }]}>
@@ -204,6 +216,26 @@ const AddContest = props => {
                 marginLeft: -15,
               }}
               resizeMode="contain"
+            />
+          </View>
+          <Text style={styles.text}>User Amount Limit</Text>
+          <View style={styles.searchContainer}>
+            <TextInput
+              placeholder={'Enter'}
+              style={styles.input}
+              keyboardType={'number-pad'}
+              value={userLimit}
+              onChangeText={setUserLimit}
+            />
+          </View>
+          <Text style={styles.text}>Symbol Amount Limit</Text>
+          <View style={styles.searchContainer}>
+            <TextInput
+              placeholder={'Enter'}
+              style={styles.input}
+              keyboardType={'number-pad'}
+              value={symbolLimit}
+              onChangeText={setSymbolLimit}
             />
           </View>
           <Text style={styles.text}>Entry Limit</Text>
@@ -234,7 +266,7 @@ const AddContest = props => {
           buttonColor={'#DC9C40'}
         />
       </View> */}
-      <DatePicker
+      {/* <DatePicker
         modal
         open={dateOpen}
         date={date}
@@ -264,7 +296,7 @@ const AddContest = props => {
         }}
         mode={'time'}
       // minimumDate={date}
-      />
+      /> */}
     </SafeScreen>
   );
 };

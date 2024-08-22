@@ -9,7 +9,7 @@ import { FontFamily } from '../../../theme/fonts';
 import { navigate } from '../../../navigators/utils';
 import { dateFormate, timeFormate } from '../../../utils/UtilityHelper';
 
-function CompletedList({ item }) {
+function CompletedList({ item, isAgent = false }) {
   const navigateToResult = () => {
     navigate('GameJoinedList', { gameId: item.id });
   };
@@ -38,13 +38,13 @@ function CompletedList({ item }) {
         style={[
           styles.participateContainer,
           {
-            justifyContent: 'space-between',
+            justifyContent: 'flex-end',
             marginTop: 10,
           },
         ]}>
-        <View style={{ justifyContent: 'center' }}>
+        {/* <View style={{ justifyContent: 'center' }}>
           <Text style={styles.dateText}>Completed On {dateFormate(item.start_date)} {timeFormate(item.start_time)}</Text>
-        </View>
+        </View> */}
         <Pressable
           style={[styles.participateContainer, styles.joinContainer]}
           onPress={navigateToResult}>

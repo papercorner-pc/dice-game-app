@@ -20,6 +20,7 @@ const AdminWalletPayment = () => {
     const [coin, setCoin] = useState("")
     const [errorCoin, setErrorCoin] = useState("")
     const [userId, setUserId] = useState("")
+    const [isFocus, setIsFocus] = useState(false);
     const { data, isLoading, refetch } = useQuery({
         queryKey: ["dealer"],
         queryFn: () => {
@@ -154,7 +155,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#EEEDED",
-        paddingHorizontal: 16
+        padding: 16
     },
     checkoutContainer: {
         // marginHorizontal: 14,

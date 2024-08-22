@@ -16,6 +16,7 @@ import thumbUp from '../../theme/assets/images/thumbUp.png';
 import thumbDown from '../../theme/assets/images/thumbDown.png';
 import robo from '../../theme/assets/images/robo-1.png';
 import game from '../../theme/assets/images/game.png';
+import coinIcon from '../../theme/assets/images/star.png';
 import filterIcon from '../../theme/assets/images/filter.png';
 import CompletedList from '../../components/molecules/Game/CompletedList';
 import { useMutation } from '@tanstack/react-query';
@@ -145,7 +146,14 @@ const HistoryScreen = props => {
                     fontFamily: FontFamily.poppinsSemiBold,
                     fontSize: 16,
                   }}>
-                  ₹{userGameHistory?.total_earning.toFixed(2)}
+                  <FastImage
+                    source={coinIcon}
+                    style={{
+                      height: 12,
+                      width: 10,
+                    }}
+                    resizeMode="contain"
+                  />{userGameHistory?.total_earning.toFixed(2)}
                 </Text>
               </Text>
             </View>

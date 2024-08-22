@@ -29,6 +29,7 @@ import iconDiamond from '../../theme/assets/images/iconDiamond.png';
 import iconFlag from '../../theme/assets/images/iconFlag.png';
 import iconHeart from '../../theme/assets/images/iconHeart.png';
 import iconMoon from '../../theme/assets/images/iconMoon.png';
+import coinIcon from '../../theme/assets/images/star.png';
 import join from '../../theme/assets/images/join-now.png';
 import { Colors } from '../../theme/colors';
 
@@ -160,7 +161,14 @@ const GameJoinedList = props => {
                         source={diceIcon}
                         resizeMode="contain"
                     />
-                    <Text style={styles.amountText}>₹ {userEarning}</Text>
+                    <Text style={styles.amountText}><FastImage
+                        source={coinIcon}
+                        style={{
+                            height: 12,
+                            width: 10,
+                        }}
+                        resizeMode="contain"
+                    /> {userEarning}</Text>
                     <Text style={styles.amountMessageText}>
                         Congrats You won the game
                     </Text>

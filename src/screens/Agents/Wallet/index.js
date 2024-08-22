@@ -25,6 +25,7 @@ import { useCallback, useEffect, useState } from 'react';
 import MaterialTab from '../../../components/molecules/MaterialTab';
 import close from '../../../theme/assets/images/closeIcon.png';
 import tick from '../../../theme/assets/images/tick.png';
+import coinIcon from '../../../theme/assets/images/star.png';
 import { dealerReqAcceptReject, getWalletReq } from '../../../services/wallet/wallet';
 import { customToastMessage } from '../../../utils/UtilityHelper';
 
@@ -42,7 +43,7 @@ const AgentWalletScreen = props => {
             return walletHistory();
         },
     });
-    const { data: reqData, isLoading: reqIsLoading } = useQuery({
+    const { data: reqData, isLoading: reqIsLoading, refetch: reqRefetch } = useQuery({
         queryKey: ["wallet"],
         queryFn: () => {
             return getWalletReq();
@@ -63,6 +64,7 @@ const AgentWalletScreen = props => {
             return dealerReqAcceptReject(payload);
         },
         onSuccess: data => {
+            reqRefetch()
             customToastMessage(data.message, 'success');
         },
         onError: error => {
@@ -108,6 +110,26 @@ const AgentWalletScreen = props => {
             setRefreshing(false);
         }, 1000);
     }, []);
+    const dateFormat = (timestamp) => {
+        const date = new Date(timestamp);
+
+        // Define options for formatting
+        const options = {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        };
+
+        // Format the date and time
+        const formattedDate = date.toLocaleDateString('en-GB', options);
+
+        // Combine date and time into the final format
+        const finalFormattedDateTime = `${formattedDate}`;
+        return finalFormattedDateTime;
+    }
     const historyComponents = ({ item }) => {
         return (
             <>
@@ -145,7 +167,14 @@ const AgentWalletScreen = props => {
                                     fontFamily: FontFamily.poppinsSemiBold,
                                     color: '#1B1023',
                                 }}>
-                                {item.type === "deposit" ? '+' : "-"}₹ {item.amount}
+                                {item.type === "deposit" ? '+' : "-"}<FastImage
+                                    source={coinIcon}
+                                    style={{
+                                        height: 12,
+                                        width: 10,
+                                    }}
+                                    resizeMode="contain"
+                                /> {item.amount}
                             </Text>
                             <Text
                                 style={{
@@ -189,12 +218,14 @@ const AgentWalletScreen = props => {
     const WalletReqItem = ({ item }) => (
         <View style={styles.userContainer}>
             <View>
-                <Text style={styles.userNameText}>Nandu s narayanan</Text>
-                <Text style={styles.dateTime}>24-03-2024 2.00 PM</Text>
+                <Text style={styles.userNameText}>{item?.request_user?.name}</Text>
+                <Text style={styles.dateTime}>{dateFormat(item?.created_at)}</Text>
             </View>
-            <Text style={styles.coinText}>34 Coins</Text>
+            <Text style={styles.coinText}>{parseInt(item?.amount)} Coins</Text>
             <View style={{ flexDirection: "row" }}>
-                <View style={[styles.acceptRejectContainer, { backgroundColor: "#C23421", marginHorizontal: 18 }]}>
+                <Pressable style={[styles.acceptRejectContainer, { backgroundColor: "#C23421", marginHorizontal: 18 }]}
+                    onPress={() => { onPressAcceptReject(item.id, "reject") }}
+                >
                     <FastImage
                         source={close}
                         style={{
@@ -203,8 +234,10 @@ const AgentWalletScreen = props => {
                         }}
                         resizeMode="contain"
                     />
-                </View>
-                <View style={[styles.acceptRejectContainer, { backgroundColor: "#21C24E" }]}>
+                </Pressable>
+                <Pressable style={[styles.acceptRejectContainer, { backgroundColor: "#21C24E" }]}
+                    onPress={() => { onPressAcceptReject(item.id, "accept") }}
+                >
                     <FastImage
                         source={tick}
                         style={{
@@ -213,7 +246,7 @@ const AgentWalletScreen = props => {
                         }}
                         resizeMode="contain"
                     />
-                </View>
+                </Pressable>
             </View>
         </View>
     )
@@ -247,7 +280,14 @@ const AgentWalletScreen = props => {
                             resizeMode="contain"
                         />
                         <Text style={styles.balanceTitleText}>E Wallet Balance</Text>
-                        <Text style={styles.balanceAmount}>₹ {walletTotal.toFixed(2)}</Text>
+                        <Text style={styles.balanceAmount}><FastImage
+                            source={coinIcon}
+                            style={{
+                                height: 12,
+                                width: 10,
+                            }}
+                            resizeMode="contain"
+                        /> {walletTotal.toFixed(2)}</Text>
                         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={styles.messageText}>
                                 Every transaction is verified for your peace of mind

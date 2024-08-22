@@ -16,6 +16,7 @@ import rupeeIcon from '../../theme/assets/images/rupee.png';
 import filterIcon from '../../theme/assets/images/filter.png';
 import cashIcon from '../../theme/assets/images/cash.png';
 import game from '../../theme/assets/images/game.png';
+import coinIcon from '../../theme/assets/images/star.png';
 import FastImage from 'react-native-fast-image';
 import { navigate } from '../../navigators/utils';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -24,11 +25,16 @@ import EmptyComponent from '../../components/molecules/EmptyComponet';
 import { useCallback, useEffect, useState } from 'react';
 import { dealerCoinReq } from '../../services/wallet/wallet';
 import { customToastMessage } from '../../utils/UtilityHelper';
+import Modal from 'react-native-modal';
+import CustomTextInput from '../../components/molecules/TextInput';
+import ButtonComponent from '../../components/molecules/Button';
 
 const WalletScreen = props => {
   const [refreshing, setRefreshing] = useState(false);
   const [walletTotal, setWalletTotal] = useState(0)
   const [reqCoin, setReqCoin] = useState("")
+  const [isModalEnable, setIsModalEnable] = useState(false)
+  const [errorReqCoin, setErrorReqCoin] = useState("")
   const { isSuccess, data, isFetching, isLoading, refetch } = useQuery({
     queryKey: ["wallethistory"],
     queryFn: () => {
@@ -80,6 +86,7 @@ const WalletScreen = props => {
       return dealerCoinReq(payload);
     },
     onSuccess: data => {
+      onToggleModal()
       customToastMessage(data.message, 'success');
     },
     onError: error => {
@@ -87,6 +94,41 @@ const WalletScreen = props => {
       customToastMessage(error.error ? error.error : error.message, 'error');
     },
   });
+  const onToggleModal = () => {
+    setIsModalEnable(!isModalEnable)
+    setReqCoin("")
+  }
+  function renderActionSheet() {
+    return (
+      <Modal isVisible={isModalEnable} onBackdropPress={onToggleModal}>
+        <LinearGradient
+          colors={['#412653', '#2E1B3B']}
+          style={{ padding: 15, justifyContent: "center", borderRadius: 20, }}>
+          <View style={{ marginVertical: 40 }}>
+            <CustomTextInput
+              placeholderName={"Add Coin"}
+              valueField={reqCoin}
+              onChangeTextValue={(text) => {
+                setReqCoin(text)
+              }}
+              onChangeFocus={() => {
+                setErrorReqCoin("")
+              }}
+              keyboardType={'number-pad'}
+              errorField={errorReqCoin}
+            />
+            <ButtonComponent
+              wrapperStyles={styles.checkoutContainer}
+              textStyles={styles.buttonText}
+              text={'Request'}
+              onPress={onPressReq}
+              buttonColor={'#DC9C40'}
+            />
+          </View>
+        </LinearGradient>
+      </Modal>
+    )
+  }
   const onPressReq = () => {
     var isValid = true;
     if (reqCoin === "") {
@@ -137,7 +179,14 @@ const WalletScreen = props => {
                   fontFamily: FontFamily.poppinsSemiBold,
                   color: '#1B1023',
                 }}>
-                {item.type === "deposit" ? '+' : "-"}₹ {item.amount}
+                {item.type === "deposit" ? '+' : "-"}<FastImage
+                  source={coinIcon}
+                  style={{
+                    height: 12,
+                    width: 10,
+                  }}
+                  resizeMode="contain"
+                /> {item.amount}
               </Text>
               <Text
                 style={{
@@ -188,9 +237,7 @@ const WalletScreen = props => {
           </View>
           <Pressable
             style={styles.rechargeButton}
-            onPress={() => {
-              navigate('WalletPayment', { walletTotal: walletTotal });
-            }}>
+            onPress={onToggleModal}>
             <Text>Recharge Wallet</Text>
           </Pressable>
         </View>
@@ -208,7 +255,14 @@ const WalletScreen = props => {
               resizeMode="contain"
             />
             <Text style={styles.balanceTitleText}>E Wallet Balance</Text>
-            <Text style={styles.balanceAmount}>₹ {walletTotal.toFixed(2)}</Text>
+            <Text style={styles.balanceAmount}><FastImage
+              source={coinIcon}
+              style={{
+                height: 12,
+                width: 10,
+              }}
+              resizeMode="contain"
+            /> {walletTotal.toFixed(2)}</Text>
             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
               <Text style={styles.messageText}>
                 Every transaction is verified for your peace of mind
@@ -255,6 +309,7 @@ const WalletScreen = props => {
           />
         }
       </View>
+      {renderActionSheet()}
     </SafeScreen>
   );
 };
@@ -330,5 +385,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E7E8E9',
     // margin: 10,
+  },
+  checkoutContainer: {
+    // marginHorizontal: 14,
+    marginTop: 20,
+    // width: '95%',
+    borderRadius: 12,
+    height: 40
+  },
+  buttonText: {
+    fontSize: 16,
+    fontFamily: FontFamily.poppinsMedium,
+    color: '#070A0D',
   },
 });

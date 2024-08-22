@@ -5,7 +5,7 @@ import { Colors } from '../../../theme/colors';
 import group from '../../../theme/assets/images/group.png';
 import deleteIcon from '../../../theme/assets/images/delete.png';
 import editIcon from '../../../theme/assets/images/edit.png';
-import ludo from '../../../theme/assets/images/ludoIcon.png';
+import coinIcon from '../../../theme/assets/images/star.png';
 
 import { FontFamily } from '../../../theme/fonts';
 import { navigate } from '../../../navigators/utils';
@@ -15,10 +15,10 @@ import { deleteGame } from '../../../services/game/game';
 
 const AdminGameList = ({ isAnnounced, game, onDeletePress = () => { } }) => {
   const navigateToResult = () => {
-    navigate('LeaderBoard', { gameId: game.id });
+    navigate('LeaderBoard', { gameId: game.id, isAdmin: true });
   };
   const announceResult = () => {
-    navigate('ContestantList', { gameId: game.id });
+    navigate('ContestantList', { gameId: game.id, isAdmin: true });
   };
   const onPressEdit = () => {
     navigate('EditContest', { game: game })
@@ -77,9 +77,9 @@ const AdminGameList = ({ isAnnounced, game, onDeletePress = () => { } }) => {
           },
         ]}>
         <View style={{ justifyContent: 'center' }}>
-          <Text style={styles.dateText}>
+          {/* <Text style={styles.dateText}>
             {dateFormate(game.start_date)} | {timeFormate(game.start_time)}
-          </Text>
+          </Text> */}
           {!isAnnounced && (
             <View style={{ flexDirection: 'row' }}>
               <View
@@ -92,7 +92,17 @@ const AdminGameList = ({ isAnnounced, game, onDeletePress = () => { } }) => {
                   marginRight: 5,
                 }}
               />
-              <Text style={styles.feeText}>Fee : ₹{game.min_fee}</Text>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <FastImage
+                  source={coinIcon}
+                  style={{
+                    height: 12,
+                    width: 10,
+                  }}
+                  resizeMode="contain"
+                />
+                <Text style={styles.feeText}>Fee : {game.min_fee}</Text>
+              </View>
             </View>
           )}
         </View>

@@ -15,6 +15,7 @@ import ButtonComponent from '../../components/molecules/Button';
 import { SafeScreen } from '../../components/template';
 import { goBack, navigate } from '../../navigators/utils';
 import backIcon from '../../theme/assets/images/back.png';
+import coinIcon from '../../theme/assets/images/star.png';
 import { FontFamily } from '../../theme/fonts';
 import { paymentMethodListData } from '../../utils/constants';
 
@@ -77,7 +78,14 @@ function WalletPaymentScreen(props) {
             colors={['#412653', '#2E1B3B']}
             style={styles.balanceGradientContainer}>
             <Text style={styles.balanceTitleText}>E Wallet Balance</Text>
-            <Text style={styles.balanceAmount}>₹ {walletTotal.toFixed(2)}</Text>
+            <Text style={styles.balanceAmount}><FastImage
+              source={coinIcon}
+              style={{
+                height: 12,
+                width: 10,
+              }}
+              resizeMode="contain"
+            /> {walletTotal.toFixed(2)}</Text>
             <Text style={styles.enterText}>
               Enter amount you want to invest
             </Text>

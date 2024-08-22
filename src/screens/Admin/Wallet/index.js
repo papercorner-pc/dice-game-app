@@ -2,7 +2,7 @@ import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from "rea
 import { SafeScreen } from "../../../components/template";
 import { FontFamily } from "../../../theme/fonts";
 import MaterialTab from '../../../components/molecules/MaterialTab';
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import FastImage from "react-native-fast-image";
 import close from '../../../theme/assets/images/closeIcon.png';
 import tick from '../../../theme/assets/images/tick.png';
@@ -10,8 +10,11 @@ import EmptyComponent from "../../../components/molecules/EmptyComponet";
 import game from '../../../theme/assets/images/game.png';
 import { walletHistory } from "../../../services/game/game";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { customToastMessage } from "../../../utils/UtilityHelper";
+import { customToastMessage, dateFormate } from "../../../utils/UtilityHelper";
 import { agentReqAcceptReject, getWalletReq } from "../../../services/wallet/wallet";
+import { navigate } from "../../../navigators/utils";
+import cashIcon from '../../../theme/assets/images/cash.png';
+import coinIcon from '../../../theme/assets/images/star.png';
 
 const staticData = [
     { value: "Requests" },
@@ -27,7 +30,7 @@ const AdminWalletScreen = () => {
             return walletHistory();
         },
     });
-    const { data: reqData, isLoading: reqIsLoading } = useQuery({
+    const { data: reqData, isLoading: reqIsLoading, refetch: reqRefetch } = useQuery({
         queryKey: ["wallet"],
         queryFn: () => {
             return getWalletReq();
@@ -39,6 +42,7 @@ const AdminWalletScreen = () => {
             return agentReqAcceptReject(payload);
         },
         onSuccess: data => {
+            reqRefetch()
             customToastMessage(data.message, 'success');
         },
         onError: error => {
@@ -53,15 +57,6 @@ const AdminWalletScreen = () => {
         }
         mutation.mutate(payload)
     }
-    useEffect(() => {
-        if (isSuccess) {
-            const total = data.transactions.reduce(
-                (acc, obj) => acc + parseInt(obj.amount),
-                0,
-            );
-            setWalletTotal(total)
-        }
-    }, [isSuccess])
     const _keyExtractor = (item, index) => index.toString();
     const formatDate = (isoString) => {
         // Create a Date object from the ISO string
@@ -93,6 +88,26 @@ const AdminWalletScreen = () => {
             setRefreshing(false);
         }, 1000);
     }, []);
+    const dateFormat = (timestamp) => {
+        const date = new Date(timestamp);
+
+        // Define options for formatting
+        const options = {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        };
+
+        // Format the date and time
+        const formattedDate = date.toLocaleDateString('en-GB', options);
+
+        // Combine date and time into the final format
+        const finalFormattedDateTime = `${formattedDate}`;
+        return finalFormattedDateTime;
+    }
     const historyComponents = ({ item }) => {
         return (
             <>
@@ -130,7 +145,14 @@ const AdminWalletScreen = () => {
                                     fontFamily: FontFamily.poppinsSemiBold,
                                     color: '#1B1023',
                                 }}>
-                                {item.type === "deposit" ? '+' : "-"}₹ {item.amount}
+                                {item.type === "deposit" ? '+' : "-"}<FastImage
+                                    source={coinIcon}
+                                    style={{
+                                        height: 12,
+                                        width: 10,
+                                    }}
+                                    resizeMode="contain"
+                                /> {item.amount}
                             </Text>
                             <Text
                                 style={{
@@ -175,12 +197,14 @@ const AdminWalletScreen = () => {
     const WalletReqItem = ({ item }) => (
         <View style={styles.userContainer}>
             <View>
-                <Text style={styles.userNameText}>Nandu s narayanan</Text>
-                <Text style={styles.dateTime}>24-03-2024 2.00 PM</Text>
+                <Text style={styles.userNameText}>{item?.request_user?.name}</Text>
+                <Text style={styles.dateTime}>{dateFormat(item?.created_at)}</Text>
             </View>
-            <Text style={styles.coinText}>34 Coins</Text>
+            <Text style={styles.coinText}>{parseInt(item?.amount)} Coins</Text>
             <View style={{ flexDirection: "row" }}>
-                <Pressable style={[styles.acceptRejectContainer, { backgroundColor: "#C23421", marginHorizontal: 18 }]}>
+                <Pressable style={[styles.acceptRejectContainer, { backgroundColor: "#C23421", marginHorizontal: 18 }]}
+                    onPress={() => { onPressAcceptReject(item.id, "reject") }}
+                >
                     <FastImage
                         source={close}
                         style={{
@@ -190,7 +214,9 @@ const AdminWalletScreen = () => {
                         resizeMode="contain"
                     />
                 </Pressable>
-                <Pressable style={[styles.acceptRejectContainer, { backgroundColor: "#21C24E" }]}>
+                <Pressable style={[styles.acceptRejectContainer, { backgroundColor: "#21C24E" }]}
+                    onPress={() => { onPressAcceptReject(item.id, "accept") }}
+                >
                     <FastImage
                         source={tick}
                         style={{
