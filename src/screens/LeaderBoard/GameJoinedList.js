@@ -38,7 +38,11 @@ const GameJoinedList = props => {
     const { gameId } = props.route.params;
     const [gameList, setGameList] = useState([]);
     const [userEarning, setUserEarning] = useState(0)
+    const [usetInvest, setUserInvest] = useState(0);
     const [refreshing, setRefreshing] = useState(false);
+    const [resOne, setResOne] = useState(null);
+    const [resTwo, setResTwo] = useState(null);
+    const [resThree, setResThree] = useState(null);
     const mutation = useMutation({
         mutationFn: payload => {
             return getUserSingleGameList(payload);
@@ -46,7 +50,13 @@ const GameJoinedList = props => {
         onSuccess: data => {
             console.log('---success gameDetails', data);
             setGameList(data.userGameList)
-            setUserEarning(data.userEarnings)
+            setUserEarning(data?.userEarnings)
+            setUserInvest(data?.user_total_investment)
+            if (!!data.result) {
+                setResOne(data.result.dice_1);
+                setResTwo(data.result.dice_2);
+                setResThree(data.result.dice_3);
+            }
             // const userData = data.hasOwnProperty('users') ? data.users : [];
             // setGameList(userData);
         },
@@ -93,7 +103,7 @@ const GameJoinedList = props => {
         return (
             <View style={styles.listContainer}>
                 <View style={{ flexDirection: 'row' }}>
-                    <Text style={{ textAlignVertical: "center", marginRight: 10, color: Colors.black }}>#{item.id}</Text>
+                    {/* <Text style={{ textAlignVertical: "center", marginRight: 10, color: Colors.black }}>#{item.id}</Text> */}
                     <View style={styles.listImageContainer}>
                         <FastImage
                             style={{ height: 28, width: 28 }}
@@ -103,6 +113,7 @@ const GameJoinedList = props => {
                     </View>
                     <View>
                         <Text style={styles.contestNameText}>invest: {item.joined_amount}</Text>
+                        <Text style={styles.contestNameText}>Earning: {item.game_earning}</Text>
                         {/* <Text style={styles.wonText}>
                             Won :{' '}
                             <Text style={styles.wonAmountText}>₹{item.game_earning}</Text>
@@ -110,7 +121,7 @@ const GameJoinedList = props => {
                     </View>
                 </View>
                 <View style={{ justifyContent: 'flex-start' }}>
-                    <Pressable
+                    {/* <Pressable
                         style={[styles.participateContainer, styles.joinContainer]}
                         onPress={() => { navigateToResult(item.selected_card) }}>
                         <Text style={styles.joinText}>Result</Text>
@@ -130,14 +141,14 @@ const GameJoinedList = props => {
                                 resizeMode="contain"
                             />
                         </View>
-                    </Pressable>
+                    </Pressable> */}
                 </View>
             </View>
         );
     };
     return (
         <SafeScreen>
-            <View style={[styles.headerContainer, { height: '30%' }]}>
+            <View style={[styles.headerContainer, { paddingBottom: 10 }]}>
                 <View style={{ flexDirection: 'row', paddingVertical: 30 }}>
                     <TouchableOpacity
                         style={styles.backButton}
@@ -156,22 +167,70 @@ const GameJoinedList = props => {
                     </View>
                 </View>
                 <View style={{ alignItems: 'center' }}>
-                    <FastImage
+                    {/* <FastImage
                         style={{ height: 48, width: 48, marginBottom: 10 }}
                         source={diceIcon}
                         resizeMode="contain"
-                    />
-                    <Text style={styles.amountText}><FastImage
-                        source={coinIcon}
-                        style={{
-                            height: 12,
-                            width: 10,
-                        }}
-                        resizeMode="contain"
-                    /> {userEarning}</Text>
-                    <Text style={styles.amountMessageText}>
+                    /> */}
+                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                        <View style={{ marginHorizontal: 30, alignItems: "center" }}>
+                            <Text style={styles.amountTitleText}>Total Invest</Text>
+                            <Text style={styles.amountText}><FastImage
+                                source={coinIcon}
+                                style={{
+                                    height: 12,
+                                    width: 10,
+                                }}
+                                resizeMode="contain"
+                            /> {usetInvest}</Text>
+                        </View>
+                        <View style={{ alignItems: "center" }}>
+                            <Text style={styles.amountTitleText}>Total Earning</Text>
+                            <Text style={styles.amountText}><FastImage
+                                source={coinIcon}
+                                style={{
+                                    height: 12,
+                                    width: 10,
+                                }}
+                                resizeMode="contain"
+                            /> {userEarning}</Text>
+                        </View>
+                    </View>
+                    <View style={{ flexDirection: "row", marginTop: 10 }}>
+                        {
+                            !!resOne &&
+                            <View style={{ backgroundColor: "white", padding: 3, marginRight: 10, }}>
+                                <FastImage
+                                    style={{ height: 28, width: 28 }}
+                                    source={setSelectedCardImage(resOne)}
+                                    resizeMode="contain"
+                                />
+                            </View>
+                        }
+                        {
+                            !!resTwo &&
+                            <View style={{ backgroundColor: "white", padding: 3, marginRight: 10, }}>
+                                <FastImage
+                                    style={{ height: 28, width: 28 }}
+                                    source={setSelectedCardImage(resTwo)}
+                                    resizeMode="contain"
+                                />
+                            </View>
+                        }
+                        {
+                            !!resThree &&
+                            <View style={{ backgroundColor: "white", padding: 3, marginRight: 10, }}>
+                                <FastImage
+                                    style={{ height: 28, width: 28 }}
+                                    source={setSelectedCardImage(resThree)}
+                                    resizeMode="contain"
+                                />
+                            </View>
+                        }
+                    </View>
+                    {/* <Text style={styles.amountMessageText}>
                         Congrats You won the game
-                    </Text>
+                    </Text> */}
                 </View>
             </View>
             <View style={styles.container}>
@@ -218,6 +277,11 @@ const styles = StyleSheet.create({
     },
     amountText: {
         fontSize: 27,
+        fontFamily: FontFamily.poppinsSemiBold,
+        color: '#FFF',
+    },
+    amountTitleText: {
+        fontSize: 18,
         fontFamily: FontFamily.poppinsSemiBold,
         color: '#FFF',
     },

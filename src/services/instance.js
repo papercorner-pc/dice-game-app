@@ -11,10 +11,10 @@ const LOCAL_IP = '192.168.90.127'; // Replace with your local IP address
 const prefixUrl = `https://www.dicedash.papercorner.in/api/`;
 const token = storage.getString('auth_token');
 const userData = storage.getString('user_data');
-console.log('--prefixUrl', token);
+// console.log('--prefixUrl', token);
 const afterResponse = async (request, options, response) => {
-  console.log('--responses', response);
-  console.log('option', options);
+  // console.log('--responses', response);
+  // console.log('option', options);
   if (response.status === 401) {
     const fcm_token = storage.getString('fcm_token');
     if (userData) {
@@ -39,8 +39,8 @@ const afterResponse = async (request, options, response) => {
 
 const beforeRequest = async request => {
   const token = storage.getString('auth_token');
-  console.log('--request', request);
-  console.log('--token', token);
+  // console.log('--request', request);
+  // console.log('--token', token);
   if (token) {
     const header = request.headers.get('Authorization');
     if (!header?.startsWith('Basic'))

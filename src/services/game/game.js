@@ -44,6 +44,7 @@ export const joinGame = async payload => {
 
 export const gameList = async payload => {
   try {
+    console.log("gameList", payload);
     const response = await instance.post(`game/list`, { json: payload }).json();
     return response;
   } catch (error) {
@@ -125,10 +126,43 @@ export const gamePublishStatus = async payload => {
   }
 };
 
+export const deleteJoinGame = async payload => {
+  try {
+    const response = await instance
+      .post(`game/delete-join`, { json: payload })
+      .json();
+    return response;
+  } catch (error) {
+    throw await error.response.json();
+  }
+};
+
 export const gameCardBalance = async payload => {
   try {
     const response = await instance
       .post(`game/card-balance`, { json: payload })
+      .json();
+    return response;
+  } catch (error) {
+    throw await error.response.json();
+  }
+};
+
+export const addCountDown = async payload => {
+  try {
+    const response = await instance
+      .post(`game/add-countdown`, { json: payload })
+      .json();
+    return response;
+  } catch (error) {
+    throw await error.response.json();
+  }
+};
+
+export const completeCountDown = async payload => {
+  try {
+    const response = await instance
+      .post(`game/complete-countdown`, { json: payload })
       .json();
     return response;
   } catch (error) {

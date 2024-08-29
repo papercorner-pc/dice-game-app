@@ -27,14 +27,17 @@ import DatePicker from 'react-native-date-picker';
 
 const EditContest = props => {
     const { game } = props.route.params;
+    console.log("game==", game);
     const date = new Date();
-    const [contestName, setContestName] = useState(game.match_name);
-    const [startDate, setStartDate] = useState(game.start_date);
+    const [contestName, setContestName] = useState(game?.match_name);
+    const [startDate, setStartDate] = useState("");
     const [dateOpen, setDateOpen] = useState(false);
-    const [startTime, setStartTime] = useState(game.start_time);
+    const [startTime, setStartTime] = useState("");
     const [timeOpen, setTimeOpen] = useState(false);
-    const [entryFee, setEntryFee] = useState(game.min_fee);
-    const [entryLimit, setEntryLimit] = useState(game.entry_limit.toString());
+    const [entryFee, setEntryFee] = useState(game?.min_fee);
+    const [entryLimit, setEntryLimit] = useState(game?.entry_limit.toString());
+    const [userLimit, setUserLimit] = useState(game?.user_amount_limit.toString());
+    const [symbolLimit, setSymbolLimit] = useState(game?.symbol_limit.toString());
     const mutation = useMutation({
         mutationFn: payload => {
             return editGame(payload);
@@ -75,14 +78,6 @@ const EditContest = props => {
             isValid = false;
             customToastMessage('Please Enter Minimum Entry Fee', 'error');
         }
-        if (startTime === '') {
-            isValid = false;
-            customToastMessage('Please Select Start Time', 'error');
-        }
-        if (startDate === '') {
-            isValid = false;
-            customToastMessage('Please Select Start Date', 'error');
-        }
         if (entryLimit === '') {
             isValid = false;
             customToastMessage('Please Enter Maximum Entry Limit', 'error');
@@ -91,12 +86,13 @@ const EditContest = props => {
             isValid = false;
             customToastMessage('Please Enter Above Maximum Entry Limit', 'error');
         }
-        if (checkCurrentTime()) {
+        if (userLimit === undefined || userLimit === null || userLimit === "") {
             isValid = false;
-            customToastMessage(
-                'Not possible to create contest in current Time',
-                'error',
-            );
+            customToastMessage('Please Enter User Amount Limit', 'error');
+        }
+        if (symbolLimit === undefined || symbolLimit === null || symbolLimit === "") {
+            isValid = false;
+            customToastMessage('Please Enter Symbol Limit', 'error');
         }
         if (isValid) {
             // const fcm_token = storage.getString('fcm_token');
@@ -104,11 +100,13 @@ const EditContest = props => {
                 game_id: game.id,
                 match_name: contestName,
                 min_fee: parseFloat(entryFee),
-                start_time: startTime.toString(),
+                /* start_time: startTime.toString(),
                 start_date: startDate.toString(),
                 end_time: startTime.toString(),
-                end_date: startDate.toString(),
+                end_date: startDate.toString(), */
                 entry_limit: parseInt(entryLimit),
+                user_limit: parseInt(userLimit),
+                symbol_limit: parseInt(symbolLimit)
             };
             console.log('payload=', payload);
             mutation.mutate(payload);
@@ -152,46 +150,46 @@ const EditContest = props => {
                             onChangeText={setContestName}
                         />
                     </View>
-                    <Text style={styles.text}>Start Date</Text>
-                    <View style={styles.searchContainer}>
-                        <FastImage
-                            source={dateIcon}
-                            style={{
-                                height: 14,
-                                width: 14,
-                                //   marginHorizontal: 2,
-                            }}
-                            resizeMode="contain"
-                        />
-                        <TextInput
-                            placeholder={'Select start date'}
-                            style={styles.input}
-                            value={startDate.toString()}
-                            onFocus={() => {
-                                setDateOpen(true);
-                            }}
-                        />
-                    </View>
-                    <Text style={styles.text}>Start Time</Text>
-                    <View style={styles.searchContainer}>
-                        <FastImage
-                            source={timeIcon}
-                            style={{
-                                height: 14,
-                                width: 14,
-                                //   marginHorizontal: 2,
-                            }}
-                            resizeMode="contain"
-                        />
-                        <TextInput
-                            placeholder={'Select start time'}
-                            style={styles.input}
-                            value={startTime.toString()}
-                            onFocus={() => {
-                                setTimeOpen(true);
-                            }}
-                        />
-                    </View>
+                    {/* <Text style={styles.text}>Start Date</Text>
+          <View style={styles.searchContainer}>
+            <FastImage
+              source={dateIcon}
+              style={{
+                height: 14,
+                width: 14,
+                //   marginHorizontal: 2,
+              }}
+              resizeMode="contain"
+            />
+            <TextInput
+              placeholder={'Select start date'}
+              style={styles.input}
+              value={startDate.toString()}
+              onFocus={() => {
+                setDateOpen(true);
+              }}
+            />
+          </View>
+          <Text style={styles.text}>Start Time</Text>
+          <View style={styles.searchContainer}>
+            <FastImage
+              source={timeIcon}
+              style={{
+                height: 14,
+                width: 14,
+                //   marginHorizontal: 2,
+              }}
+              resizeMode="contain"
+            />
+            <TextInput
+              placeholder={'Select start time'}
+              style={styles.input}
+              value={startTime.toString()}
+              onFocus={() => {
+                setTimeOpen(true);
+              }}
+            />
+          </View> */}
                     <Text style={styles.text}>Entry Fee</Text>
                     <View
                         style={[styles.searchContainer, { justifyContent: 'space-between' }]}>
@@ -201,7 +199,6 @@ const EditContest = props => {
                             keyboardType={'number-pad'}
                             value={entryFee}
                             onChangeText={setEntryFee}
-                            editable={false}
                         />
                         <FastImage
                             source={moneyIcon}
@@ -211,6 +208,26 @@ const EditContest = props => {
                                 marginLeft: -15,
                             }}
                             resizeMode="contain"
+                        />
+                    </View>
+                    <Text style={styles.text}>User Amount Limit</Text>
+                    <View style={styles.searchContainer}>
+                        <TextInput
+                            placeholder={'Enter'}
+                            style={styles.input}
+                            keyboardType={'number-pad'}
+                            value={userLimit}
+                            onChangeText={setUserLimit}
+                        />
+                    </View>
+                    <Text style={styles.text}>Symbol Amount Limit</Text>
+                    <View style={styles.searchContainer}>
+                        <TextInput
+                            placeholder={'Enter'}
+                            style={styles.input}
+                            keyboardType={'number-pad'}
+                            value={symbolLimit}
+                            onChangeText={setSymbolLimit}
                         />
                     </View>
                     <Text style={styles.text}>Entry Limit</Text>
@@ -241,7 +258,7 @@ const EditContest = props => {
             buttonColor={'#DC9C40'}
           />
         </View> */}
-            <DatePicker
+            {/* <DatePicker
                 modal
                 open={dateOpen}
                 date={date}
@@ -271,7 +288,7 @@ const EditContest = props => {
                 }}
                 mode={'time'}
             // minimumDate={date}
-            />
+            /> */}
         </SafeScreen>
     );
 };

@@ -66,6 +66,20 @@ const HomeScreen = props => {
     };
     mutation.mutate(payload);
   }, [option, refreshing]);
+  /* useEffect(() => {
+    const interval = setInterval(() => {
+      const payload = {
+        type:
+          option === 'Completed'
+            ? 'completed'
+            : option === 'Live'
+              ? 'upcoming'
+              : 'live',
+      };
+      mutation.mutate(payload);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []); */
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     // Simulate a network request or some data fetching

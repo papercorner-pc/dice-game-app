@@ -2,7 +2,7 @@ import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from "rea
 import { SafeScreen } from "../../../components/template";
 import { FontFamily } from "../../../theme/fonts";
 import MaterialTab from '../../../components/molecules/MaterialTab';
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import FastImage from "react-native-fast-image";
 import close from '../../../theme/assets/images/closeIcon.png';
 import tick from '../../../theme/assets/images/tick.png';
@@ -37,6 +37,13 @@ const AdminWalletScreen = () => {
         },
         enabled: true,
     });
+    useEffect(() => {
+        const interval = setInterval(() => {
+            refetch()
+            reqRefetch()
+        }, 3000);
+        return () => clearInterval(interval);
+    }, []);
     const mutation = useMutation({
         mutationFn: payload => {
             return agentReqAcceptReject(payload);
@@ -139,21 +146,25 @@ const AdminWalletScreen = () => {
                             />
                         </View>
                         <View>
-                            <Text
-                                style={{
-                                    fontSize: 18,
-                                    fontFamily: FontFamily.poppinsSemiBold,
-                                    color: '#1B1023',
-                                }}>
-                                {item.type === "deposit" ? '+' : "-"}<FastImage
+                            <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                <Text
+                                    style={{
+                                        fontSize: 18,
+                                        fontFamily: FontFamily.poppinsSemiBold,
+                                        color: '#1B1023',
+                                    }}>
+                                    {item.type === "deposit" ? '+' : "-"}{item.amount}
+                                </Text>
+                                <FastImage
                                     source={coinIcon}
                                     style={{
-                                        height: 12,
-                                        width: 10,
+                                        height: 14,
+                                        width: 14,
+                                        marginLeft: 3
                                     }}
                                     resizeMode="contain"
-                                /> {item.amount}
-                            </Text>
+                                />
+                            </View>
                             <Text
                                 style={{
                                     fontSize: 13,
@@ -208,8 +219,8 @@ const AdminWalletScreen = () => {
                     <FastImage
                         source={close}
                         style={{
-                            height: 11,
-                            width: 9,
+                            height: 16,
+                            width: 14,
                         }}
                         resizeMode="contain"
                     />
@@ -220,8 +231,8 @@ const AdminWalletScreen = () => {
                     <FastImage
                         source={tick}
                         style={{
-                            height: 11,
-                            width: 9,
+                            height: 16,
+                            width: 14
                         }}
                         resizeMode="contain"
                     />
@@ -346,8 +357,8 @@ const styles = StyleSheet.create({
         color: '#49284A',
     },
     acceptRejectContainer: {
-        height: 19,
-        width: 19,
+        height: 28,
+        width: 28,
         justifyContent: "center",
         alignItems: "center"
     }

@@ -61,6 +61,20 @@ const AgentHomeScreen = props => {
     };
     mutation.mutate(payload);
   }, [option, refreshing]);
+  /* useEffect(() => {
+    const interval = setInterval(() => {
+      const payload = {
+        type:
+          option === 'Completed'
+            ? 'completed'
+            : option === 'Live'
+              ? 'upcoming'
+              : 'live',
+      };
+      mutation.mutate(payload);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []); */
   const onNAvigateToAgent = () => {
     navigate('DealerList');
   };

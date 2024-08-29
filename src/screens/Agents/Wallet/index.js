@@ -36,7 +36,7 @@ const staticData = [
 const AgentWalletScreen = props => {
     const [option, setOption] = useState(staticData[0].value);
     const [refreshing, setRefreshing] = useState(false);
-    const [walletTotal, setWalletTotal] = useState(0)
+    // const [walletTotal, setWalletTotal] = useState(0)
     const { isSuccess, data, isFetching, isLoading, refetch } = useQuery({
         queryKey: ["wallethistory"],
         queryFn: () => {
@@ -51,14 +51,21 @@ const AgentWalletScreen = props => {
         enabled: true,
     });
     useEffect(() => {
-        if (isSuccess) {
-            const total = data.transactions.reduce(
-                (acc, obj) => acc + parseInt(obj.amount),
-                0,
-            );
-            setWalletTotal(total)
-        }
-    }, [isSuccess])
+        const interval = setInterval(() => {
+            refetch()
+            reqRefetch()
+        }, 3000);
+        return () => clearInterval(interval);
+    }, []);
+    // useEffect(() => {
+    //     if (isSuccess) {
+    //         /* const total = data.transactions.reduce(
+    //             (acc, obj) => acc + parseInt(obj.amount),
+    //             0,
+    //         ); */
+    //         setWalletTotal(parseFloat(data?.balance))
+    //     }
+    // }, [isSuccess])
     const mutation = useMutation({
         mutationFn: payload => {
             return dealerReqAcceptReject(payload);
@@ -161,21 +168,25 @@ const AgentWalletScreen = props => {
                             />
                         </View>
                         <View>
-                            <Text
-                                style={{
-                                    fontSize: 18,
-                                    fontFamily: FontFamily.poppinsSemiBold,
-                                    color: '#1B1023',
-                                }}>
-                                {item.type === "deposit" ? '+' : "-"}<FastImage
+                            <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                <Text
+                                    style={{
+                                        fontSize: 18,
+                                        fontFamily: FontFamily.poppinsSemiBold,
+                                        color: '#1B1023',
+                                    }}>
+                                    {item.type === "deposit" ? '+' : "-"}{item.amount}
+                                </Text>
+                                <FastImage
                                     source={coinIcon}
                                     style={{
-                                        height: 12,
-                                        width: 10,
+                                        height: 14,
+                                        width: 14,
+                                        marginLeft: 3
                                     }}
                                     resizeMode="contain"
-                                /> {item.amount}
-                            </Text>
+                                />
+                            </View>
                             <Text
                                 style={{
                                     fontSize: 13,
@@ -229,8 +240,8 @@ const AgentWalletScreen = props => {
                     <FastImage
                         source={close}
                         style={{
-                            height: 11,
-                            width: 9,
+                            height: 16,
+                            width: 14,
                         }}
                         resizeMode="contain"
                     />
@@ -241,8 +252,8 @@ const AgentWalletScreen = props => {
                     <FastImage
                         source={tick}
                         style={{
-                            height: 11,
-                            width: 9,
+                            height: 16,
+                            width: 14,
                         }}
                         resizeMode="contain"
                     />
@@ -287,7 +298,7 @@ const AgentWalletScreen = props => {
                                 width: 10,
                             }}
                             resizeMode="contain"
-                        /> {walletTotal.toFixed(2)}</Text>
+                        /> {parseFloat(data?.balance).toFixed(2)}</Text>
                         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={styles.messageText}>
                                 Every transaction is verified for your peace of mind
@@ -433,8 +444,8 @@ const styles = StyleSheet.create({
         color: '#49284A',
     },
     acceptRejectContainer: {
-        height: 19,
-        width: 19,
+        height: 28,
+        width: 28,
         justifyContent: "center",
         alignItems: "center"
     }

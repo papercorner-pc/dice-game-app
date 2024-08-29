@@ -7,6 +7,7 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -15,19 +16,24 @@ import ButtonComponent from '../../../components/molecules/Button';
 import LiveStreaming from '../../../components/molecules/LiveStreaming';
 import { SafeScreen } from '../../../components/template';
 import { goBack, navigate } from '../../../navigators/utils';
-import { announceGameResult } from '../../../services/game/game';
+import { addCountDown, announceGameResult, completeCountDown } from '../../../services/game/game';
 import backIcon from '../../../theme/assets/images/back.png';
 import { FontFamily } from '../../../theme/fonts';
 import { resultDiceCards } from '../../../utils/constants';
 import { customToastMessage } from '../../../utils/UtilityHelper';
 import { Collapse, CollapseHeader, CollapseBody } from "accordion-collapse-react-native";
 import { ScrollView } from 'react-native-gesture-handler';
+import { Colors } from '../../../theme/colors';
 
 const AnnounceResult = props => {
   const { gameId } = props.route.params;
   const [resultDice, setResultDice] = useState(resultDiceCards);
   const [resultDiceTwo, setResultDiceTwo] = useState(resultDiceCards);
   const [resultDiceThree, setResultDiceThree] = useState(resultDiceCards);
+  const [countDown, setCountDown] = useState("10");
+  const [showCountDown, setShowCountDown] = useState(true);
+  const [startCount, setStartCount] = useState(false);
+
   const mutation = useMutation({
     mutationFn: payload => {
       return announceGameResult(payload);
@@ -42,6 +48,52 @@ const AnnounceResult = props => {
       customToastMessage(error.error ? error.error : error.message, 'error');
     },
   });
+  const countMutation = useMutation({
+    mutationFn: payload => {
+      return addCountDown(payload);
+    },
+    onSuccess: data => {
+      console.log('---success joinGame', data);
+      setShowCountDown(false)
+      setStartCount(true);
+      setCountDown(parseInt(countDown))
+    },
+    onError: error => {
+      console.log('------ERROR joinGame -----', error);
+      customToastMessage(error.error ? error.error : error.message, 'error');
+    },
+  });
+  const countStatusMutation = useMutation({
+    mutationFn: payload => {
+      return completeCountDown(payload);
+    },
+    onSuccess: data => {
+      console.log('---success joinGame', data);
+      // setShowCountDown(false)
+    },
+    onError: error => {
+      console.log('------ERROR joinGame -----', error);
+      customToastMessage(error.error ? error.error : error.message, 'error');
+    },
+  });
+  useEffect(() => {
+    if (!!countDown && countDown > 0) {
+      // Set an interval to decrease the countdown by 1 every second
+      const timer = setInterval(() => {
+        setCountDown((prevCountdown) => prevCountdown - 1);
+      }, 1000);
+
+      // Clear the interval when the component unmounts or countdown reaches 0
+      return () => clearInterval(timer);
+    } else {
+      // Disable the button when countdown reaches 0
+      const payload = {
+        game_id: gameId,
+        status: 1,
+      };
+      countStatusMutation.mutate(payload);
+    }
+  }, [countDown]);
   const onSelectDice = item => {
     const resultDiceData = [...resultDice];
     const updatedDiceResult = resultDiceData.map?.(itemValue => {
@@ -168,6 +220,13 @@ const AnnounceResult = props => {
   const streamCallBack = () => {
     console.log("streaming startred========");
   }
+  const onPressStart = () => {
+    const payload = {
+      game_id: gameId,
+      countdown: parseInt(countDown),
+    };
+    countMutation.mutate(payload);
+  }
   return (
     <SafeScreen>
       <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
@@ -197,6 +256,34 @@ const AnnounceResult = props => {
       </View>
       <View style={{ flex: 0.3 }}>
         <ScrollView>
+          {
+            showCountDown &&
+            <Collapse>
+              <CollapseHeader>
+                <View style={[styles.titleContainer]}>
+                  <Text style={{
+                    fontSize: 18,
+                    fontFamily: FontFamily.poppinsMedium,
+                    color: 'white',
+                  }}>Start Count Down</Text>
+                </View>
+              </CollapseHeader>
+              <CollapseBody>
+                <View style={{ backgroundColor: "#FFF", flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 10, alignItems: "center" }}>
+                  <TextInput
+                    placeholder={'Enter'}
+                    style={styles.input}
+                    keyboardType={'number-pad'}
+                    value={countDown}
+                    onChangeText={setCountDown}
+                  />
+                  <Pressable style={styles.startContainer} onPress={onPressStart}>
+                    <Text style={styles.startText}>Start</Text>
+                  </Pressable>
+                </View>
+              </CollapseBody>
+            </Collapse>
+          }
           <Collapse>
             <CollapseHeader>
               <View style={styles.titleContainer}>
@@ -378,5 +465,26 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderColor: "#FFF"
+  },
+  input: {
+    height: 50, // Adjust height as needed
+    paddingVertical: 0, // Remove vertical padding
+    paddingHorizontal: 10, // Adjust horizontal padding
+    fontSize: 14, // Adjust font size as needed
+    lineHeight: 18, // Adjust line height as needed
+    width: '80%',
+    color: Colors.black,
+  },
+  startContainer: {
+    height: 30,
+    backgroundColor: "#DC9C40",
+    paddingHorizontal: 20,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  startText: {
+    fontSize: 18,
+    fontFamily: FontFamily.poppinsMedium,
+    color: '#000',
   }
 });

@@ -69,6 +69,8 @@ const AdminHomeScreen = props => {
     },
     onSuccess: data => {
       console.log('---success gameList', data);
+      closeActionSheet();
+      onRefresh()
       customToastMessage("Contest deleted", 'success');
     },
     onError: error => {
@@ -93,7 +95,15 @@ const AdminHomeScreen = props => {
       return () => { };
     }, [option, refreshing]), // Empty array means it will run every time the screen is focused
   );
-
+  /* useEffect(() => {
+    const interval = setInterval(() => {
+      const payload = {
+        type: option === 'History' ? 'completed' : 'upcoming',
+      };
+      mutation.mutate(payload);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []); */
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     // Simulate a network request or some data fetching

@@ -13,8 +13,8 @@ export default function LiveStreaming({ isHost }) {
     <View style={styles.container}>
       {
         <ZegoUIKitPrebuiltLiveStreaming
-          appID={1652041483} // Your App ID
-          appSign='47cb859ebf381471d1cc42516e283e825d3d75ac106ff15cc753f03485cf43c7'
+          appID={165204148} // Your App ID
+          appSign='47cb859ebf381471d1cc516e283e825d3d75ac106ff15cc753f03485cf43c7'
           userID={randomUserID}
           userName={'user_' + randomUserID}
           liveID='dice_dash'

@@ -12,6 +12,7 @@ import { goBack } from "../../../navigators/utils";
 import { getAgentsList } from "../../../services/users/users";
 import { adminWalletRecharge } from "../../../services/wallet/wallet";
 import backIcon from '../../../theme/assets/images/back.png';
+import { Colors } from "../../../theme/colors";
 import { FontFamily } from "../../../theme/fonts";
 import { customToastMessage } from "../../../utils/UtilityHelper";
 
@@ -21,7 +22,7 @@ const AdminWalletPayment = () => {
     const [errorCoin, setErrorCoin] = useState("")
     const [userId, setUserId] = useState("")
     const [isFocus, setIsFocus] = useState(false);
-    const { data, isLoading, refetch } = useQuery({
+    const { data, isSuccess } = useQuery({
         queryKey: ["dealer"],
         queryFn: () => {
             return getAgentsList();
@@ -44,7 +45,7 @@ const AdminWalletPayment = () => {
     });
     const onPressRecharge = () => {
         var isValid = true;
-        if (userId === "") {
+        if (userId === undefined || userId === null || userId === "") {
             isValid = false;
             customToastMessage("Please Select User", 'error');
         }
@@ -84,30 +85,33 @@ const AdminWalletPayment = () => {
                     colors={['#412653', '#2E1B3B']}
                     style={{ padding: 15, justifyContent: "center", borderRadius: 20, }}>
                     <View style={{ marginVertical: 40 }}>
-                        <Dropdown
-                            style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
-                            placeholderStyle={styles.placeholderStyle}
-                            selectedTextStyle={styles.selectedTextStyle}
-                            inputSearchStyle={styles.inputSearchStyle}
-                            iconStyle={styles.iconStyle}
-                            data={data?.data?.agents}
-                            search
-                            maxHeight={300}
-                            labelField="name"
-                            valueField="id"
-                            placeholder={!isFocus ? 'Select Agent' : ''}
-                            searchPlaceholder="Search..."
-                            value={userId}
-                            onFocus={() => setIsFocus(true)}
-                            onBlur={() => setIsFocus(false)}
-                            onChange={item => {
-                                setUserId(item.id);
-                                setIsFocus(false);
-                            }}
-                            renderLeftIcon={() => (
-                                <></>
-                            )}
-                        />
+                        {
+                            isSuccess &&
+                            <Dropdown
+                                style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                                placeholderStyle={styles.placeholderStyle}
+                                selectedTextStyle={styles.selectedTextStyle}
+                                inputSearchStyle={styles.inputSearchStyle}
+                                iconStyle={styles.iconStyle}
+                                data={data?.data?.agents}
+                                search
+                                maxHeight={300}
+                                labelField="name"
+                                valueField="id"
+                                placeholder={!isFocus ? 'Select Agent' : ''}
+                                searchPlaceholder="Search..."
+                                value={userId}
+                                onFocus={() => setIsFocus(true)}
+                                onBlur={() => setIsFocus(false)}
+                                onChange={item => {
+                                    setUserId(item.id);
+                                    setIsFocus(false);
+                                }}
+                                renderLeftIcon={() => (
+                                    <></>
+                                )}
+                            />
+                        }
                         <CustomTextInput
                             placeholderName={"Add Coin"}
                             valueField={coin}
@@ -192,9 +196,11 @@ const styles = StyleSheet.create({
     },
     placeholderStyle: {
         fontSize: 16,
+        color: Colors.black
     },
     selectedTextStyle: {
         fontSize: 16,
+        color: Colors.black
     },
     iconStyle: {
         width: 20,
@@ -203,5 +209,6 @@ const styles = StyleSheet.create({
     inputSearchStyle: {
         height: 40,
         fontSize: 16,
+        color: Colors.black
     },
 })

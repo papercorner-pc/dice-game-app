@@ -38,31 +38,32 @@ function GamePaymentModal({ visible, onClose, selectedCard, game }) {
   const [image, setImage] = useState('');
   const [count, setCount] = useState("1");
   const [amount, setAmount] = useState(game.min_fee);
-  const [walletTotal, setWalletTotal] = useState(0)
+  // const [walletTotal, setWalletTotal] = useState(0)
   const { isSuccess, data } = useQuery({
     queryKey: ["wallethistory"],
     queryFn: () => {
       return walletHistory();
     },
   });
-  useEffect(() => {
-    if (isSuccess) {
-      const total = data.transactions.reduce(
-        (acc, obj) => acc + parseInt(obj.amount),
-        0,
-      );
-      setWalletTotal(total)
-    }else{
-      setWalletTotal(0)
-    }
-  }, [isSuccess])
+  // useEffect(() => {
+  //   if (isSuccess) {
+  //     /* const total = data.transactions.reduce(
+  //       (acc, obj) => acc + parseInt(obj.amount),
+  //       0,
+  //     ); */
+  //     setWalletTotal(parseFloat(data?.balance))
+  //   } else {
+  //     setWalletTotal(0)
+  //   }
+  // }, [isSuccess])
   const mutation = useMutation({
     mutationFn: payload => {
       return joinGame(payload);
     },
     onSuccess: data => {
       console.log('---success joinGame', data);
-      navigate('PaymentScreen', { selectedCard: selectedCard, gameId: game.id });
+      onClose(true);
+      // navigate('PaymentScreen', { selectedCard: selectedCard, gameId: game.id });
     },
     onError: error => {
       console.log('------ERROR joinGame -----', error);
@@ -167,7 +168,7 @@ function GamePaymentModal({ visible, onClose, selectedCard, game }) {
                       width: 10,
                     }}
                     resizeMode="contain"
-                  /> {walletTotal.toFixed(2)}
+                  /> {parseFloat(data?.balance).toFixed(2)}
                 </Text>
               </Text>
               {/* <TouchableOpacity
@@ -198,15 +199,6 @@ function GamePaymentModal({ visible, onClose, selectedCard, game }) {
     //   }}>
     <Modal isVisible={visible} onBackdropPress={onClose}>
       <View style={styles.modalContainer}>
-        {/* <View style={styles.closeIconContainer}>
-            <TouchableOpacity onPress={() => {}}>
-              <FastImage
-                style={styles.closeIcon}
-                resizeMode="contain"
-                source={closeIcon}
-              />
-            </TouchableOpacity>
-          </View> */}
         <View style={styles.container}>
           <View style={styles.balanceContainer}>
             <LinearGradient
@@ -252,7 +244,7 @@ function GamePaymentModal({ visible, onClose, selectedCard, game }) {
                   placeholder="Enter Amount"
                   value={amount}
                   onChangeText={setAmount}
-                  style={{ borderBottomWidth: 1, margin: 5, alignItems: "center", justifyContent: "center", color: Colors.black }}
+                  style={styles.input}
                   keyboardType="numeric"
                 />
                 {/* <OTPTextView
@@ -294,6 +286,15 @@ function GamePaymentModal({ visible, onClose, selectedCard, game }) {
             </LinearGradient>
           </View>
           <View style={{ flex: 1 }}>
+            <View style={styles.closeIconContainer}>
+              <TouchableOpacity onPress={onClose}>
+                <FastImage
+                  style={styles.closeIcon}
+                  resizeMode="contain"
+                  source={closeIcon}
+                />
+              </TouchableOpacity>
+            </View>
             <View style={styles.paymentOptionContainer}>
               <Text
                 style={{
@@ -320,6 +321,7 @@ function GamePaymentModal({ visible, onClose, selectedCard, game }) {
           </View>
         </View>
       </View>
+      <View style={{}}></View>
     </Modal>
     // </View>
   );
@@ -371,7 +373,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   enterContainer: {
-    height: 45,
+    // height: 65,
     borderRadius: 8,
     backgroundColor: '#F8EAF9',
     justifyContent: 'center',
@@ -421,7 +423,8 @@ const styles = StyleSheet.create({
   closeIconContainer: {
     justifyContent: 'center',
     alignItems: 'flex-end',
-    paddingHorizontal: 15,
+    marginBottom: 10
+    // paddingHorizontal: 15,
   },
   closeIcon: {
     width: 26,
@@ -460,4 +463,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 5
   },
+  input: {
+    margin: 5,
+    alignItems: "center",
+    justifyContent: "center",
+    color: Colors.black,
+    fontSize: 28,
+    fontFamily: FontFamily.poppinsBold,
+    textAlign: "center"
+  }
 });

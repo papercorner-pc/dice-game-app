@@ -201,7 +201,7 @@ const CreateAccount = (props) => {
                 text={'SignUp'}
                 onPress={onPressCreateAccount}
               />
-              <View
+              {/* <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'center',
@@ -228,7 +228,7 @@ const CreateAccount = (props) => {
                     Login
                   </Text>
                 </TouchableOpacity>
-              </View>
+              </View> */}
             </View>
           </View>
         </View>

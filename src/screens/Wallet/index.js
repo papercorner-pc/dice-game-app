@@ -31,7 +31,7 @@ import ButtonComponent from '../../components/molecules/Button';
 
 const WalletScreen = props => {
   const [refreshing, setRefreshing] = useState(false);
-  const [walletTotal, setWalletTotal] = useState(0)
+  // const [walletTotal, setWalletTotal] = useState(0)
   const [reqCoin, setReqCoin] = useState("")
   const [isModalEnable, setIsModalEnable] = useState(false)
   const [errorReqCoin, setErrorReqCoin] = useState("")
@@ -41,15 +41,15 @@ const WalletScreen = props => {
       return walletHistory();
     },
   });
-  useEffect(() => {
-    if (isSuccess) {
-      const total = data.transactions.reduce(
-        (acc, obj) => acc + parseInt(obj.amount),
-        0,
-      );
-      setWalletTotal(total)
-    }
-  }, [isSuccess])
+  // useEffect(() => {
+  //   if (isSuccess) {
+  //     /* const total = data.transactions.reduce(
+  //       (acc, obj) => acc + parseInt(obj.amount),
+  //       0,
+  //     ); */
+  //     setWalletTotal(parseFloat(data?.balance))
+  //   }
+  // }, [isSuccess])
   const _keyExtractor = (item, index) => index.toString();
   const formatDate = (isoString) => {
     // Create a Date object from the ISO string
@@ -173,21 +173,25 @@ const WalletScreen = props => {
               />
             </View>
             <View>
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontFamily: FontFamily.poppinsSemiBold,
-                  color: '#1B1023',
-                }}>
-                {item.type === "deposit" ? '+' : "-"}<FastImage
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontFamily: FontFamily.poppinsSemiBold,
+                    color: '#1B1023',
+                  }}>
+                  {item.type === "deposit" ? '+' : "-"}{item.amount}
+                </Text>
+                <FastImage
                   source={coinIcon}
                   style={{
-                    height: 12,
-                    width: 10,
+                    height: 14,
+                    width: 14,
+                    marginLeft: 3
                   }}
                   resizeMode="contain"
-                /> {item.amount}
-              </Text>
+                />
+              </View>
               <Text
                 style={{
                   fontSize: 13,
@@ -262,7 +266,7 @@ const WalletScreen = props => {
                 width: 10,
               }}
               resizeMode="contain"
-            /> {walletTotal.toFixed(2)}</Text>
+            /> {parseFloat(data?.balance).toFixed(2)}</Text>
             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
               <Text style={styles.messageText}>
                 Every transaction is verified for your peace of mind
