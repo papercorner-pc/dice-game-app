@@ -26,7 +26,7 @@ import MaterialTab from '../../../components/molecules/MaterialTab';
 import close from '../../../theme/assets/images/closeIcon.png';
 import tick from '../../../theme/assets/images/tick.png';
 import coinIcon from '../../../theme/assets/images/star.png';
-import { dealerReqAcceptReject, getWalletReq } from '../../../services/wallet/wallet';
+import { dealerReqAcceptReject, getUserWalletReq, getWalletReq, walletReqDelete, walletReqEdit } from '../../../services/wallet/wallet';
 import { customToastMessage } from '../../../utils/UtilityHelper';
 
 const staticData = [
@@ -57,6 +57,31 @@ const AgentWalletScreen = props => {
         }, 3000);
         return () => clearInterval(interval);
     }, []);
+
+    const { isSuccess: userSuccess, data: userData, refetch: userRefetch } = useQuery({
+        queryKey: ["walletreq"],
+        queryFn: () => {
+            return getUserWalletReq();
+        },
+    });
+
+    const deleteMutation = useMutation({
+        mutationFn: payload => {
+            return walletReqDelete(payload);
+        },
+        onSuccess: data => {
+            userRefetch()
+        },
+        onError: error => {
+            console.log('------ERROR game status -----', error);
+            customToastMessage(error.error ? error.error : error.message, 'error');
+        },
+    });
+
+    const onPressDeleteReq = (id) => {
+        deleteMutation.mutate(id)
+    }
+
     // useEffect(() => {
     //     if (isSuccess) {
     //         /* const total = data.transactions.reduce(
@@ -261,6 +286,41 @@ const AgentWalletScreen = props => {
             </View>
         </View>
     )
+    const UserWalletReqItem = ({ item }) => (
+        <View style={styles.userContainer}>
+            <View>
+                <Text style={styles.userNameText}>{item?.request_user?.name}</Text>
+                <Text style={styles.dateTime}>{dateFormat(item?.created_at)}</Text>
+            </View>
+            <Text style={styles.coinText}>{parseInt(item?.amount)} Coins</Text>
+            <View style={{ flexDirection: "row" }}>
+                <Pressable style={[styles.acceptRejectContainer, { backgroundColor: "#C23421", marginHorizontal: 18 }]}
+                    onPress={() => { onPressDeleteReq(item.id) }}
+                >
+                    <FastImage
+                        source={close}
+                        style={{
+                            height: 16,
+                            width: 14,
+                        }}
+                        resizeMode="contain"
+                    />
+                </Pressable>
+                <Pressable style={[styles.acceptRejectContainer, { backgroundColor: "#21C24E" }]}
+                    onPress={() => { navigate('AgentWalletPayment', { id: item.id, amount: item?.amount }) }}
+                >
+                    <FastImage
+                        source={tick}
+                        style={{
+                            height: 16,
+                            width: 14,
+                        }}
+                        resizeMode="contain"
+                    />
+                </Pressable>
+            </View>
+        </View>
+    )
     return (
         <SafeScreen>
             <View style={styles.container}>
@@ -312,7 +372,7 @@ const AgentWalletScreen = props => {
                     selectedOption={option}
                 />
                 {
-                    option === "Requests" ? <>
+                    option === "Requests" ?
                         <FlatList
                             data={!!reqData ? reqData.data : []}
                             renderItem={WalletReqItem}
@@ -323,8 +383,7 @@ const AgentWalletScreen = props => {
                             ListEmptyComponent={() => (
                                 <EmptyComponent text={'No Data Founds'} image={game} />
                             )}
-                        />
-                    </> :
+                        /> :
                         <FlatList
                             data={!!data ? data.transactions : []}
                             renderItem={historyComponents}

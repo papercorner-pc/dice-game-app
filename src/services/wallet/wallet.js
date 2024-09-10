@@ -70,3 +70,30 @@ export const getWalletReq = async () => {
     const response = await instance.get(`wallet-requests`).json();
     return response;
 };
+
+export const getUserWalletReq = async () => {
+    const response = await instance.get(`user/wallet-req`).json();
+    return response;
+};
+
+export const walletReqEdit = async (id, payload) => {
+    try {
+        const response = await instance
+            .put(`user/wallet-request/${id}/edit`, { json: payload })
+            .json();
+        return response;
+    } catch (error) {
+        throw await error.response.json();
+    }
+};
+
+export const walletReqDelete = async (id) => {
+    try {
+        const response = await instance
+            .delete(`user/wallet-request/${id}/delete`)
+            .json();
+        return response;
+    } catch (error) {
+        throw await error.response.json();
+    }
+};

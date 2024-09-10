@@ -10,7 +10,7 @@ import CustomTextInput from "../../../components/molecules/TextInput";
 import { SafeScreen } from "../../../components/template"
 import { goBack } from "../../../navigators/utils";
 import { getAgentsList } from "../../../services/users/users";
-import { agentCoinReq, agentWalletRecharge, dealerCoinReq } from "../../../services/wallet/wallet";
+import { agentCoinReq, agentWalletRecharge, dealerCoinReq, walletReqEdit } from "../../../services/wallet/wallet";
 import backIcon from '../../../theme/assets/images/back.png';
 import { Colors } from "../../../theme/colors";
 import { FontFamily } from "../../../theme/fonts";
@@ -20,9 +20,10 @@ const staticData = [
     { value: "Admin" },
     { value: "Dealer" },
 ]
-const AgentWalletPayment = () => {
+const AgentWalletPayment = (props) => {
+    const { id, amount } = props.route.params;
     const [option, setOption] = useState(staticData[0].value);
-    const [coin, setCoin] = useState("")
+    const [coin, setCoin] = useState(!!id ? amount : "")
     const [errorCoin, setErrorCoin] = useState("")
     const [reqCoin, setReqCoin] = useState("")
     const [errorReqCoin, setErrorReqCoin] = useState("")
@@ -50,6 +51,20 @@ const AgentWalletPayment = () => {
             customToastMessage(error.error ? error.error : error.message, 'error');
         },
     });
+    const editMutation = useMutation({
+        mutationFn: payload => {
+            return walletReqEdit(payload.id, payload.data);
+        },
+        onSuccess: data => {
+            setCoin("")
+            goBack()
+            // userRefetch()
+        },
+        onError: error => {
+            console.log('------ERROR game status -----', error);
+            customToastMessage(error.error ? error.error : error.message, 'error');
+        },
+    });
     const onPressRecharge = () => {
         var isValid = true;
         console.log("userId", userId);
@@ -67,6 +82,19 @@ const AgentWalletPayment = () => {
                 amount: coin
             }
             mutation.mutate(payload)
+        }
+    }
+    const onPressEditReq = () => {
+        var isValid = true;
+        if (coin === "") {
+            isValid = false;
+            setErrorCoin("Enter valid Amount")
+        }
+        if (isValid) {
+            const data = {
+                amount: coin
+            }
+            editMutation.mutate({ id: id, data: data });
         }
     }
     const reqMutation = useMutation({
@@ -142,8 +170,8 @@ const AgentWalletPayment = () => {
                                     <ButtonComponent
                                         wrapperStyles={styles.checkoutContainer}
                                         textStyles={styles.buttonText}
-                                        text={'Request'}
-                                        onPress={onPressReq}
+                                        text={!!id ? 'Edit Request' : 'Request'}
+                                        onPress={!!id ? onPressEditReq : onPressReq}
                                         buttonColor={'#DC9C40'}
                                     />
                                 </View>

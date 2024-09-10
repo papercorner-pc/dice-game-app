@@ -23,7 +23,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { walletHistory } from '../../services/game/game';
 import EmptyComponent from '../../components/molecules/EmptyComponet';
 import { useCallback, useEffect, useState } from 'react';
-import { dealerCoinReq } from '../../services/wallet/wallet';
+import { dealerCoinReq, getUserWalletReq, walletReqDelete, walletReqEdit } from '../../services/wallet/wallet';
 import { customToastMessage } from '../../utils/UtilityHelper';
 import Modal from 'react-native-modal';
 import CustomTextInput from '../../components/molecules/TextInput';
@@ -41,6 +41,47 @@ const WalletScreen = props => {
       return walletHistory();
     },
   });
+  const { isSuccess: userSuccess, data: userData, refetch: userRefetch } = useQuery({
+    queryKey: ["walletreq"],
+    queryFn: () => {
+      return getUserWalletReq();
+    },
+  });
+  const editMutation = useMutation({
+    mutationFn: payload => {
+      return walletReqEdit(payload.id, payload.data);
+    },
+    onSuccess: data => {
+      userRefetch()
+    },
+    onError: error => {
+      console.log('------ERROR game status -----', error);
+      customToastMessage(error.error ? error.error : error.message, 'error');
+    },
+  });
+  const deleteMutation = useMutation({
+    mutationFn: payload => {
+      return walletReqDelete(payload);
+    },
+    onSuccess: data => {
+      userRefetch()
+    },
+    onError: error => {
+      console.log('------ERROR game status -----', error);
+      customToastMessage(error.error ? error.error : error.message, 'error');
+    },
+  });
+
+  const onPressEditReq = (id) => {
+    const data = {
+      amount: "200"
+    }
+    editMutation.mutate({ id: id, data: data });
+  }
+
+  const onPressDeleteReq = (id) => {
+    deleteMutation.mutate(id)
+  }
   // useEffect(() => {
   //   if (isSuccess) {
   //     /* const total = data.transactions.reduce(

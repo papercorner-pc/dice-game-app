@@ -332,6 +332,8 @@ const GameJoin = props => {
   useEffect(() => {
     if (!!countVal) {
       setCountdown(countVal)
+    }else{
+      setCountdown(null)
     }
   }, [countVal])
   useEffect(() => {
