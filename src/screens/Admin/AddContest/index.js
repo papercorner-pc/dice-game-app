@@ -18,7 +18,7 @@ import moneyIcon from '../../../theme/assets/images/money.png';
 import FastImage from 'react-native-fast-image';
 import { TextInput } from 'react-native-gesture-handler';
 import ButtonComponent from '../../../components/molecules/Button';
-import { createGame, getPreviousGame } from '../../../services/game/game';
+import { createGame, gamePublishStatus, getPreviousGame } from '../../../services/game/game';
 import { useMutation } from '@tanstack/react-query';
 import { customToastMessage } from '../../../utils/UtilityHelper';
 import { useEffect, useState } from 'react';
@@ -36,14 +36,15 @@ const AddContest = props => {
   const [entryLimit, setEntryLimit] = useState('');
   const [userLimit, setUserLimit] = useState('');
   const [symbolLimit, setSymbolLimit] = useState('');
+  const [gameId, setGameId] = useState("")
   const mutation = useMutation({
     mutationFn: payload => {
       return createGame(payload);
     },
     onSuccess: data => {
-      console.log('---success createGame', data);
+      console.log('---success createGame', data?.game?.id);
       customToastMessage('Contest created', 'success');
-      navigateToAnnounce(data?.gameId)
+      navigateToAnnounce(data?.game?.id)
     },
     onError: error => {
       console.log('------ERROR createGame -----', error);
@@ -55,7 +56,7 @@ const AddContest = props => {
       return getPreviousGame(payload);
     },
     onSuccess: data => {
-      setContestName(data?.data?.match_name);
+      setContestName(contestNameSetting(data?.today_games_count));
       setEntryFee(data?.data?.min_fee.toString());
       setEntryLimit(data?.data?.entry_limit.toString());
       setUserLimit(data?.data?.user_amount_limit.toString());
@@ -69,6 +70,12 @@ const AddContest = props => {
   useEffect(() => {
     previousMutation.mutate()
   }, []);
+  const contestNameSetting = (count) => {
+    const formatedDate = moment(date).format('DD/MM/YYYY');
+    const nextVal = count + 1;
+    const data = formatedDate + "-#" + nextVal
+    return data;
+  }
   const checkCurrentTime = () => {
     const [day, month, year] = startDate.split('/').map(Number);
     const [hours, minutes, seconds] = startTime.split(':').map(Number);
@@ -139,8 +146,25 @@ const AddContest = props => {
       mutation.mutate(payload);
     }
   };
+  const statusMutation = useMutation({
+    mutationFn: payload => {
+      return gamePublishStatus(payload);
+    },
+    onSuccess: data => {
+      console.log('------success getJoinedUserList -----', data);
+      navigate('AnnounceResult', { gameId: gameId, fromDirect: true });
+    },
+    onError: error => {
+      console.log('------ERROR getJoinedUserList -----', error);
+    },
+  });
   const navigateToAnnounce = (id) => {
-    navigate('AnnounceResult', { gameId: id, fromDirect: true });
+    setGameId(id)
+    const payload = {
+      game_id: id,
+      is_publishable: true
+    };
+    statusMutation.mutate(payload);
   };
   return (
     <SafeScreen>

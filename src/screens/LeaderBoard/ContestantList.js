@@ -68,17 +68,6 @@ const ContestantList = props => {
       customToastMessage(error.error ? error.error : error.message, 'error');
     },
   });
-  const statusMutation = useMutation({
-    mutationFn: payload => {
-      return gamePublishStatus(payload);
-    },
-    onSuccess: data => {
-      console.log('------success getJoinedUserList -----', error);
-    },
-    onError: error => {
-      console.log('------ERROR getJoinedUserList -----', error);
-    },
-  });
   useEffect(() => {
     const payload = {
       game_id: gameId,
@@ -108,8 +97,24 @@ const ContestantList = props => {
   const onPressAnnounce = () => {
     setModalView(!isModalView);
   };
-  const navigateToAnnounce = () => {
-    navigate('AnnounceResult', { gameId: gameId, fromDirect: false });
+  const statusMutation = useMutation({
+    mutationFn: payload => {
+      return gamePublishStatus(payload);
+    },
+    onSuccess: data => {
+      console.log('------success getJoinedUserList -----', data);
+      navigate('AnnounceResult', { gameId: gameId, fromDirect: false });
+    },
+    onError: error => {
+      console.log('------ERROR getJoinedUserList -----', error);
+    },
+  });
+  const navigateToAnnounce = (id) => {
+    const payload = {
+      game_id: gameId,
+      is_publishable: true
+    };
+    statusMutation.mutate(payload);
   };
   const setSelectedCardImage = (selectedCard) => {
     switch (selectedCard) {

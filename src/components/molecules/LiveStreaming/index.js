@@ -6,7 +6,7 @@ import banner from '../../../theme/assets/images/banner.png';
 import { useRef, useState } from 'react';
 import FastImage from 'react-native-fast-image';
 
-export default function LiveStreaming({ isHost }) {
+export default function LiveStreaming({ isHost, streamEnd = () => { } }) {
   const prebuiltRef = useRef();
 
   const randomUserID = String(Math.floor(Math.random() * 100000))
@@ -27,6 +27,7 @@ export default function LiveStreaming({ isHost }) {
             onStartLiveButtonPressed: () => { console.log('########HostPage onStartLiveButtonPressed'); },
             onLiveStreamingEnded: () => {
               console.log('########HostPage onLiveStreamingEnded');
+              streamEnd();
             },
             turnOnCameraWhenJoining: isHost ? true : false,
             useFrontFacingCamera: false,

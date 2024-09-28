@@ -40,18 +40,21 @@ const AnnounceResult = props => {
     },
     onSuccess: data => {
       console.log('---success joinGame', data);
-      if (fromDirect) {
-        goBack()
-      } else {
-        const { pop } = props.navigation;
-        pop(2);
-      }
+      customToastMessage(data?.message, 'success');
     },
     onError: error => {
       console.log('------ERROR joinGame -----', error);
       customToastMessage(error.error ? error.error : error.message, 'error');
     },
   });
+  const redirectFn = () => {
+    if (fromDirect) {
+      goBack()
+    } else {
+      const { pop } = props.navigation;
+      pop(2);
+    }
+  }
   const countMutation = useMutation({
     mutationFn: payload => {
       return addCountDown(payload);
@@ -91,13 +94,13 @@ const AnnounceResult = props => {
       console.log('------ERROR getJoinedUserList -----', error);
     },
   });
-  useEffect(() => {
+  /* useEffect(() => {
     const payload = {
       game_id: gameId,
       is_publishable: true
     };
     statusMutation.mutate(payload);
-  }, [])
+  }, []) */
   useEffect(() => {
     if (countDown !== null && startCount) {
       if (countDown > 0) {
@@ -268,7 +271,7 @@ const AnnounceResult = props => {
   }
   const renderLiveStreaming = useCallback(() => {
     return (
-      <LiveStreaming isHost={true} />
+      <LiveStreaming isHost={true} streamEnd={redirectFn} />
     );
   }, []);
   return (
