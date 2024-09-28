@@ -22,6 +22,7 @@ const AdminWalletPayment = () => {
     const [errorCoin, setErrorCoin] = useState("")
     const [userId, setUserId] = useState("")
     const [isFocus, setIsFocus] = useState(false);
+    const [type, setType] = useState("recharge");
     const { data, isSuccess } = useQuery({
         queryKey: ["dealer"],
         queryFn: () => {
@@ -56,7 +57,8 @@ const AdminWalletPayment = () => {
         if (isValid) {
             const payload = {
                 user_id: userId,
-                amount: coin
+                amount: coin,
+                type: type
             }
             mutation.mutate(payload)
         }
@@ -113,7 +115,7 @@ const AdminWalletPayment = () => {
                             />
                         }
                         <CustomTextInput
-                            placeholderName={"Add Coin"}
+                            placeholderName={"Enter Coin"}
                             valueField={coin}
                             onChangeTextValue={(text) => {
                                 setCoin(text)
@@ -124,10 +126,31 @@ const AdminWalletPayment = () => {
                             keyboardType={'number-pad'}
                             errorField={errorCoin}
                         />
+                        <View style={styles.radioGroup}>
+                            <TouchableOpacity onPress={() => setType('recharge')} style={[styles.radioOption, type === 'recharge' ? styles.radioSelectedBorder : styles.radioUnSelectedBorder]}>
+                                <View style={type === 'recharge' ? styles.radioButtonSelected : styles.radioButtonUnselected}>
+                                    {
+                                        type === 'recharge' &&
+                                        <View style={styles.radioSelectedContainer} />
+                                    }
+                                </View>
+                                <Text style={type === 'recharge' ? styles.radioButtonSelectedText : styles.radioButtonUnselectedText}>Recharge</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity onPress={() => setType('redeem')} style={[styles.radioOption, type === 'redeem' ? styles.radioSelectedBorder : styles.radioUnSelectedBorder]}>
+                                <View style={type === 'redeem' ? styles.radioButtonSelected : styles.radioButtonUnselected}>
+                                    {
+                                        type === 'redeem' &&
+                                        <View style={styles.radioSelectedContainer} />
+                                    }
+                                </View>
+                                <Text style={type === 'redeem' ? styles.radioButtonSelectedText : styles.radioButtonUnselectedText}>Redeem</Text>
+                            </TouchableOpacity>
+                        </View>
                         <ButtonComponent
                             wrapperStyles={styles.checkoutContainer}
                             textStyles={styles.buttonText}
-                            text={'Recharge'}
+                            text={type}
                             onPress={onPressRecharge}
                             buttonColor={'#DC9C40'}
                         />
@@ -172,6 +195,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontFamily: FontFamily.poppinsMedium,
         color: '#070A0D',
+        textTransform: "capitalize"
     },
     dropdown: {
         height: 50,
@@ -211,4 +235,72 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: Colors.black
     },
+    radioGroup: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 10,
+    },
+    radioOption: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: "center",
+        marginRight: 20,
+        // width: 100,
+        height: 30,
+        // backgroundColor: Colors.orange,
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        paddingVertical: 5
+    },
+    radioButtonUnselected: {
+        height: 20,
+        width: 20,
+        borderRadius: 100,
+        borderWidth: 2,
+        borderColor: "#DC9C40",
+        marginRight: 10,
+    },
+    radioButtonSelected: {
+        height: 20,
+        width: 20,
+        borderRadius: 100,
+        borderWidth: 2,
+        borderColor: Colors.white,
+        marginRight: 10,
+        backgroundColor: Colors.white,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    radioButtonUnselectedText: {
+        fontSize: 14,
+        fontFamily: FontFamily.montserratRegular,
+        lineHeight: 15.85,
+        color: "#DC9C40",
+        textTransform: "capitalize"
+    },
+    radioButtonSelectedText: {
+        fontSize: 14,
+        fontFamily: FontFamily.montserratRegular,
+        lineHeight: 15.85,
+        color: Colors.white,
+        textTransform: "capitalize"
+    },
+    radioSelectedContainer: {
+        height: 10,
+        width: 10,
+        borderRadius: 100,
+        borderWidth: 1,
+        borderColor: "#DC9C40",
+        backgroundColor: "#DC9C40",
+    },
+    radioSelectedBorder: {
+        backgroundColor: "#DC9C40",
+        borderWidth: 1,
+        borderColor: "#DC9C40",
+    },
+    radioUnSelectedBorder: {
+        backgroundColor: Colors.white,
+        borderWidth: 1,
+        borderColor: "#DC9C40"
+    }
 })

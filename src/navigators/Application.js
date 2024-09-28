@@ -42,6 +42,7 @@ import DealerList from '../screens/Agents/DealersList';
 import AgentWalletScreen from '../screens/Agents/Wallet';
 import AgentWalletPayment from '../screens/Agents/Wallet/WalletPayment';
 import AdminWalletPayment from '../screens/Admin/Wallet/WalletPayment';
+import AdminReport from '../screens/Admin/Report';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -97,6 +98,7 @@ function AppStack() {
       <Stack.Screen name="DealerList" component={DealerList} />
       <Stack.Screen name="AgentWalletPayment" component={AgentWalletPayment} />
       <Stack.Screen name="AdminWalletPayment" component={AdminWalletPayment} />
+      <Stack.Screen name="AdminReport" component={AdminReport} />
     </Stack.Navigator>
   );
 }

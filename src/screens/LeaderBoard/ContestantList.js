@@ -73,8 +73,7 @@ const ContestantList = props => {
       return gamePublishStatus(payload);
     },
     onSuccess: data => {
-      setModalView(false);
-      navigate('AnnounceResult', { gameId: gameId });
+      console.log('------success getJoinedUserList -----', error);
     },
     onError: error => {
       console.log('------ERROR getJoinedUserList -----', error);
@@ -110,11 +109,7 @@ const ContestantList = props => {
     setModalView(!isModalView);
   };
   const navigateToAnnounce = () => {
-    const payload = {
-      game_id: gameId,
-      is_publishable: true
-    };
-    statusMutation.mutate(payload);
+    navigate('AnnounceResult', { gameId: gameId, fromDirect: false });
   };
   const setSelectedCardImage = (selectedCard) => {
     switch (selectedCard) {

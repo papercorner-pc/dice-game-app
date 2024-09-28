@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import { SafeScreen } from '../../../components/template';
-import { goBack } from '../../../navigators/utils';
+import { goBack, navigate } from '../../../navigators/utils';
 import backIcon from '../../../theme/assets/images/back.png';
 import { Colors } from '../../../theme/colors';
 import { FontFamily } from '../../../theme/fonts';
@@ -18,10 +18,10 @@ import moneyIcon from '../../../theme/assets/images/money.png';
 import FastImage from 'react-native-fast-image';
 import { TextInput } from 'react-native-gesture-handler';
 import ButtonComponent from '../../../components/molecules/Button';
-import { createGame } from '../../../services/game/game';
+import { createGame, getPreviousGame } from '../../../services/game/game';
 import { useMutation } from '@tanstack/react-query';
 import { customToastMessage } from '../../../utils/UtilityHelper';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import moment from 'moment';
 import DatePicker from 'react-native-date-picker';
 
@@ -43,13 +43,32 @@ const AddContest = props => {
     onSuccess: data => {
       console.log('---success createGame', data);
       customToastMessage('Contest created', 'success');
-      goBack();
+      navigateToAnnounce(data?.gameId)
     },
     onError: error => {
       console.log('------ERROR createGame -----', error);
       customToastMessage(error.error ? error.error : error.message, 'error');
     },
   });
+  const previousMutation = useMutation({
+    mutationFn: payload => {
+      return getPreviousGame(payload);
+    },
+    onSuccess: data => {
+      setContestName(data?.data?.match_name);
+      setEntryFee(data?.data?.min_fee.toString());
+      setEntryLimit(data?.data?.entry_limit.toString());
+      setUserLimit(data?.data?.user_amount_limit.toString());
+      setSymbolLimit(data?.data?.symbol_limit.toString());
+      console.log('---success previousMutation', data);
+    },
+    onError: error => {
+      console.log('------ERROR previousMutation -----', error);
+    },
+  });
+  useEffect(() => {
+    previousMutation.mutate()
+  }, []);
   const checkCurrentTime = () => {
     const [day, month, year] = startDate.split('/').map(Number);
     const [hours, minutes, seconds] = startTime.split(':').map(Number);
@@ -119,6 +138,9 @@ const AddContest = props => {
       console.log('payload=', payload);
       mutation.mutate(payload);
     }
+  };
+  const navigateToAnnounce = (id) => {
+    navigate('AnnounceResult', { gameId: id, fromDirect: true });
   };
   return (
     <SafeScreen>

@@ -3,34 +3,36 @@ import ZegoUIKitPrebuiltLiveStreaming, { HOST_DEFAULT_CONFIG, AUDIENCE_DEFAULT_C
   from '@zegocloud/zego-uikit-prebuilt-live-streaming-rn'
 import { Colors } from '../../../theme/colors';
 import banner from '../../../theme/assets/images/banner.png';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import FastImage from 'react-native-fast-image';
 
 export default function LiveStreaming({ isHost }) {
+  const prebuiltRef = useRef();
 
   const randomUserID = String(Math.floor(Math.random() * 100000))
   return (
     <View style={styles.container}>
       {
         <ZegoUIKitPrebuiltLiveStreaming
-          appID={165204148} // Your App ID
-          appSign='47cb859ebf381471d1cc516e283e825d3d75ac106ff15cc753f03485cf43c7'
+          ref={prebuiltRef}
+          appID={2147675132} // Your App ID
+          appSign='3d9f1baee59519de5a0ec4f4ac55128ad47a9be67a7cebf9f514c7cc961704be'
           userID={randomUserID}
-          userName={'user_' + randomUserID}
+          userName={isHost ? 'admin' : 'user_' + randomUserID}
           liveID='dice_dash'
           frontCamera={false} // Use the back camera
           layout='single'
           config={{
             ...(isHost == true ? HOST_DEFAULT_CONFIG : AUDIENCE_DEFAULT_CONFIG),
-            onLeaveLiveStreaming: () => { },
+            onStartLiveButtonPressed: () => { console.log('########HostPage onStartLiveButtonPressed'); },
+            onLiveStreamingEnded: () => {
+              console.log('########HostPage onLiveStreamingEnded');
+            },
             turnOnCameraWhenJoining: isHost ? true : false,
             useFrontFacingCamera: false,
-            onStartLiveButtonPressed: () => {
-              setIsStreamStart(true)
-            },
-            topMenuBarConfig: {
+            /* topMenuBarConfig: {
               buttons: [ZegoMenuBarButtonName.leaveButton, ZegoMenuBarButtonName.toggleMicrophoneButton, ZegoMenuBarButtonName.switchCameraButton],
-            },
+            }, */
           }}
         />
       }

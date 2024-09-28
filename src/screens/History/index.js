@@ -2,6 +2,7 @@ import { SafeScreen } from '../../components/template';
 import {
   FlatList,
   ImageBackground,
+  Pressable,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -18,6 +19,7 @@ import robo from '../../theme/assets/images/robo-1.png';
 import game from '../../theme/assets/images/game.png';
 import coinIcon from '../../theme/assets/images/star.png';
 import filterIcon from '../../theme/assets/images/filter.png';
+import group from '../../theme/assets/images/group.png';
 import CompletedList from '../../components/molecules/Game/CompletedList';
 import { useMutation } from '@tanstack/react-query';
 import { gameList } from '../../services/game/game';
@@ -27,9 +29,11 @@ import { useCallback, useState } from 'react';
 import AdminGameList from '../../components/molecules/Game/AdminGameList';
 import EmptyComponent from '../../components/molecules/EmptyComponet';
 import { storage } from '../../App';
+import { navigate } from '../../navigators/utils';
 
 const HistoryScreen = props => {
   const isAdmin = storage.getBoolean('is_admin');
+  const userType = storage.getString('user_type');
   const [gameListData, setGameListData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [userGameHistory, setUserGameHistory] = useState(null);
@@ -65,6 +69,9 @@ const HistoryScreen = props => {
       setRefreshing(false);
     }, 1000);
   }, []);
+  const onNavigateToReport = () => {
+    navigate("AdminReport")
+  }
   return (
     <SafeScreen>
       <View style={styles.topContainer}>
@@ -163,6 +170,23 @@ const HistoryScreen = props => {
                 alignItems: 'center',
                 paddingHorizontal: 20,
               }}>
+              {
+                userType !== "dealer" &&
+                <Pressable
+                  style={[styles.contestContainer, { marginTop: 20 }]}
+                  onPress={onNavigateToReport}>
+                  <FastImage
+                    source={group}
+                    style={{
+                      height: 16,
+                      width: 14,
+                      marginRight: 4,
+                    }}
+                    resizeMode="contain"
+                  />
+                  <Text style={[styles.addText, { color: "#a0549c" }]}>Report</Text>
+                </Pressable>
+              }
               <FastImage
                 source={robo}
                 style={{
@@ -247,5 +271,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: FontFamily.poppinsSemiBold,
     color: '#070A0D',
+  },
+  contestContainer: {
+    backgroundColor: 'white',
+    width: 132,
+    height: 33,
+    borderWidth: 1,
+    borderColor: '#FBFBFB',
+    borderRadius: 8,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addText: {
+    fontSize: 16,
+    fontFamily: FontFamily.poppinsMedium,
+    color: '#DC9C40',
   },
 });

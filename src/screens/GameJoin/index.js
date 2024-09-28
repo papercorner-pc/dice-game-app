@@ -35,6 +35,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import ButtonComponent from '../../components/molecules/Button';
 import ViewLiveStream from '../../components/molecules/LiveStreaming';
 import coinIcon from '../../theme/assets/images/coins.png';
+import AnimationValue from '../../components/molecules/Animation/AnimationValue';
 
 const GameJoin = props => {
   const { game } = props.route.params;
@@ -57,6 +58,12 @@ const GameJoin = props => {
   const [countdown, setCountdown] = useState(null);
   const [disableJoin, setDisableJoin] = useState(false);
   const [countVal, setCountdownVal] = useState(null);
+  const [oneAnimationCount, setOneAnimationCount] = useState(null);
+  const [twoAnimationCount, setTwoAnimationCount] = useState(null);
+  const [threeAnimationCount, setThreeAnimationCount] = useState(null);
+  const [fourAnimationCount, setFourAnimationCount] = useState(null);
+  const [fiveAnimationCount, setFiveAnimationCount] = useState(null);
+  const [sixAnimationCount, setSixAnimationCount] = useState(null);
   useFocusEffect(
     useCallback(() => {
       Orientation.lockToLandscape();
@@ -83,7 +90,7 @@ const GameJoin = props => {
       return gameCardBalance(payload);
     },
     onSuccess: data => {
-      // console.log("dataaaaaa=======", JSON.stringify(data));
+      console.log("dataaaaaa=======", JSON.stringify(data));
       if (data?.countdown_status === 1) {
         setCountdownVal(null)
       } else {
@@ -150,6 +157,36 @@ const GameJoin = props => {
       } else {
         setSixCount(null)
       }
+      if (!!balance["1"]?.animation_key) {
+        setOneAnimationCount(balance["1"].animation_key)
+      } else {
+        setOneAnimationCount(null)
+      }
+      if (!!balance["2"]?.animation_key) {
+        setTwoAnimationCount(balance["2"].animation_key)
+      } else {
+        setTwoAnimationCount(null)
+      }
+      if (!!balance["3"]?.animation_key) {
+        setThreeAnimationCount(balance["3"].animation_key)
+      } else {
+        setThreeAnimationCount(null)
+      }
+      if (!!balance["4"]?.animation_key) {
+        setFourAnimationCount(balance["4"].animation_key)
+      } else {
+        setFourAnimationCount(null)
+      }
+      if (!!balance["5"]?.animation_key) {
+        setFiveAnimationCount(balance["5"].animation_key)
+      } else {
+        setFiveAnimationCount(null)
+      }
+      if (!!balance["6"]?.animation_key) {
+        setSixAnimationCount(balance["6"].animation_key)
+      } else {
+        setSixAnimationCount(null)
+      }
     },
     onError: error => {
       console.log('------ERROR joinGame -----', error);
@@ -172,6 +209,13 @@ const GameJoin = props => {
       console.log('------ERROR game status -----', error);
     },
   });
+  useEffect(() => {
+    const payload = {
+      game_id: game.id
+    };
+    mutation.mutate(payload);
+    statusMutation.mutate(payload);
+  }, [])
   useEffect(() => {
     const payload = {
       game_id: game.id
@@ -332,22 +376,24 @@ const GameJoin = props => {
   useEffect(() => {
     if (!!countVal) {
       setCountdown(countVal)
-    }else{
+    } else {
       setCountdown(null)
     }
   }, [countVal])
   useEffect(() => {
-    if (!!countdown && countdown > 0) {
-      // Set an interval to decrease the countdown by 1 every second
-      const timer = setInterval(() => {
-        setCountdown((prevCountdown) => prevCountdown - 1);
-      }, 1000);
+    if (countdown !== null) {
+      if (countdown > 0) {
+        // Set an interval to decrease the countdown by 1 every second
+        const timer = setInterval(() => {
+          setCountdown((prevCountdown) => prevCountdown - 1);
+        }, 1000);
 
-      // Clear the interval when the component unmounts or countdown reaches 0
-      return () => clearInterval(timer);
-    } else {
-      // Disable the button when countdown reaches 0
-      setDisableJoin(true);
+        // Clear the interval when the component unmounts or countdown reaches 0
+        return () => clearInterval(timer);
+      } else {
+        // Disable the button when countdown reaches 0
+        setDisableJoin(true);
+      }
     }
   }, [countdown]);
   const checkDisable = (balance, val) => {
@@ -397,6 +443,9 @@ const GameJoin = props => {
                     resizeMode="cover"
                     style={styles.image}
                   >
+                    <View style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}>
+                      <AnimationValue value={oneAnimationCount} />
+                    </View>
                     <View style={[styles.backgroundContainer, { justifyContent: positionFix(1) ? 'space-between' : "flex-end", }]}>
                       {
                         (oneBalance !== null && !(parseInt(oneBalance) > 0)) &&
@@ -438,6 +487,9 @@ const GameJoin = props => {
                     resizeMode="cover"
                     style={styles.image}
                   >
+                    <View style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}>
+                      <AnimationValue value={twoAnimationCount} />
+                    </View>
                     <View style={[styles.backgroundContainer, { justifyContent: positionFix(2) ? 'space-between' : "flex-end", }]}>
                       {
                         (twoBalance !== null && !(parseInt(twoBalance) > 0)) &&
@@ -479,6 +531,9 @@ const GameJoin = props => {
                     resizeMode="cover"
                     style={styles.image}
                   >
+                    <View style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}>
+                      <AnimationValue value={threeAnimationCount} />
+                    </View>
                     <View style={[styles.backgroundContainer, { justifyContent: positionFix(3) ? 'space-between' : "flex-end", }]}>
                       {
                         (threeBalance !== null && !(parseInt(threeBalance) > 0)) &&
@@ -520,6 +575,9 @@ const GameJoin = props => {
                     resizeMode="cover"
                     style={styles.image}
                   >
+                    <View style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}>
+                      <AnimationValue value={fourAnimationCount} />
+                    </View>
                     <View style={[styles.backgroundContainer, { justifyContent: positionFix(4) ? 'space-between' : "flex-end", }]}>
                       {
                         (fourBalance !== null && !(parseInt(fourBalance) > 0)) &&
@@ -563,6 +621,9 @@ const GameJoin = props => {
                     resizeMode="cover"
                     style={styles.image}
                   >
+                    <View style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}>
+                      <AnimationValue value={fiveAnimationCount} />
+                    </View>
                     <View style={[styles.backgroundContainer, { justifyContent: positionFix(5) ? 'space-between' : "flex-end", }]}>
                       {
                         (fiveBalance !== null && !(parseInt(fiveBalance) > 0)) &&
@@ -614,6 +675,9 @@ const GameJoin = props => {
                     resizeMode="cover"
                     style={styles.image}
                   >
+                    <View style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}>
+                      <AnimationValue value={sixAnimationCount} />
+                    </View>
                     <View style={[styles.backgroundContainer, { justifyContent: positionFix(6) ? 'space-between' : "flex-end", }]}>
                       {
                         (sixBalance !== null && !(parseInt(sixBalance) > 0)) &&

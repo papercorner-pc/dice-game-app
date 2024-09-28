@@ -169,3 +169,13 @@ export const completeCountDown = async payload => {
     throw await error.response.json();
   }
 };
+
+export const getPreviousGame = async () => {
+  const response = await instance.get(`get/previous-game`).json();
+  return response;
+};
+
+export const getDailyReport = async () => {
+  const response = await instance.get(`get/daily-report`).json();
+  return response;
+};

@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   FlatList,
   Image,
@@ -16,7 +16,7 @@ import ButtonComponent from '../../../components/molecules/Button';
 import LiveStreaming from '../../../components/molecules/LiveStreaming';
 import { SafeScreen } from '../../../components/template';
 import { goBack, navigate } from '../../../navigators/utils';
-import { addCountDown, announceGameResult, completeCountDown } from '../../../services/game/game';
+import { addCountDown, announceGameResult, completeCountDown, gamePublishStatus } from '../../../services/game/game';
 import backIcon from '../../../theme/assets/images/back.png';
 import { FontFamily } from '../../../theme/fonts';
 import { resultDiceCards } from '../../../utils/constants';
@@ -26,11 +26,11 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Colors } from '../../../theme/colors';
 
 const AnnounceResult = props => {
-  const { gameId } = props.route.params;
+  const { gameId, fromDirect } = props.route.params;
   const [resultDice, setResultDice] = useState(resultDiceCards);
   const [resultDiceTwo, setResultDiceTwo] = useState(resultDiceCards);
   const [resultDiceThree, setResultDiceThree] = useState(resultDiceCards);
-  const [countDown, setCountDown] = useState("10");
+  const [countDown, setCountDown] = useState(null);
   const [showCountDown, setShowCountDown] = useState(true);
   const [startCount, setStartCount] = useState(false);
 
@@ -40,8 +40,12 @@ const AnnounceResult = props => {
     },
     onSuccess: data => {
       console.log('---success joinGame', data);
-      const { pop } = props.navigation;
-      pop(2);
+      if (fromDirect) {
+        goBack()
+      } else {
+        const { pop } = props.navigation;
+        pop(2);
+      }
     },
     onError: error => {
       console.log('------ERROR joinGame -----', error);
@@ -76,24 +80,44 @@ const AnnounceResult = props => {
       customToastMessage(error.error ? error.error : error.message, 'error');
     },
   });
+  const statusMutation = useMutation({
+    mutationFn: payload => {
+      return gamePublishStatus(payload);
+    },
+    onSuccess: data => {
+      console.log('------success getJoinedUserList -----', error);
+    },
+    onError: error => {
+      console.log('------ERROR getJoinedUserList -----', error);
+    },
+  });
   useEffect(() => {
-    if (!!countDown && countDown > 0) {
-      // Set an interval to decrease the countdown by 1 every second
-      const timer = setInterval(() => {
-        setCountDown((prevCountdown) => prevCountdown - 1);
-      }, 1000);
+    const payload = {
+      game_id: gameId,
+      is_publishable: true
+    };
+    statusMutation.mutate(payload);
+  }, [])
+  useEffect(() => {
+    if (countDown !== null && startCount) {
+      if (countDown > 0) {
+        // Set an interval to decrease the countdown by 1 every second
+        const timer = setInterval(() => {
+          setCountDown((prevCountdown) => prevCountdown - 1);
+        }, 1000);
 
-      // Clear the interval when the component unmounts or countdown reaches 0
-      return () => clearInterval(timer);
-    } else {
-      // Disable the button when countdown reaches 0
-      const payload = {
-        game_id: gameId,
-        status: 1,
-      };
-      countStatusMutation.mutate(payload);
+        // Clear the interval when the component unmounts or countdown reaches 0
+        return () => clearInterval(timer);
+      } else {
+        // Disable the button when countdown reaches 0
+        const payload = {
+          game_id: gameId,
+          status: 1,
+        };
+        countStatusMutation.mutate(payload);
+      }
     }
-  }, [countDown]);
+  }, [countDown, startCount]);
   const onSelectDice = item => {
     const resultDiceData = [...resultDice];
     const updatedDiceResult = resultDiceData.map?.(itemValue => {
@@ -209,13 +233,28 @@ const AnnounceResult = props => {
     const diceOne = resultDice.find(item => item.isSelected === true);
     const diceTwo = resultDiceTwo.find(item => item.isSelected === true);
     const diceThree = resultDiceThree.find(item => item.isSelected === true);
-    const payload = {
-      game_id: gameId,
-      dice_1: parseInt(diceOne.id),
-      dice_2: parseInt(diceTwo.id),
-      dice_3: parseInt(diceThree.id),
-    };
-    mutation.mutate(payload);
+    let isValid = true;
+    if (diceOne?.id === undefined || diceOne.id === null) {
+      isValid = false;
+      customToastMessage("Select card One", 'error');
+    }
+    if (diceTwo?.id === undefined || diceOne.id === null) {
+      isValid = false;
+      customToastMessage("Select card Two", 'error');
+    }
+    if (diceThree?.id === undefined || diceOne.id === null) {
+      isValid = false;
+      customToastMessage("Select card Three", 'error');
+    }
+    if (isValid) {
+      const payload = {
+        game_id: gameId,
+        dice_1: parseInt(diceOne.id),
+        dice_2: parseInt(diceTwo.id),
+        dice_3: parseInt(diceThree.id),
+      };
+      mutation.mutate(payload);
+    }
   };
   const streamCallBack = () => {
     console.log("streaming startred========");
@@ -227,6 +266,11 @@ const AnnounceResult = props => {
     };
     countMutation.mutate(payload);
   }
+  const renderLiveStreaming = useCallback(() => {
+    return (
+      <LiveStreaming isHost={true} />
+    );
+  }, []);
   return (
     <SafeScreen>
       <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
@@ -252,7 +296,7 @@ const AnnounceResult = props => {
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <LiveStreaming isHost={true} />
+        {renderLiveStreaming()}
       </View>
       <View style={{ flex: 0.3 }}>
         <ScrollView>

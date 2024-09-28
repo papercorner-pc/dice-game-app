@@ -48,7 +48,7 @@ const GameJoinedList = props => {
             return getUserSingleGameList(payload);
         },
         onSuccess: data => {
-            console.log('---success gameDetails', data);
+            console.log('---success gameDetails---------', data);
             setGameList(data.userGameList)
             setUserEarning(data?.userEarnings)
             setUserInvest(data?.user_total_investment)
