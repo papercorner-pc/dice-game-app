@@ -26,6 +26,7 @@ import { goBack, navigate, navigateAndSimpleReset } from '../../navigators/utils
 import { customToastMessage } from '../../utils/UtilityHelper';
 import { useFocusEffect } from '@react-navigation/native';
 import GamePaymentModal from './GamePaymentScreen';
+import LivestreamModal from './LivestreamModal'
 import banner from '../../theme/assets/images/banner.png';
 import closeIcon from '../../theme/assets/images/close.png';
 import { useMutation } from '@tanstack/react-query';
@@ -41,6 +42,7 @@ const GameJoin = props => {
   const { game } = props.route.params;
   const [selectedCard, setSelectedCard] = useState(0);
   const [visiblePaymentModal, setVisiblePaymentModal] = useState(false);
+  const [visibleStreamModal, setVisibleStreamModal] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
   const [oneBalance, setOneBalance] = useState(null);
   const [twoBalance, setTwoBalance] = useState(null);
@@ -90,12 +92,13 @@ const GameJoin = props => {
       return gameCardBalance(payload);
     },
     onSuccess: data => {
-      console.log("dataaaaaa=======", JSON.stringify(data));
-      if (data?.countdown_status === 1) {
+      // console.log("dataaaaaa=======", JSON.stringify(data), "date==", new Date());
+      /* if (data?.countdown_status === 1) {
         setCountdownVal(null)
       } else {
         setCountdownVal(data?.countdown)
-      }
+      } */
+      setCountdownVal(data?.countdown)
       const balance = data?.balances;
       if (!!balance["1"]?.balance) {
         setOneBalance(balance["1"].balance)
@@ -286,6 +289,10 @@ const GameJoin = props => {
     }
 
   };
+  const toggleStreamModal = () => {
+    setVisibleStreamModal(!visibleStreamModal);
+    setIsStreamStart(!isStreamStart);
+  }
   const positionFix = (num) => {
     switch (num) {
       case 1:
@@ -375,11 +382,24 @@ const GameJoin = props => {
   }
   useEffect(() => {
     if (!!countVal) {
-      setCountdown(countVal)
+      countDownCheck(countVal);
+      setDisableJoin(true);
+      toggleStreamModal();
     } else {
       setCountdown(null)
     }
-  }, [countVal])
+  }, [countVal]);
+  const countDownCheck = (date) => {
+    const currentDate = new Date();
+    const countDownDate = new Date(date);
+    const countDownDateMilli = countDownDate.getTime();
+    const currentDateMill = currentDate.getTime();
+    const diffInMilliseconds = countDownDateMilli - currentDateMill;
+    if (diffInMilliseconds > 0) {
+      const diffInSeconds = diffInMilliseconds / 1000;
+      setCountdown(parseInt(diffInSeconds));
+    }
+  }
   useEffect(() => {
     if (countdown !== null) {
       if (countdown > 0) {
@@ -390,9 +410,6 @@ const GameJoin = props => {
 
         // Clear the interval when the component unmounts or countdown reaches 0
         return () => clearInterval(timer);
-      } else {
-        // Disable the button when countdown reaches 0
-        setDisableJoin(true);
       }
     }
   }, [countdown]);
@@ -806,6 +823,7 @@ const GameJoin = props => {
           </LinearGradient>
         </View>
       </Modal>
+      <LivestreamModal visible={visibleStreamModal} onClose={toggleStreamModal} />
     </SafeScreen>
   );
 };

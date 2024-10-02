@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import {
+  Dimensions,
   FlatList,
   Image,
   ImageBackground,
@@ -24,6 +25,9 @@ import { customToastMessage } from '../../../utils/UtilityHelper';
 import { Collapse, CollapseHeader, CollapseBody } from "accordion-collapse-react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 import { Colors } from '../../../theme/colors';
+import closeIcon from '../../../theme/assets/images/close.png';
+import Modal from "react-native-modal";
+import FastImage from 'react-native-fast-image';
 
 const AnnounceResult = props => {
   const { gameId, fromDirect } = props.route.params;
@@ -33,6 +37,7 @@ const AnnounceResult = props => {
   const [countDown, setCountDown] = useState(null);
   const [showCountDown, setShowCountDown] = useState(true);
   const [startCount, setStartCount] = useState(false);
+  const [modalVisible, setModalVisible] = useState(true);
 
   const mutation = useMutation({
     mutationFn: payload => {
@@ -61,6 +66,7 @@ const AnnounceResult = props => {
     },
     onSuccess: data => {
       console.log('---success joinGame', data);
+      customToastMessage("Count Down started", 'success');
       setShowCountDown(false)
       setStartCount(true);
       setCountDown(parseInt(countDown))
@@ -101,7 +107,7 @@ const AnnounceResult = props => {
     };
     statusMutation.mutate(payload);
   }, []) */
-  useEffect(() => {
+  /* useEffect(() => {
     if (countDown !== null && startCount) {
       if (countDown > 0) {
         // Set an interval to decrease the countdown by 1 every second
@@ -120,7 +126,7 @@ const AnnounceResult = props => {
         countStatusMutation.mutate(payload);
       }
     }
-  }, [countDown, startCount]);
+  }, [countDown, startCount]); */
   const onSelectDice = item => {
     const resultDiceData = [...resultDice];
     const updatedDiceResult = resultDiceData.map?.(itemValue => {
@@ -259,6 +265,9 @@ const AnnounceResult = props => {
       mutation.mutate(payload);
     }
   };
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+  }
   const streamCallBack = () => {
     console.log("streaming startred========");
   }
@@ -295,17 +304,63 @@ const AnnounceResult = props => {
       </View>
       <View
         style={{
-          flex: 0.7,
+          flex: showCountDown ? 0.8 : 0.9,
           justifyContent: 'center',
           alignItems: 'center',
         }}>
         {renderLiveStreaming()}
       </View>
-      <View style={{ flex: 0.3 }}>
-        <ScrollView>
+      <View style={{ flex: showCountDown ? 0.2 : 0.1 }}>
+        {
+          showCountDown &&
+          <View>
+            <View style={[styles.titleContainer]}>
+              <Text style={{
+                fontSize: 18,
+                fontFamily: FontFamily.poppinsMedium,
+                color: 'white',
+              }}>Start Count Down</Text>
+            </View>
+            <View style={{ backgroundColor: "#FFF", flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 10, alignItems: "center" }}>
+              <TextInput
+                placeholder={'Enter'}
+                style={styles.input}
+                keyboardType={'number-pad'}
+                value={countDown}
+                onChangeText={setCountDown}
+              />
+              <Pressable style={styles.startContainer} onPress={onPressStart}>
+                <Text style={styles.startText}>Start</Text>
+              </Pressable>
+            </View>
+          </View>
+        }
+        {/* <ScrollView>
           {
             showCountDown &&
-            <Collapse>
+            <View>
+              <View style={[styles.titleContainer]}>
+                <Text style={{
+                  fontSize: 18,
+                  fontFamily: FontFamily.poppinsMedium,
+                  color: 'white',
+                }}>Start Count Down</Text>
+              </View>
+              <View style={{ backgroundColor: "#FFF", flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 10, alignItems: "center" }}>
+                <TextInput
+                  placeholder={'Enter'}
+                  style={styles.input}
+                  keyboardType={'number-pad'}
+                  value={countDown}
+                  onChangeText={setCountDown}
+                />
+                <Pressable style={styles.startContainer} onPress={onPressStart}>
+                  <Text style={styles.startText}>Start</Text>
+                </Pressable>
+              </View>
+            </View>
+          }
+          <Collapse>
               <CollapseHeader>
                 <View style={[styles.titleContainer]}>
                   <Text style={{
@@ -330,7 +385,6 @@ const AnnounceResult = props => {
                 </View>
               </CollapseBody>
             </Collapse>
-          }
           <Collapse>
             <CollapseHeader>
               <View style={styles.titleContainer}>
@@ -400,7 +454,7 @@ const AnnounceResult = props => {
               </View>
             </CollapseBody>
           </Collapse>
-        </ScrollView>
+        </ScrollView> */}
         <ButtonComponent
           buttonColor="#DC9C40"
           wrapperStyles={{
@@ -411,8 +465,8 @@ const AnnounceResult = props => {
             fontSize: 16,
             fontFamily: FontFamily.poppinsRegular,
           }}
-          text={'Announce'}
-          onPress={onPressAnnounce}
+          text={'Select Cards'}
+          onPress={toggleModal}
         />
       </View>
       {/* <LinearGradient
@@ -483,6 +537,106 @@ const AnnounceResult = props => {
           onPress={onPressAnnounce}
         />
       </LinearGradient> */}
+      <Modal
+        transparent={true}
+        isVisible={modalVisible}
+        animationType={"none"}
+        style={styles.modalContainer}
+        onBackdropPress={toggleModal}
+        onLayout={(event) => { }}
+      >
+        <LinearGradient
+          colors={['#412653', '#2E1B3B']} style={{ flex: 1, padding: 10 }}>
+          <View style={styles.closeIconContainer}>
+            <TouchableOpacity onPress={toggleModal}>
+              <Image
+                style={styles.closeIcon}
+                resizeMode="contain"
+                source={closeIcon}
+                tintColor={Colors.white}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-evenly" }}>
+            <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+              <Text
+                style={{
+                  margin: 5,
+                  fontSize: 18,
+                  fontFamily: FontFamily.poppinsMedium,
+                  color: Colors.white,
+                  marginBottom: 10,
+                  textDecorationLine: "underline"
+                }}>
+                Dice 1
+              </Text>
+              <FlatList
+                // horizontal={true}
+                data={resultDice}
+                renderItem={renderItem}
+                keyExtractor={item => item.id}
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
+              />
+            </View>
+            <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+              <Text
+                style={{
+                  margin: 5,
+                  fontSize: 18,
+                  fontFamily: FontFamily.poppinsMedium,
+                  color: Colors.white,
+                  marginBottom: 10,
+                  textDecorationLine: "underline"
+                }}>
+                Dice 2
+              </Text>
+              <FlatList
+                // horizontal={true}
+                data={resultDiceTwo}
+                renderItem={renderItemTwo}
+                keyExtractor={item => item.id}
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
+              />
+            </View>
+            <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+              <Text
+                style={{
+                  margin: 5,
+                  fontSize: 18,
+                  fontFamily: FontFamily.poppinsMedium,
+                  color: Colors.white,
+                  marginBottom: 10,
+                  textDecorationLine: "underline"
+                }}>
+                Dice 3
+              </Text>
+              <FlatList
+                // horizontal={true}
+                data={resultDiceThree}
+                renderItem={renderItemThree}
+                keyExtractor={item => item.id}
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
+              />
+            </View>
+          </View>
+          <ButtonComponent
+            buttonColor="#DC9C40"
+            wrapperStyles={{
+              // marginBottom: 10,
+            }}
+            textStyles={{
+              color: '#090D12',
+              fontSize: 16,
+              fontFamily: FontFamily.poppinsRegular,
+            }}
+            text={'Announce'}
+            onPress={onPressAnnounce}
+          />
+        </LinearGradient>
+      </Modal>
     </SafeScreen>
   );
 };
@@ -533,5 +687,24 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: FontFamily.poppinsMedium,
     color: '#000',
-  }
+  },
+  modalContainer: {
+    flex: 1,
+    marginHorizontal: 0,
+    marginBottom: 0,
+    marginTop: Dimensions.get("screen").height / 7,
+    overflow: "hidden",
+    backgroundColor: Colors.white,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  closeIconContainer: {
+    justifyContent: "center",
+    alignItems: "flex-end",
+    marginBottom: 20
+  },
+  closeIcon: {
+    width: 26,
+    height: 26,
+  },
 });

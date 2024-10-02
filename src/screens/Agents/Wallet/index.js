@@ -28,6 +28,7 @@ import tick from '../../../theme/assets/images/tick.png';
 import coinIcon from '../../../theme/assets/images/star.png';
 import { dealerReqAcceptReject, getUserWalletReq, getWalletReq, walletReqDelete, walletReqEdit } from '../../../services/wallet/wallet';
 import { customToastMessage } from '../../../utils/UtilityHelper';
+import { Colors } from '../../../theme/colors';
 
 const staticData = [
     { value: "Requests" },
@@ -43,6 +44,7 @@ const AgentWalletScreen = props => {
             return walletHistory();
         },
     });
+    // console.log("data===user walleyy history", isSuccess, JSON.stringify(data));
     const { data: reqData, isLoading: reqIsLoading, refetch: reqRefetch } = useQuery({
         queryKey: ["wallet"],
         queryFn: () => {
@@ -194,13 +196,25 @@ const AgentWalletScreen = props => {
                         </View>
                         <View>
                             <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                {
+                                    !!item.user_name &&
+                                    <Text
+                                        style={{
+                                            fontSize: 18,
+                                            fontFamily: FontFamily.poppinsSemiBold,
+                                            color: '#1B1023',
+                                            marginRight: 10
+                                        }}>
+                                        {item.user_name}
+                                    </Text>
+                                }
                                 <Text
                                     style={{
                                         fontSize: 18,
                                         fontFamily: FontFamily.poppinsSemiBold,
                                         color: '#1B1023',
                                     }}>
-                                    {item.type === "deposit" ? '+' : "-"}{item.amount}
+                                    {item.type === "deposit" && '+'}{item.amount}
                                 </Text>
                                 <FastImage
                                     source={coinIcon}
@@ -243,8 +257,9 @@ const AgentWalletScreen = props => {
                                 fontSize: 13,
                                 fontFamily: FontFamily.poppinsMedium,
                                 color: '#1B1023',
+                                textTransform:"capitalize"
                             }}>
-                            {item.type}
+                            {(!!item.user_name && item.type === "deposit") ? "Deposite to Dealer" : (!!item.user_name && item.type === "withdraw") ? "Dealer Redeemed" : item.type}
                         </Text>
                     </View>
                 </View>
@@ -258,32 +273,35 @@ const AgentWalletScreen = props => {
                 <Text style={styles.dateTime}>{dateFormat(item?.created_at)}</Text>
             </View>
             <Text style={styles.coinText}>{parseInt(item?.amount)} Coins</Text>
-            <View style={{ flexDirection: "row" }}>
-                <Pressable style={[styles.acceptRejectContainer, { backgroundColor: "#C23421", marginHorizontal: 18 }]}
-                    onPress={() => { onPressAcceptReject(item.id, "reject") }}
-                >
-                    <FastImage
-                        source={close}
-                        style={{
-                            height: 16,
-                            width: 14,
-                        }}
-                        resizeMode="contain"
-                    />
-                </Pressable>
-                <Pressable style={[styles.acceptRejectContainer, { backgroundColor: "#21C24E" }]}
-                    onPress={() => { onPressAcceptReject(item.id, "accept") }}
-                >
-                    <FastImage
-                        source={tick}
-                        style={{
-                            height: 16,
-                            width: 14,
-                        }}
-                        resizeMode="contain"
-                    />
-                </Pressable>
-            </View>
+            {
+                item.status === 0 ?
+                    <View style={{ flexDirection: "row" }}>
+                        <Pressable style={[styles.acceptRejectContainer, { backgroundColor: "#C23421", marginHorizontal: 18 }]}
+                            onPress={() => { onPressAcceptReject(item.id, "reject") }}
+                        >
+                            <FastImage
+                                source={close}
+                                style={{
+                                    height: 16,
+                                    width: 14,
+                                }}
+                                resizeMode="contain"
+                            />
+                        </Pressable>
+                        <Pressable style={[styles.acceptRejectContainer, { backgroundColor: "#21C24E" }]}
+                            onPress={() => { onPressAcceptReject(item.id, "accept") }}
+                        >
+                            <FastImage
+                                source={tick}
+                                style={{
+                                    height: 16,
+                                    width: 14,
+                                }}
+                                resizeMode="contain"
+                            />
+                        </Pressable>
+                    </View> : item.status === 1 ? <Text style={styles.acceptText}>Accepted</Text> : <Text style={styles.rejectText}>Rejected</Text>
+            }
         </View>
     )
     const UserWalletReqItem = ({ item }) => (
@@ -385,7 +403,7 @@ const AgentWalletScreen = props => {
                             )}
                         /> :
                         <FlatList
-                            data={!!data ? data.transactions : []}
+                            data={!!data ? data.transaction : []}
                             renderItem={historyComponents}
                             keyExtractor={_keyExtractor}
                             listKey={(item, index) => `${index}-item`}
@@ -507,5 +525,15 @@ const styles = StyleSheet.create({
         width: 28,
         justifyContent: "center",
         alignItems: "center"
+    },
+    acceptText: {
+        fontSize: 15,
+        fontFamily: FontFamily.poppinsBold,
+        color: Colors.green,
+    },
+    rejectText: {
+        fontSize: 15,
+        fontFamily: FontFamily.poppinsBold,
+        color: Colors.red,
     }
 });

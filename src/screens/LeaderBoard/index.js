@@ -24,6 +24,12 @@ import { useCallback, useEffect, useState } from 'react';
 import game from '../../theme/assets/images/game.png';
 import coinIcon from '../../theme/assets/images/star.png';
 import EmptyComponent from '../../components/molecules/EmptyComponet';
+import iconAce from '../../theme/assets/images/iconAce.png';
+import iconClaver from '../../theme/assets/images/iconClaver.png';
+import iconDiamond from '../../theme/assets/images/iconDiamond.png';
+import iconFlag from '../../theme/assets/images/iconFlag.png';
+import iconHeart from '../../theme/assets/images/iconHeart.png';
+import iconMoon from '../../theme/assets/images/iconMoon.png';
 
 const LeaderBoard = props => {
   const _keyExtractor = (item, index) => index.toString();
@@ -31,6 +37,9 @@ const LeaderBoard = props => {
   const [leaderBoardList, setLeaderBoardList] = useState([]);
   const [adminData, setAdminData] = useState({});
   const [refreshing, setRefreshing] = useState(false);
+  const [resOne, setResOne] = useState(null);
+  const [resTwo, setResTwo] = useState(null);
+  const [resThree, setResThree] = useState(null);
   const mutation = useMutation({
     mutationFn: payload => {
       return getJoinedUserList(payload);
@@ -40,6 +49,11 @@ const LeaderBoard = props => {
       const userData = data.hasOwnProperty('users') ? data.users : [];
       setLeaderBoardList(userData);
       setAdminData(data?.admin_earnings[0]);
+      if (!!data.result) {
+        setResOne(data.result?.dice_1);
+        setResTwo(data.result?.dice_2);
+        setResThree(data.result?.dice_3);
+      }
     },
     onError: error => {
       console.log('------ERROR gameDetails -----', error);
@@ -59,6 +73,24 @@ const LeaderBoard = props => {
       setRefreshing(false);
     }, 1000);
   }, []);
+  const setSelectedCardImage = (selectedCard) => {
+    switch (selectedCard) {
+      case 1:
+        return iconHeart;
+      case 2:
+        return iconAce;
+      case 3:
+        return iconClaver;
+      case 4:
+        return iconDiamond;
+      case 5:
+        return iconMoon;
+      case 6:
+        return iconFlag;
+      default:
+        break;
+    }
+  };
   const renderLeaderBoardMethod = ({ item }) => {
     return (
       <View style={styles.listContainer}>
@@ -157,6 +189,38 @@ const LeaderBoard = props => {
                 }}>
                 Amount Received
               </Text>
+            </View>
+            <View style={{ flexDirection: "row", marginTop: 10 }}>
+              {
+                !!resOne &&
+                <View style={{ backgroundColor: "white", padding: 3, marginRight: 10, justifyContent: "center", alignItems: "center" }}>
+                  <FastImage
+                    style={{ height: 28, width: 28 }}
+                    source={setSelectedCardImage(resOne)}
+                    resizeMode="contain"
+                  />
+                </View>
+              }
+              {
+                !!resTwo &&
+                <View style={{ backgroundColor: "white", padding: 3, marginRight: 10, justifyContent: "center", alignItems: "center" }}>
+                  <FastImage
+                    style={{ height: 28, width: 28 }}
+                    source={setSelectedCardImage(resTwo)}
+                    resizeMode="contain"
+                  />
+                </View>
+              }
+              {
+                !!resThree &&
+                <View style={{ backgroundColor: "white", padding: 3, marginRight: 10, justifyContent: "center", alignItems: "center" }}>
+                  <FastImage
+                    style={{ height: 28, width: 28 }}
+                    source={setSelectedCardImage(resThree)}
+                    resizeMode="contain"
+                  />
+                </View>
+              }
             </View>
             <View>
               <View style={{ flexDirection: "row", alignItems: "center" }}>

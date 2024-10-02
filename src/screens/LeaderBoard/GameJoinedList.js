@@ -32,10 +32,12 @@ import iconMoon from '../../theme/assets/images/iconMoon.png';
 import coinIcon from '../../theme/assets/images/star.png';
 import join from '../../theme/assets/images/join-now.png';
 import { Colors } from '../../theme/colors';
+import { storage } from '../../App';
 
 const GameJoinedList = props => {
     const _keyExtractor = (item, index) => index.toString();
     const { gameId } = props.route.params;
+    const userType = storage.getString('user_type');
     const [gameList, setGameList] = useState([]);
     const [userEarning, setUserEarning] = useState(0)
     const [usetInvest, setUserInvest] = useState(0);
@@ -111,13 +113,19 @@ const GameJoinedList = props => {
                             resizeMode="contain"
                         />
                     </View>
-                    <View>
-                        <Text style={styles.contestNameText}>invest: {item.joined_amount}</Text>
-                        <Text style={styles.contestNameText}>Earning: {item.game_earning}</Text>
-                        {/* <Text style={styles.wonText}>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                        {
+                            !!item.user_name &&
+                            <Text style={styles.userNameText}>{item.user_name}</Text>
+                        }
+                        <View>
+                            <Text style={styles.contestNameText}>invest: {item.joined_amount}</Text>
+                            <Text style={styles.contestNameText}>Earning: {item.game_earning}</Text>
+                            {/* <Text style={styles.wonText}>
                             Won :{' '}
                             <Text style={styles.wonAmountText}>₹{item.game_earning}</Text>
                         </Text> */}
+                        </View>
                     </View>
                 </View>
                 <View style={{ justifyContent: 'flex-start' }}>
@@ -348,6 +356,12 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontFamily: FontFamily.poppinsMedium,
         color: '#070A0D',
+    },
+    userNameText: {
+        fontSize: 18,
+        fontFamily: FontFamily.poppinsMedium,
+        color: '#070A0D',
+        marginRight: 10,
     },
     wonText: {
         fontSize: 13,

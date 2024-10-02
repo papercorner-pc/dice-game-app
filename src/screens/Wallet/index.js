@@ -221,7 +221,7 @@ const WalletScreen = props => {
                     fontFamily: FontFamily.poppinsSemiBold,
                     color: '#1B1023',
                   }}>
-                  {item.type === "deposit" ? '+' : "-"}{item.amount}
+                  {item.type === "deposit" && '+'}{item.amount}
                 </Text>
                 <FastImage
                   source={coinIcon}

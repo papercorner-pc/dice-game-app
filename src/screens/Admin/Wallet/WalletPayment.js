@@ -5,6 +5,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import FastImage from "react-native-fast-image";
 import LinearGradient from "react-native-linear-gradient";
 import ButtonComponent from "../../../components/molecules/Button";
+import LoaderOverlay from "../../../components/molecules/LoaderOverlay";
 import MaterialTab from "../../../components/molecules/MaterialTab";
 import CustomTextInput from "../../../components/molecules/TextInput";
 import { SafeScreen } from "../../../components/template"
@@ -23,7 +24,7 @@ const AdminWalletPayment = () => {
     const [userId, setUserId] = useState("")
     const [isFocus, setIsFocus] = useState(false);
     const [type, setType] = useState("recharge");
-    const { data, isSuccess } = useQuery({
+    const { data, isSuccess, isLoading } = useQuery({
         queryKey: ["dealer"],
         queryFn: () => {
             return getAgentsList();
@@ -65,6 +66,7 @@ const AdminWalletPayment = () => {
     }
     return (
         <SafeScreen>
+            <LoaderOverlay show={isLoading} />
             <View style={{ flexDirection: 'row', height: 80, backgroundColor: "#3B234C", alignItems: "center", paddingHorizontal: 16 }}>
                 <TouchableOpacity
                     // style={styles.backButton}
@@ -94,6 +96,7 @@ const AdminWalletPayment = () => {
                                 placeholderStyle={styles.placeholderStyle}
                                 selectedTextStyle={styles.selectedTextStyle}
                                 inputSearchStyle={styles.inputSearchStyle}
+                                itemTextStyle={styles.inputSearchStyle}
                                 iconStyle={styles.iconStyle}
                                 data={data?.data?.agents}
                                 search
