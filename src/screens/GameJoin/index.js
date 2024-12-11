@@ -59,6 +59,7 @@ const GameJoin = props => {
   const [isStreamStart, setIsStreamStart] = useState(false)
   const [countdown, setCountdown] = useState(null);
   const [disableJoin, setDisableJoin] = useState(false);
+  const [countDownStarted, setCountDownStarted] = useState(false);
   const [countVal, setCountdownVal] = useState(null);
   const [oneAnimationCount, setOneAnimationCount] = useState(null);
   const [twoAnimationCount, setTwoAnimationCount] = useState(null);
@@ -289,9 +290,13 @@ const GameJoin = props => {
     }
 
   };
-  const toggleStreamModal = () => {
-    setVisibleStreamModal(!visibleStreamModal);
-    setIsStreamStart(!isStreamStart);
+  const openStreamModal = () => {
+    setVisibleStreamModal(true);
+    setIsStreamStart(false);
+  }
+  const closeStreamModal = () => {
+    setVisibleStreamModal(false);
+    setIsStreamStart(true);
   }
   const positionFix = (num) => {
     switch (num) {
@@ -381,10 +386,11 @@ const GameJoin = props => {
     deleteMutation.mutate(payload);
   }
   useEffect(() => {
-    if (!!countVal) {
+    if (!!countVal && !countDownStarted) {
       countDownCheck(countVal);
       setDisableJoin(true);
-      toggleStreamModal();
+      setCountDownStarted(true);
+      openStreamModal();
     } else {
       setCountdown(null)
     }
@@ -823,7 +829,7 @@ const GameJoin = props => {
           </LinearGradient>
         </View>
       </Modal>
-      <LivestreamModal visible={visibleStreamModal} onClose={toggleStreamModal} />
+      <LivestreamModal visible={visibleStreamModal} onClose={closeStreamModal} />
     </SafeScreen>
   );
 };

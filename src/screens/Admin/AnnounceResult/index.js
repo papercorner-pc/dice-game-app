@@ -37,7 +37,7 @@ const AnnounceResult = props => {
   const [countDown, setCountDown] = useState(null);
   const [showCountDown, setShowCountDown] = useState(true);
   const [startCount, setStartCount] = useState(false);
-  const [modalVisible, setModalVisible] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const mutation = useMutation({
     mutationFn: payload => {
@@ -545,8 +545,9 @@ const AnnounceResult = props => {
         onBackdropPress={toggleModal}
         onLayout={(event) => { }}
       >
-        <LinearGradient
-          colors={['#412653', '#2E1B3B']} style={{ flex: 1, padding: 10 }}>
+        {/* <LinearGradient
+          colors={['#412653', '#2E1B3B']} style={{ flex: 1, padding: 10 }}> */}
+        <View style={{ flex: 1, padding: 10 }}>
           <View style={styles.closeIconContainer}>
             <TouchableOpacity onPress={toggleModal}>
               <Image
@@ -635,7 +636,8 @@ const AnnounceResult = props => {
             text={'Announce'}
             onPress={onPressAnnounce}
           />
-        </LinearGradient>
+          {/* </LinearGradient> */}
+        </View>
       </Modal>
     </SafeScreen>
   );
@@ -694,9 +696,12 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     marginTop: Dimensions.get("screen").height / 7,
     overflow: "hidden",
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.transparent,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
+    borderTopWidth: 1,
+    borderColor: Colors.white,
+    paddingTop: 10
   },
   closeIconContainer: {
     justifyContent: "center",

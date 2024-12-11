@@ -339,7 +339,7 @@ const WalletScreen = props => {
         {
           !isLoading &&
           <FlatList
-            data={!!data ? data.transactions : []}
+            data={!!data ? data.transaction : []}
             renderItem={historyComponents}
             keyExtractor={_keyExtractor}
             listKey={(item, index) => `${index}-item`}
